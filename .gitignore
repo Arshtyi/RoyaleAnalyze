@@ -8,3 +8,8 @@
 __pycache__/
 *.log
 
+##打包文件
+*.spec
+build/
+dist/
+
