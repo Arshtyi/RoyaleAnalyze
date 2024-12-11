@@ -1,0 +1,10 @@
+##测试及筛选文件
+/GroupInfor.xlsx
+/clans_infor.xlsx
+
+##运行文件
+
+*.pyc
+__pycache__/
+*.log
+
