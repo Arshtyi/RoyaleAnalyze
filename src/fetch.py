@@ -47,7 +47,7 @@ def contribution():
         """
         需要在非战斗日进行测试需要取消下面第一句的注释并注释掉下方第二句一句判断
         """
-        ##if 1 == in_war :###战斗日
+        ##if True or 1 == in_war :###战斗日
         if 1 == in_war:
             ####爬取总量
             trs = soup.find_all('tr')#####完全匹配，速度慢不少
