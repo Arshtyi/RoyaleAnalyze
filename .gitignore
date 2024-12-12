@@ -1,15 +1,17 @@
-##测试及筛选文件
+#测试及筛选文件
 /GroupInfor.xlsx
 /clans_infor.xlsx
 
-##运行文件
+#运行文件
 
 *.pyc
 __pycache__/
 *.log
 
-##打包文件
+#打包文件
 *.spec
 build/
 dist/
 
+#许可
+/LICENSE
