@@ -13,5 +13,3 @@ __pycache__/
 build/
 dist/
 
-#许可
-/LICENSE
