@@ -93,3 +93,6 @@ def contribution():
             start_row = now_row
             ws.merge_cells(start_column = 2,end_column = 5,start_row = now_row,end_row = now_row)
     wb.save(filename = formal.output_name)
+
+def donation():
+    t = 0
