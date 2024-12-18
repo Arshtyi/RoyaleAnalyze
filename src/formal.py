@@ -1,12 +1,43 @@
+"""
+some formatting operations
+"""
+
 import openpyxl as op
 from openpyxl.utils import get_column_letter
-from openpyxl.styles import Font,Alignment
-import ops_defines as od
+from openpyxl.styles import Alignment
+import path
 import os
+outputName = "clansInformation.xlsx"
 
-output_name = "clans_infor.xlsx"
+def getClansInformation():
+    """
+    从指定路径的 Excel 文件中读取 'clansInformation' sheet 的内容，
+    从第二行开始，将第一列作为字典的 key，第二列作为对应的 value。
+    
+    :param file_path: str, Excel 文件路径
+    :return: dict, 从 sheet 中读取的字典
+    """
+    # 加载op簿
+    workbook = op.load_workbook(filename = path.pathConcatenationForClansInformationTable)
+    
+    # 确保 sheet 名为 'clansInformation'
+    if 'clansInformation' not in workbook.sheetnames:
+        raise ValueError("Excel 文件中没有名为 'clansInformation' 的 sheet")
+    
+    sheet = workbook['clansInformation']
+    
+    # 初始化结果字典
+    result = {}
+    
+    # 遍历从第二行开始的内容
+    for row in sheet.iter_rows(min_row=2, max_col=2, values_only=True):
+        key, value = row
+        if key is not None:  # 确保 key 不为空
+            result[key] = value
+    
+    return result
 
-def clear_sheet_all(file_name, sheet_name):
+def clearSheet(fileName, sheetName):
     """
     清除指定工作表的所有内容、格式和合并单元格，完全重置工作表。
     
@@ -14,12 +45,10 @@ def clear_sheet_all(file_name, sheet_name):
     :param sheet_name: 目标工作表的名称
     """
     # 加载工作簿
-    wb = op.load_workbook(file_name)
+    wb = op.load_workbook(fileName)
     
     # 获取目标工作表
-    ws = wb[sheet_name]
-    # 删除所有合并单元格
-    ws.merged_cells = []  # 直接清空合并单元格
+    ws = wb[sheetName]
     # 取消所有合并单元格
     for merged_range in list(ws.merged_cells):
         ws.unmerge_cells(str(merged_range))  # 取消合并
@@ -29,23 +58,24 @@ def clear_sheet_all(file_name, sheet_name):
         for cell in row:
             cell.value = None  # 清空内容
             cell.style = 'Normal'  # 清除格式
-    # 保存修改后的工作簿
-    wb.save(file_name)
 
-def check_file(file_name):##当前目录下是否存在输出workbook
-    if os.path.isfile(file_name):
+    # 保存修改后的工作簿
+    wb.save(fileName)
+
+def checkFile(fileName):##当前目录下是否存在输出workbook
+    if os.path.isfile(fileName):
         return True
     else:
         return False
     
-def del_sheet_from_wb(file_name,sheet_name):##特定的sheet是否存在
-    wb = op.load_workbook(filename = file_name)
-    if sheet_name in wb.sheetnames :##存在即删除
+def delSheetFromWorkbook(fileName,sheetName):##特定的sheet是否存在
+    wb = op.load_workbook(filename = fileName)
+    if sheetName in wb.sheetnames :##存在即删除
         if len(wb.sheetnames) > 1:##删或者清除
-            del wb[sheet_name]
+            del wb[sheetName]
         else :
-            clear_sheet_all(file_name,sheet_name)
-    wb.save(filename = file_name)
+            clearSheet(fileName,sheetName)
+    wb.save(filename = fileName)
     ###不存在无事
 
 def creat_sheet(op_num):
@@ -62,8 +92,10 @@ def creat_sheet(op_num):
             # if len(wb.sheetnames) > 1:##删掉不为空
             #     del wb['Sheet']##删掉Sheet
         ws = wb[sheet_name]
-        ws.append(['部落','玩家','今日使用卡组数','袭击战船次数','总贡献'])##表头
+        ws.append(['部落','玩家','总使用卡组数','总袭击战船次数','总贡献'])##表头
         wb.save(filename = output_name)
+    elif od.creat_donation_sheet():
+        t = 0
     else :
         print("Error!")
 

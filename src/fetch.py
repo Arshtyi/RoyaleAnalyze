@@ -1,17 +1,15 @@
 """
-for fetch and save
+fetch and save
 """
 import urllib.request
 import urls
 import urllib
 import re
 from bs4 import BeautifulSoup
-import ClansInfor as CLI
-import formal 
+import clansInformation
 import openpyxl as op
-import ops_defines as od
-clans = CLI.clans
-def contribution():
+clans = clansInformation.clans
+def queryContribution():
     sheet_name = "Contribution"
     url_0 = urls.url_0 + "clan/"
     formal.creat_sheet(od.creat_contribution_sheet())
@@ -95,4 +93,6 @@ def contribution():
     wb.save(filename = formal.output_name)
 
 def donation():
-    t = 0
+    sheet_name = "Donation"
+    url_0 = urls.url_0 + "clan/"
+    formal.creat_sheet(od.creat_donation_sheet())
