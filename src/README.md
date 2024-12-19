@@ -6,7 +6,7 @@ input文件夹下为存入的部落信息,若需要修改则按已有格式修�
 
 urls.py文件存放需要用到的url.
 
-main.py文件为程序入口,menu.py文件实现选择菜单,operations.py通过constant定义操作类型.
+main.py文件为程序入口,menu.py文件实现选择菜单,operations.py通过constant定义操作类型.gettime.py实现时间信息输入.
 ## 抓取
 抓取的主体在fetch.py文件.
 ## 输出与格式化

@@ -32,6 +32,7 @@
     │   externs.py
     │   fetch.py
     │   formal.py
+    |   gettime.py
     │   main.py
     │   main.spec
     │   menu.py

@@ -8,6 +8,7 @@ from openpyxl.styles import Alignment
 from openpyxl.styles import PatternFill
 import operations 
 import os
+import gettime
 outputName = externs.outputFileLocation
 contributionSheetName = externs.contributionsSheetName
 donationSheetName = externs.donationsSheetName
@@ -69,7 +70,7 @@ def creatSheet(operation):
             wb = op.Workbook()
             wb.create_sheet(title = sheetName)
         ws = wb[sheetName]
-        ws.append(['部落','玩家','总使用卡组数','总袭击战船次数','总贡献'])##表头
+        ws.append(['部落','玩家','总使用卡组数','总袭击战船次数','总贡献',gettime.get_current_time()])##表头
         wb.save(filename = outputName)
     elif operations.creat_donation_sheet() == operation:
         sheetName = donationSheetName
@@ -81,7 +82,7 @@ def creatSheet(operation):
             wb = op.Workbook()
             wb.create_sheet(title = sheetName)
         ws = wb[sheetName]
-        ws.append(['部落','玩家','近七天捐赠'])
+        ws.append(['部落','玩家','近七天捐赠',gettime.get_current_time()])##表头
         wb.save(filename = outputName)
     else :
         print("Undefined Query Type, Please Check Input Validity.")
