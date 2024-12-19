@@ -17,3 +17,6 @@ dist/
 #input/output
 input/groupInformation.xlsx
 output/clansQueryInformation.xlsx
+
+# tree
+/list.txt

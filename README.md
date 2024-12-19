@@ -2,21 +2,59 @@
 ## 项目目的
 本项目主要配合皇室战争部落管理及相关数据查询之用.
 ## 依赖项
-项目主要依赖于https://royaleapi.com/
+项目主要依赖于RoyaleAPI:https://royaleapi.com/
 
-此外,请确保已安装依赖的所有第三库.所有自定义库均有相关功能实现的注释.
+此外,请确保已安装依赖的所有第三库.所有自定义模板均有相关功能实现的注释.
 # 功能实现
 截至此次更新，功能实现如下，具体见更新日志：
 
-支持查询已存部落的各成员部落战贡献.
+支持查询已存部落的各成员部落战贡献、查询已存部落的各成员的近七天的捐赠量.
 # 关于项目
+## 目录结构
+```
+│   .gitignore
+│   CHANGELOG.md
+│   LICENSE
+│   list.txt
+│   README.md
+│   
+├───.vscode
+│      
+├───input
+│       clansInformation.xlsx
+│       
+├───output
+│       clansQueryInformation.xlsx
+│       
+└───src
+    │   clansInformation.py
+    │   externs.py
+    │   fetch.py
+    │   formal.py
+    │   main.py
+    │   main.spec
+    │   menu.py
+    │   operations.py
+    │   path.py
+    │   README.md
+    │   urls.py
+    │   
+    ├───build
+    │   
+    ├───dist
+    │      
+    └───__pycache__
+```
 ## 使用
-确保所有依赖项正常且输入已经完全后运行main.py文件.
-## 测试事项
-若需要在非战斗日测试进行本项目测试，请按照fetch.py文件第47行所说修改.
+确保所有依赖项正常且目录结构完整后运行main.py文件.
 ## 输入
-所有选项均有相关说明,此外，查询依据是ClansInfor.py文件中的original_clans字典，若需要修改，请按格式修改.
+所有选项均有相关说明,此外，查询依据是input文件夹中的clansInformation.xlsx文件，请确保目录结构完整、正确，若需要进一步的修改，请按已有格式修改.
+
+特别地，格式化处理在输入退出选项后执行，请注意输入此指令，否则将导致格式化异常.
 ## 输出
-文件默认以clans_infor.xlsx文件输出在当前目录下，因为输出格式原因，每一次运行前，最好手动清除已有的输出文件，该问题截至此次更新未解决.
+文件默认以clansQueryInformation.xlsx文件输出在output目录下，请注意执行退出指令以完成格式化.
+# 关于更新
+当前该项目处于个人开发阶段，如果你有任何好的想法或者想要加入开发，欢迎联系我！
 # 联系我
 QQ:640006128 或 3842004484
+email:8956230x@gmail.com

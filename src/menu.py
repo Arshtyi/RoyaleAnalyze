@@ -4,8 +4,9 @@ Creat the menu and judge choice which chosen by user
 import clansInformation as infor
 import os
 def creatMenu():
-    print("欢迎使用皇室战争部落信息查询系统！")
-    print("请确保input文件夹下已正确导入clansInformation.xlsx文件")
+    print("欢迎使用皇室战争部落信息查询系统(By Arshtyi)！")
+    print("本项目地址: https://github.com/Arshtyi/Clashofroyale ,建议阅读README.md.")
+    print("请确保input文件夹下已正确导入clansInformation.xlsx文件以及存在output文件夹！")
     input("键入任意内容以继续...\n")###暂停
     os.system('cls')###清屏
     print("当前操作对象：")
