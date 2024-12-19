@@ -20,19 +20,18 @@
 │   README.md
 │   
 ├───.vscode
-│      
+│       settings.json
+│       
 ├───input
 │       clansInformation.xlsx
 │       
 ├───output
-│       clansQueryInformation.xlsx
-│       
 └───src
     │   clansInformation.py
     │   externs.py
     │   fetch.py
     │   formal.py
-    |   gettime.py
+    │   gettime.py
     │   main.py
     │   main.spec
     │   menu.py
@@ -40,12 +39,6 @@
     │   path.py
     │   README.md
     │   urls.py
-    │   
-    ├───build
-    │   
-    ├───dist
-    │      
-    └───__pycache__
 ```
 ## 使用
 确保所有依赖项正常且目录结构完整后运行main.py文件.
