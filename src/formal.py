@@ -71,7 +71,7 @@ def creatSheet(operation):
         ws = wb[sheetName]
         ws.append(['部落','玩家','总使用卡组数','总袭击战船次数','总贡献'])##表头
         wb.save(filename = outputName)
-    elif operations.creat_donation_sheet():
+    elif operations.creat_donation_sheet() == operation:
         sheetName = donationSheetName
         if checkFile(outputName): ##输出文件是否存在
             delSheetFromWorkbook(outputName,sheetName)
@@ -156,37 +156,45 @@ def processExcel(fileName):
     # 保存更改
     wb.save(fileName)
 
-def sort_and_color_rows(file_path, sheet_name, start_row, end_row, sort_column):
+def sort_xlsx_data(file_path, sheet_name, start_row, end_row, sort_column):
     """
-    按照指定列（sort_column）对给定范围的行进行降序排序，并标记第 sort_column 列为0或None的行为红色。
+    按照给定的依据列对指定范围的行进行降序排序，
+    其中，依据列内容为整数，且不能直接交换数据。
 
     :param file_path: Excel文件路径
-    :param sheet_name: 工作表名称
-    :param start_row: 要排序的起始行
-    :param end_row: 要排序的结束行
-    :param sort_column: 排序依据的列（从1开始，1表示第一列）
+    :param sheet_name: 工作表名
+    :param start_row: 起始行
+    :param end_row: 终止行
+    :param sort_column: 排序依据列（从1开始，1表示第一列）
+    :return: 排序后的数据（二维列表）
     """
-    # 加载工作簿和目标工作表
+    # 加载工作簿
     wb = op.load_workbook(file_path)
     sheet = wb[sheet_name]
 
-    # 读取指定行的1到5列内容
+    # 读取指定范围的行和列数据
     rows_to_sort = []
-    for row in sheet.iter_rows(min_row=start_row, max_row=end_row, min_col=1, max_col=5, values_only=False):
-        row_data = [cell.value for cell in row]  # 获取当前行的数据
+    for row in sheet.iter_rows(min_row=start_row, max_row=end_row, min_col=1, max_col=sheet.max_column, values_only=False):
+        row_data = [cell.value for cell in row]
+        # for data in row_data:
+        #     print(f"type of data is {type(data)},data = {data}")  # 获取当前行的数据
         rows_to_sort.append(row_data)
 
-    # 按照指定列排序（sort_column是从1开始，Python索引是从0开始，所以需要减去1）
-    rows_to_sort.sort(key=lambda x: (x[sort_column - 1] is not None, x[sort_column - 1]), reverse=True)
+    # 处理 None 值，确保排序时不会出错
+    def sort_key(value):
+        # 如果值为 None，则将其视为负无穷（float('-inf')），确保它排在最后
+        if value is None:
+            return float('-inf')
+        return value
 
-    # 应用排序后的数据到表格中
+    # 依据列为整数，直接按整数进行排序（降序）
+    rows_to_sort.sort(key=lambda x: sort_key(x[sort_column - 1]), reverse=True)
+
+    # 根据排序后的数据更新工作表
     for i, row_data in enumerate(rows_to_sort, start=start_row):
         for j, value in enumerate(row_data):
-            sheet.cell(row=i, column=j+1, value=value)
+            # 将排序后的数据写回相应的单元格
+            sheet.cell(row=i, column=j + 1, value=value)
 
-        # if row_data[sort_column - 1] == 0 or row_data[sort_column - 1] is None:
-        #     # 标记依据列的单元格背景为红色
-        #     red_fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
-        #     sheet.cell(row=i, column=sort_column).fill = red_fill  # 只给依据列的
     # 保存修改后的文件
     wb.save(file_path)

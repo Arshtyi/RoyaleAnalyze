@@ -12,11 +12,18 @@ constant
 def queryDonation():
     return 2
 
+constant
+def queryExit():
+    return 9
+
 def judge(choice):
     if queryContribution() == choice:
         fetch.queryContribution()
     elif queryDonation() == choice:
         fetch.queryDonation()
+    elif queryExit == choice:
+        print("Exit Successfully.")
+        
     else :
         print("Undefined Query Type, Please Check Input Validity.")
 

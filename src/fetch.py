@@ -43,10 +43,6 @@ def queryContribution():
                 break
             day = day + 1 
         data = [clan]
-        """
-        需要在非战斗日进行测试需要取消下面第一句的注释并注释掉下方第二句一句判断
-        """
-        ##if True or 1 == in_war :###战斗日
         if 1 == in_war:
             ####爬取总量
             trs = soup.find_all('tr')#####完全匹配，速度慢不少
@@ -60,22 +56,25 @@ def queryContribution():
                     data.append(player_name)
                 player_decks_used = tr.find('div',{'class':'value_bg decks_used'})
                 if player_decks_used:
-                    decks_uesd = player_decks_used.get_text()
+                    decks_uesd = (int)(player_decks_used.get_text())
                     data.append(decks_uesd) 
                 player_boat_attack = tr.find('div',{'class':'value_bg boat_attacks'})
                 if player_boat_attack:
-                    boat_attack = player_boat_attack.get_text()
+                    boat_attack = (int)(player_boat_attack.get_text())
                     data.append(boat_attack)
                 player_medal = tr.find('div',{'class':'value_bg fame'})
                 if player_medal:
-                    medal = player_medal.get_text()
+                    medal = (int)(player_medal.get_text())
                     data.append(medal)
                 if len(data) > 1:
                     data_num = data_num + 1
                     ws.append(data)
             if data_num:
                     now_row = now_row + data_num
-                    formal.sort_and_color_rows(externs.outputFileLocation,sheet_name,start_row = start_row,end_row = now_row,sort_column = 5) 
+                    wb.save(filename = externs.outputFileLocation)
+                    formal.sort_xlsx_data(externs.outputFileLocation,sheet_name,start_row = start_row,end_row = now_row,sort_column = 5) 
+                    wb = op.load_workbook(externs.outputFileLocation)
+                    ws = wb[sheet_name]
                     ws.merge_cells(start_row = start_row,end_row = now_row,start_column = 1,end_column = 1)
                     start_row = now_row + 1
         elif 0 == in_war:
@@ -96,10 +95,13 @@ def queryDonation():
     formal.creatSheet(operations.creat_donation_sheet())
     wb = op.load_workbook(externs.outputFileLocation)
     ws = wb[sheet_name]
+    data_num = 0
     now_row = 1
     start_row = 2
     for clan in clans:
+        data_num = 0
         url_donation = url_0 + clans[clan]
+        # print(url_donation)
         requests = urllib.request.Request(url = url_donation,headers = urls.HEADERS)
         response = urllib.request.urlopen(requests)
         content = response.read().decode("utf-8")
@@ -112,12 +114,24 @@ def queryDonation():
             a_ty = tr.find('a',class_='block member_link')
             if a_ty:
                 player_name = formal.keep_before_first_newline(a_ty.get_text().strip())
-                #player_name = a_ty.get_text().strip()
                 player_name = player_name.replace('\u200c','') 
                 data.append(player_name)
             td_donation = tr.find('td',class_='donations right aligned mobile-hide')
             if td_donation:
-                donation = td_donation.get_text().strip()
+                donation = (int)(td_donation.get_text().strip())
                 data.append(donation)
             if len(data) > 1:
-                print(data)
+                data_num = data_num + 1
+               ### print(data)
+                ws.append(data)
+        if data_num:
+                now_row = now_row + data_num
+                #print(f"now_row = {now_row},start_row = {start_row}")
+                wb.save(filename = externs.outputFileLocation)
+                formal.sort_xlsx_data(externs.outputFileLocation,sheet_name,start_row = start_row,end_row = now_row,sort_column = 3)
+                wb = op.load_workbook(externs.outputFileLocation)
+                ws = wb[sheet_name]
+                ws.merge_cells(start_row = start_row,end_row = now_row,start_column = 1,end_column = 1)
+                start_row = now_row + 1
+                #print(f"now_row = {now_row},start_row = {start_row}")
+    wb.save(filename = externs.outputFileLocation)    
