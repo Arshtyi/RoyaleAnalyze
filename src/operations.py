@@ -15,7 +15,15 @@ def queryDonation():
 def judge(choice):
     if queryContribution() == choice:
         fetch.queryContribution()
-    elif queryDonation == choice:
+    elif queryDonation() == choice:
         fetch.queryDonation()
     else :
         print("Undefined Query Type, Please Check Input Validity.")
+
+constant
+def creat_contribution_sheet():
+    return 1
+
+constant 
+def creat_donation_sheet():
+    return 2

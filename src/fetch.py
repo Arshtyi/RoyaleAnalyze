@@ -5,18 +5,20 @@ import urllib.request
 import urls
 import urllib
 import re
+import operations
 from bs4 import BeautifulSoup
-import clansInformation
+from clansInformation import clans
 import openpyxl as op
-clans = clansInformation.clans
+import formal
+import externs
 def queryContribution():
-    sheet_name = "Contribution"
-    url_0 = urls.url_0 + "clan/"
-    formal.creat_sheet(od.creat_contribution_sheet())
+    sheet_name = externs.contributionsSheetName
+    url_0 = urls.url_clan
+    formal.creatSheet(operations.creat_contribution_sheet())
     ##已创建用于统计贡献情况的工作表
-    ##ws.append(['部落','玩家','今日使用卡组数','袭击战船次数','总贡献'])##表头
+    ##ws.append(['部落','玩家','总使用卡组数','总袭击战船次数','总贡献'])##表头
     ##ABCDE
-    wb = op.load_workbook(formal.output_name)
+    wb = op.load_workbook(externs.outputFileLocation)
     ws = wb[sheet_name]
     now_row = 1
     start_row = 2
@@ -41,7 +43,6 @@ def queryContribution():
                 break
             day = day + 1 
         data = [clan]
-        
         """
         需要在非战斗日进行测试需要取消下面第一句的注释并注释掉下方第二句一句判断
         """
@@ -50,14 +51,12 @@ def queryContribution():
             ####爬取总量
             trs = soup.find_all('tr')#####完全匹配，速度慢不少
             trs_players = [tr for tr in trs if 'player' in tr.get('class', []) and len(tr['class']) == 1]
-            ##trs_players = soup.find_all('tr',class_=re.compile(r'\bplayer\b'))##正则###完全匹配
             for tr in trs_players:
-               # print(tr)
                 data = [clan]
                 player_name_location = tr.find('a',{'class':'player_name force_single_line_hidden'}) 
                 if player_name_location:
                     player_name = player_name_location.get_text().strip()
-                    player_name = player_name.replace('\u200c','')
+                    player_name = player_name.replace('\u200c','')##去除特殊字符
                     data.append(player_name)
                 player_decks_used = tr.find('div',{'class':'value_bg decks_used'})
                 if player_decks_used:
@@ -76,10 +75,9 @@ def queryContribution():
                     ws.append(data)
             if data_num:
                     now_row = now_row + data_num
-                    #print(f"start_row = {start_row},now_row = {now_row}")
+                    formal.sort_and_color_rows(externs.outputFileLocation,sheet_name,start_row = start_row,end_row = now_row,sort_column = 5) 
                     ws.merge_cells(start_row = start_row,end_row = now_row,start_column = 1,end_column = 1)
                     start_row = now_row + 1
-                    #print(f"start_row = {start_row},now_row = {now_row}")
         elif 0 == in_war:
             data = [clan]
             data.append('该部落未处于战斗日！')
@@ -90,9 +88,36 @@ def queryContribution():
             now_row = now_row + 1
             start_row = now_row
             ws.merge_cells(start_column = 2,end_column = 5,start_row = now_row,end_row = now_row)
-    wb.save(filename = formal.output_name)
+    wb.save(filename = externs.outputFileLocation)
 
-def donation():
-    sheet_name = "Donation"
-    url_0 = urls.url_0 + "clan/"
-    formal.creat_sheet(od.creat_donation_sheet())
+def queryDonation():
+    sheet_name = formal.donationSheetName
+    url_0 = urls.url_clan
+    formal.creatSheet(operations.creat_donation_sheet())
+    wb = op.load_workbook(externs.outputFileLocation)
+    ws = wb[sheet_name]
+    now_row = 1
+    start_row = 2
+    for clan in clans:
+        url_donation = url_0 + clans[clan]
+        requests = urllib.request.Request(url = url_donation,headers = urls.HEADERS)
+        response = urllib.request.urlopen(requests)
+        content = response.read().decode("utf-8")
+        soup = BeautifulSoup(content, 'html.parser')
+        table_donation = soup.find('table', id='roster', class_='ui unstackable hover striped attached compact sortable table')##找到捐赠表
+        ##print(table_donation)
+        trs = table_donation.find_all('tr')
+        for tr in trs:
+            data = [clan]
+            a_ty = tr.find('a',class_='block member_link')
+            if a_ty:
+                player_name = formal.keep_before_first_newline(a_ty.get_text().strip())
+                #player_name = a_ty.get_text().strip()
+                player_name = player_name.replace('\u200c','') 
+                data.append(player_name)
+            td_donation = tr.find('td',class_='donations right aligned mobile-hide')
+            if td_donation:
+                donation = td_donation.get_text().strip()
+                data.append(donation)
+            if len(data) > 1:
+                print(data)

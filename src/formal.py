@@ -1,42 +1,17 @@
 """
 some formatting operations
 """
-
+import externs
 import openpyxl as op
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Alignment
-import path
+from openpyxl.styles import PatternFill
+import operations 
 import os
-outputName = "clansInformation.xlsx"
-
-def getClansInformation():
-    """
-    从指定路径的 Excel 文件中读取 'clansInformation' sheet 的内容，
-    从第二行开始，将第一列作为字典的 key，第二列作为对应的 value。
-    
-    :param file_path: str, Excel 文件路径
-    :return: dict, 从 sheet 中读取的字典
-    """
-    # 加载op簿
-    workbook = op.load_workbook(filename = path.pathConcatenationForClansInformationTable)
-    
-    # 确保 sheet 名为 'clansInformation'
-    if 'clansInformation' not in workbook.sheetnames:
-        raise ValueError("Excel 文件中没有名为 'clansInformation' 的 sheet")
-    
-    sheet = workbook['clansInformation']
-    
-    # 初始化结果字典
-    result = {}
-    
-    # 遍历从第二行开始的内容
-    for row in sheet.iter_rows(min_row=2, max_col=2, values_only=True):
-        key, value = row
-        if key is not None:  # 确保 key 不为空
-            result[key] = value
-    
-    return result
-
+outputName = externs.outputFileLocation
+contributionSheetName = externs.contributionsSheetName
+donationSheetName = externs.donationsSheetName
+clansInformationSheetName = externs.clansInformationSheetName
 def clearSheet(fileName, sheetName):
     """
     清除指定工作表的所有内容、格式和合并单元格，完全重置工作表。
@@ -78,28 +53,40 @@ def delSheetFromWorkbook(fileName,sheetName):##特定的sheet是否存在
     wb.save(filename = fileName)
     ###不存在无事
 
-def creat_sheet(op_num):
-    if od.creat_contribution_sheet() == op_num:
-        sheet_name = "Contribution"
-        if check_file(output_name):##输出文件是否存在
+def keep_before_first_newline(input_string):
+    # 使用split方法按照 '\n' 切分字符串，取第一个部分
+    return input_string.split('\n')[0]
+
+def creatSheet(operation):
+    if operations.creat_contribution_sheet() == operation:
+        sheetName = contributionSheetName
+        if checkFile(outputName):##输出文件是否存在
             ###存在则删除贡献sheet
-            del_sheet_from_wb(output_name,sheet_name)
-            wb = op.load_workbook(output_name)
-            wb.create_sheet(title = sheet_name)
+            delSheetFromWorkbook(outputName,sheetName)
+            wb = op.load_workbook(outputName)
+            wb.create_sheet(title = sheetName)
         else :##不存在新建
             wb = op.Workbook()
-            wb.create_sheet(title = sheet_name)
-            # if len(wb.sheetnames) > 1:##删掉不为空
-            #     del wb['Sheet']##删掉Sheet
-        ws = wb[sheet_name]
+            wb.create_sheet(title = sheetName)
+        ws = wb[sheetName]
         ws.append(['部落','玩家','总使用卡组数','总袭击战船次数','总贡献'])##表头
-        wb.save(filename = output_name)
-    elif od.creat_donation_sheet():
-        t = 0
+        wb.save(filename = outputName)
+    elif operations.creat_donation_sheet():
+        sheetName = donationSheetName
+        if checkFile(outputName): ##输出文件是否存在
+            delSheetFromWorkbook(outputName,sheetName)
+            wb = op.load_workbook(outputName)
+            wb.create_sheet(title = sheetName)
+        else: ##不存在新建
+            wb = op.Workbook()
+            wb.create_sheet(title = sheetName)
+        ws = wb[sheetName]
+        ws.append(['部落','玩家','近七天捐赠'])
+        wb.save(filename = outputName)
     else :
-        print("Error!")
+        print("Undefined Query Type, Please Check Input Validity.")
 
-def calculate_adjusted_width(value):
+def calculateAdjustedWidth(value):
     """
     根据单元格内容计算宽度，处理中文繁体和宽字符的显示宽度。
     :param value: 单元格内容
@@ -117,7 +104,7 @@ def calculate_adjusted_width(value):
             width += 1  # 普通字符占用1单位宽度
     return width
 
-def adjust_column_width(sheet):
+def adjustColumnWidth(sheet):
     """
     动态调整工作表的列宽，确保中文繁体和宽字符正确显示。
     :param sheet: 当前工作表
@@ -128,12 +115,12 @@ def adjust_column_width(sheet):
         for cell in col:
             if cell.value is not None:
                 # 根据内容计算宽度
-                adjusted_width = calculate_adjusted_width(cell.value)
+                adjusted_width = calculateAdjustedWidth(cell.value)
                 max_width = max(max_width, adjusted_width)
         # Excel的列宽与字符宽度不同，这里乘1.2是一个经验调整值
         sheet.column_dimensions[col_letter].width = max_width * 1.2
 
-def process_excel(file_name):
+def processExcel(fileName):
     """
     处理Excel文件：
     1. 检查当前目录是否存在指定的Excel文件。
@@ -145,12 +132,12 @@ def process_excel(file_name):
     :param file_name: str, Excel 文件名。
     """
     # 检查当前目录是否存在指定文件
-    if not os.path.exists(file_name):
-        print(f"文件 '{file_name}' 不存在！请检查文件名和路径。")
+    if not os.path.exists(fileName):
+        print(f"文件 '{fileName}' 不存在！请检查文件名和路径。")
         return
 
     # 加载工作簿
-    wb = op.load_workbook(file_name)
+    wb = op.load_workbook(fileName)
 
     # 删除 "Sheet" 工作表
     if len(wb.sheetnames) > 1 and "Sheet" in wb.sheetnames:
@@ -159,7 +146,7 @@ def process_excel(file_name):
     # 遍历每个工作表
     for sheet in wb.worksheets:
         # 调整列宽
-        adjust_column_width(sheet)
+        adjustColumnWidth(sheet)
 
         # 设置单元格居中
         for row in sheet.iter_rows():
@@ -167,4 +154,39 @@ def process_excel(file_name):
                 cell.alignment = Alignment(horizontal="center", vertical="center")
 
     # 保存更改
-    wb.save(file_name)
+    wb.save(fileName)
+
+def sort_and_color_rows(file_path, sheet_name, start_row, end_row, sort_column):
+    """
+    按照指定列（sort_column）对给定范围的行进行降序排序，并标记第 sort_column 列为0或None的行为红色。
+
+    :param file_path: Excel文件路径
+    :param sheet_name: 工作表名称
+    :param start_row: 要排序的起始行
+    :param end_row: 要排序的结束行
+    :param sort_column: 排序依据的列（从1开始，1表示第一列）
+    """
+    # 加载工作簿和目标工作表
+    wb = op.load_workbook(file_path)
+    sheet = wb[sheet_name]
+
+    # 读取指定行的1到5列内容
+    rows_to_sort = []
+    for row in sheet.iter_rows(min_row=start_row, max_row=end_row, min_col=1, max_col=5, values_only=False):
+        row_data = [cell.value for cell in row]  # 获取当前行的数据
+        rows_to_sort.append(row_data)
+
+    # 按照指定列排序（sort_column是从1开始，Python索引是从0开始，所以需要减去1）
+    rows_to_sort.sort(key=lambda x: (x[sort_column - 1] is not None, x[sort_column - 1]), reverse=True)
+
+    # 应用排序后的数据到表格中
+    for i, row_data in enumerate(rows_to_sort, start=start_row):
+        for j, value in enumerate(row_data):
+            sheet.cell(row=i, column=j+1, value=value)
+
+        # if row_data[sort_column - 1] == 0 or row_data[sort_column - 1] is None:
+        #     # 标记依据列的单元格背景为红色
+        #     red_fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
+        #     sheet.cell(row=i, column=sort_column).fill = red_fill  # 只给依据列的
+    # 保存修改后的文件
+    wb.save(file_path)

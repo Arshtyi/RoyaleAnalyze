@@ -1,9 +1,14 @@
+"""
+main function of this project
+"""
+
 import menu
 import operations
 import formal
+import externs
 if __name__ == '__main__':
-    menu.creat_menu()
+    menu.creatMenu()
     choice = menu.getChoice()
     operations.judge(choice)
-    formal.process_excel(formal.output_name)
+    formal.processExcel(externs.outputFileLocation)
     

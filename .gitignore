@@ -3,13 +3,17 @@
 /clans_infor.xlsx
 
 #运行文件
-
 *.pyc
 __pycache__/
 *.log
+.vscode/
 
 #打包文件
 *.spec
 build/
 dist/
 
+
+#input/output
+input/groupInformation.xlsx
+output/clansQueryInformation.xlsx

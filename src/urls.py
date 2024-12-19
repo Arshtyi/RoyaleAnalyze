@@ -10,3 +10,4 @@ HEADERS = {
 }
 ## original url
 url_0 = "https://royaleapi.com/" #初始url
+url_clan = "https://royaleapi.com/clan/" #部落url
