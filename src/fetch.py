@@ -118,7 +118,7 @@ def queryDonation():
                 data.append(player_name)
             td_donation = tr.find('td',class_='donations right aligned mobile-hide')
             if td_donation:
-                donation = (int)(td_donation.get_text().strip())
+                donation = (int)(td_donation.get_text().strip().replace(',',''))
                 data.append(donation)
             if len(data) > 1:
                 data_num = data_num + 1
