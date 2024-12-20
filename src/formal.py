@@ -82,7 +82,7 @@ def creatSheet(operation):
             wb = op.Workbook()
             wb.create_sheet(title = sheetName)
         ws = wb[sheetName]
-        ws.append(['部落','玩家','近七天捐赠',gettime.get_current_time()])##表头
+        ws.append(['部落','玩家','本周捐赠',gettime.get_current_time()])##表头
         wb.save(filename = outputName)
     else :
         print("Undefined Query Type, Please Check Input Validity.")
