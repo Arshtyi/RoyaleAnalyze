@@ -1,3 +1,19 @@
+# 目录结构
+```
+│   clansInformation.py
+│   externs.py
+│   fetch.py
+│   formal.py
+│   gettime.py
+│   list.txt
+│   main.py
+│   main.spec
+│   menu.py
+│   operations.py
+│   path.py
+│   README.md
+│   urls.py
+```
 # 项目实现说明
 ## 全局化
 为了避免模块的循环导入，externs.py文件用于做一些全局化工作.path.py负责路径拼接
