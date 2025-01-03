@@ -135,3 +135,46 @@ def queryDonation():
                 start_row = now_row + 1
                 #print(f"now_row = {now_row},start_row = {start_row}")
     wb.save(filename = externs.outputFileLocation)    
+
+def queryActivity():
+    sheet_name = formal.activitySheetName
+    url_0 = urls.url_clan
+    formal.creatSheet(operations.creat_activity_sheet())
+    wb = op.load_workbook(externs.outputFileLocation)
+    ws = wb[sheet_name]
+    data_num = 0
+    now_row = 1
+    start_row = 2
+    for clan in clans:
+        data_num = 0
+        url_activity = url_0 + clans[clan]
+        requests = urllib.request.Request(url = url_activity,headers = urls.HEADERS)
+        response = urllib.request.urlopen(requests)
+        content = response.read().decode("utf-8")
+        soup = BeautifulSoup(content, 'html.parser')
+        table_activity = soup.find('table', id='roster', class_='ui unstackable hover striped attached compact sortable table')
+        trs = table_activity.find_all('tr')
+        for tr in trs:
+            data = [clan]
+            a_ty = tr.find('a',class_='block member_link')
+            if a_ty:
+                player_name = formal.keep_before_first_newline(a_ty.get_text().strip())
+                player_name = player_name.replace('\u200c','') 
+                data.append(player_name)
+            div = tr.find('div',class_='i18n_duration_short')
+            ###print(div)
+            if div:
+                activity = formal.convert_time_format(div.get_text().strip())
+                data.append(activity)
+            if len(data) > 1:
+                data_num = data_num + 1
+                ws.append(data)
+        if data_num:
+            now_row = now_row + data_num
+            wb.save(filename = externs.outputFileLocation)
+            wb = op.load_workbook(externs.outputFileLocation)
+            ws = wb[sheet_name]
+            ws.merge_cells(start_row = start_row,end_row = now_row,start_column = 1,end_column = 1)
+            start_row = now_row + 1
+    wb.save(filename = externs.outputFileLocation)
+            

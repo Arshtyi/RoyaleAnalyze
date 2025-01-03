@@ -12,6 +12,7 @@ import gettime
 outputName = externs.outputFileLocation
 contributionSheetName = externs.contributionsSheetName
 donationSheetName = externs.donationsSheetName
+activitySheetName = externs.activitySheetName
 clansInformationSheetName = externs.clansInformationSheetName
 def clearSheet(fileName, sheetName):
     """
@@ -83,6 +84,18 @@ def creatSheet(operation):
             wb.create_sheet(title = sheetName)
         ws = wb[sheetName]
         ws.append(['部落','玩家','本周捐赠',gettime.get_current_time()])##表头
+        wb.save(filename = outputName)
+    elif operations.creat_activity_sheet() == operation:
+        sheetName = activitySheetName
+        if checkFile(outputName):##输出文件是否存在
+            delSheetFromWorkbook(outputName,sheetName)
+            wb = op.load_workbook(outputName)
+            wb.create_sheet(title = sheetName)
+        else:##不存在新建
+            wb = op.Workbook()
+            wb.create_sheet(title = sheetName)
+        ws = wb[sheetName]
+        ws.append(['部落','玩家','当前最后活跃时间',gettime.get_current_time()])##表头
         wb.save(filename = outputName)
     else :
         print("Undefined Query Type, Please Check Input Validity.")
@@ -199,3 +212,33 @@ def sort_xlsx_data(file_path, sheet_name, start_row, end_row, sort_column):
 
     # 保存修改后的文件
     wb.save(file_path)
+
+def convert_time_format(input_str):
+    # 定义时间单位和对应的中文格式
+    time_units = {"w": "周", "d": "天", "h": "小时", "m": "分钟"}
+    time_values = {"w": 0, "d": 0, "h": 0, "m": 0}
+    
+    # 提取输入字符串中的时间单位
+    parts = input_str.split()
+    for part in parts:
+        if part.endswith("w"):
+            time_values["w"] = int(part[:-1])
+        elif part.endswith("d"):
+            time_values["d"] = int(part[:-1])
+        elif part.endswith("h"):
+            time_values["h"] = int(part[:-1])
+        elif part.endswith("m"):
+            time_values["m"] = int(part[:-1])
+
+    # 构建输出字符串，从第一个不为零的时间单位开始
+    output = []
+    if time_values["w"] > 0:
+        output.append(f"{time_values['w']}周")
+    if time_values["d"] > 0 or (time_values["w"] > 0 and (time_values["h"] > 0 or time_values["m"] > 0)):
+        output.append(f"{time_values['d']}天")
+    if time_values["h"] > 0 or ((time_values["w"] > 0 or time_values["d"] > 0) and time_values["m"] > 0):
+        output.append(f"{time_values['h']}小时")
+    if time_values["m"] > 0:
+        output.append(f"{time_values['m']}分钟")
+
+    return "".join(output)

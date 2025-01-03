@@ -3,6 +3,7 @@ import openpyxl as op
 clansInformationSheetName = "clansInformation"
 contributionsSheetName = "Contribution"
 donationsSheetName = "Donation"
+activitySheetName = "Activity"
 inputClansInformationLocation = path.pathConcatenationForClansInformationTable()
 inputGroupPlayerInformationLocation = path.pathConcatenationForGroupPlayerInformationTable()
 outputFileLocation = path.pathConcatenationForOutputTable()
