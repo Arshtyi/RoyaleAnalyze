@@ -13,6 +13,10 @@ def queryDonation():
     return 2
 
 constant
+def queryActivity():
+    return 3
+
+constant
 def queryExit():
     return 9
 
@@ -21,6 +25,8 @@ def judge(choice):
         fetch.queryContribution()
     elif queryDonation() == choice:
         fetch.queryDonation()
+    elif queryActivity() == choice:
+        fetch.queryActivity()
     elif queryExit == choice:
         print("Exit Successfully.")
         
@@ -34,3 +40,7 @@ def creat_contribution_sheet():
 constant 
 def creat_donation_sheet():
     return 2
+
+constant
+def creat_activity_sheet():
+    return 3
