@@ -16,12 +16,14 @@
 │   .gitignore
 │   CHANGELOG.md
 │   LICENSE
-│   list.txt
 │   README.md
-│       
+│   走遍万罪星空.yml
+│   
 ├───input
 │       clansInformation.xlsx
-|
+│       
+├───output
+│       
 └───src
     │   clansInformation.py
     │   externs.py
@@ -29,7 +31,6 @@
     │   formal.py
     │   gettime.py
     │   main.py
-    │   main.spec
     │   menu.py
     │   operations.py
     │   path.py
