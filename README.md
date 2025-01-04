@@ -46,7 +46,20 @@
 文件默认以clansQueryInformation.xlsx文件输出在output目录下，请注意执行退出指令以完成格式化.
 # 家庭信息
 ```
-
+name: 走遍万罪星空
+key: 走遍万罪星空
+color: blue
+emblem: Arrow_01
+info:
+  description: >
+    中国人为主的部落，欢迎各方朋友加入，主要交流频道为QQ群：939160021；A clan mainly composed of Chinese people, welcoming friends from all sides to join. The main communication channel is QQ group: 939160021
+clans:
+  - name: 零度轩辕
+    tag: QRL0PYQL
+  - name: 勾指起誓
+    tag: R8RJYCCU
+  - name: 啟明星之夢
+    tag: GQPV9Y2R
 ```
 # 关于更新
 当前该项目处于个人开发阶段，如果你有任何好的想法或者想要加入开发，欢迎联系我！
