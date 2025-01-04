@@ -5,9 +5,7 @@
 │   fetch.py
 │   formal.py
 │   gettime.py
-│   list.txt
 │   main.py
-│   main.spec
 │   menu.py
 │   operations.py
 │   path.py
