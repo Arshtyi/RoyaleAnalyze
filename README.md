@@ -18,14 +18,10 @@
 │   LICENSE
 │   list.txt
 │   README.md
-│   
-├───.vscode
-│       settings.json
 │       
 ├───input
 │       clansInformation.xlsx
-│       
-├───output
+|
 └───src
     │   clansInformation.py
     │   externs.py
