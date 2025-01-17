@@ -5,7 +5,7 @@ import clansInformation as infor
 import os
 def creatMenu():
     print("欢迎使用皇室战争部落信息查询系统(By Arshtyi)！")
-    print("本项目地址: https://github.com/Arshtyi/Clashofroyale ,建议阅读README.md.")
+    print("本项目地址: https://github.com/Arshtyi/Clash-of-Royale ,建议阅读README.md.")
     print("请确保input文件夹下已正确导入clansInformation.xlsx文件以及存在output文件夹！")
     input("键入任意内容以继续...\n")###暂停
     os.system('cls')###清屏
@@ -16,6 +16,7 @@ def creatMenu():
     print("1.查询部落战贡献")
     print("2.查询部落成员捐赠")
     print("3.查询部落成员最近活跃情况")
+    print("4.查询近一个月部落战贡献和捐赠信息")
     print("...更多功能敬请期待...")
     print("9.退出")
 

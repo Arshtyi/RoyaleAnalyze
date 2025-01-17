@@ -13,6 +13,7 @@ outputName = externs.outputFileLocation
 contributionSheetName = externs.contributionsSheetName
 donationSheetName = externs.donationsSheetName
 activitySheetName = externs.activitySheetName
+lastMonthWarSheetName = externs.lastMonthWarSheetName
 clansInformationSheetName = externs.clansInformationSheetName
 def clearSheet(fileName, sheetName):
     """
@@ -96,6 +97,19 @@ def creatSheet(operation):
             wb.create_sheet(title = sheetName)
         ws = wb[sheetName]
         ws.append(['部落','玩家','当前最后活跃时间',gettime.get_current_time()])##表头
+        wb.save(filename = outputName)
+    elif operations.creat_last_month_war_sheet() == operation:
+        sheetName = externs.lastMonthWarSheetName
+        if checkFile(outputName):
+            delSheetFromWorkbook(outputName,sheetName)
+            wb = op.load_workbook(outputName)
+            wb.create_sheet(title = sheetName)
+        else:
+            wb = op.Workbook()
+            wb.create_sheet(title = sheetName)
+        ws = wb[sheetName]
+        # ws.append(['部落','玩家','第一周使用卡组数','第一周贡献','第一周捐赠','第二周使用卡组数','第二周贡献','第二周捐赠','第三周使用卡组数','第三周贡献','第三周捐赠','第四周使用卡组数','第四周贡献','第四周捐赠','近一月使用卡组数','近一月贡献','近一月捐赠','近期参与的河道竞速',gettime.get_current_time()])
+        ws.append(['部落','玩家','第一周使用卡组数','第一周贡献','第二周使用卡组数','第二周贡献','第三周使用卡组数','第三周贡献','第四周使用卡组数','第四周贡献','近一月使用卡组数','近一月贡献','近期参与的河道竞速',gettime.get_current_time()])
         wb.save(filename = outputName)
     else :
         print("Undefined Query Type, Please Check Input Validity.")

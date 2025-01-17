@@ -4,6 +4,7 @@ clansInformationSheetName = "clansInformation"
 contributionsSheetName = "Contribution"
 donationsSheetName = "Donation"
 activitySheetName = "Activity"
+lastMonthWarSheetName = "LastMonthWar"
 inputClansInformationLocation = path.pathConcatenationForClansInformationTable()
 inputGroupPlayerInformationLocation = path.pathConcatenationForGroupPlayerInformationTable()
 outputFileLocation = path.pathConcatenationForOutputTable()

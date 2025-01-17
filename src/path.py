@@ -18,5 +18,5 @@ def pathConcatenationForClansInformationTable(): ##部落信息路径拼接
 def pathConcatenationForOutputTable(): ##输出路径拼接
     currentDir = os.getcwd()
     outputDir = os.path.join(currentDir,"output")
-    outputInformationPath = os.path.join(outputDir,"clansQueryInformation.xlsx")
+    outputInformationPath = os.path.join(outputDir,"Information.xlsx")
     return outputInformationPath

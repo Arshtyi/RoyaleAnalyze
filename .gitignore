@@ -16,8 +16,11 @@ dist/
 
 #input/output
 input/groupInformation.xlsx
-output/clansQueryInformation.xlsx
+output/Information.xlsx
 
 # tree
 /list.txt
 src/list.txt
+
+# .venv
+.venv/

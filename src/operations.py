@@ -17,6 +17,10 @@ def queryActivity():
     return 3
 
 constant
+def queryLastMonthWar():
+    return 4
+
+constant
 def queryExit():
     return 9
 
@@ -27,9 +31,10 @@ def judge(choice):
         fetch.queryDonation()
     elif queryActivity() == choice:
         fetch.queryActivity()
+    elif queryLastMonthWar() == choice:
+        fetch.queryLastMonthWar()
     elif queryExit == choice:
         print("Exit Successfully.")
-        
     else :
         print("Undefined Query Type, Please Check Input Validity.")
 
@@ -44,3 +49,7 @@ def creat_donation_sheet():
 constant
 def creat_activity_sheet():
     return 3
+
+constant
+def creat_last_month_war_sheet():
+    return 4
