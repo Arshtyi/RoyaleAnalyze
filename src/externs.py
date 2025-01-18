@@ -4,10 +4,14 @@ clansInformationSheetName = "clansInformation"
 contributionsSheetName = "Contribution"
 donationsSheetName = "Donation"
 activitySheetName = "Activity"
+lastMonthWarSheetName = "LastMonthWar"
+lastMonthDonationSheetName = "LastMonthDonation"
+sortedSheetName = "Sorted"
 inputClansInformationLocation = path.pathConcatenationForClansInformationTable()
 inputGroupPlayerInformationLocation = path.pathConcatenationForGroupPlayerInformationTable()
 outputFileLocation = path.pathConcatenationForOutputTable()
-
+weightContribution = 0.25
+weightDonation = 0.75
 def getClansInformation():
     """
     从指定路径的 Excel 文件中读取 'clansInformation' sheet 的内容，

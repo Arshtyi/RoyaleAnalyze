@@ -13,6 +13,9 @@ outputName = externs.outputFileLocation
 contributionSheetName = externs.contributionsSheetName
 donationSheetName = externs.donationsSheetName
 activitySheetName = externs.activitySheetName
+lastMonthWarSheetName = externs.lastMonthWarSheetName
+lastMonthDonationSheetName = externs.lastMonthDonationSheetName
+sortedSheetName = externs.sortedSheetName
 clansInformationSheetName = externs.clansInformationSheetName
 def clearSheet(fileName, sheetName):
     """
@@ -97,6 +100,42 @@ def creatSheet(operation):
         ws = wb[sheetName]
         ws.append(['部落','玩家','当前最后活跃时间',gettime.get_current_time()])##表头
         wb.save(filename = outputName)
+    elif operations.creat_last_month_war_sheet() == operation:
+        sheetName = externs.lastMonthWarSheetName
+        if checkFile(outputName):
+            delSheetFromWorkbook(outputName,sheetName)
+            wb = op.load_workbook(outputName)
+            wb.create_sheet(title = sheetName)
+        else:
+            wb = op.Workbook()
+            wb.create_sheet(title = sheetName)
+        ws = wb[sheetName]
+        ws.append(['部落','玩家','第一周使用卡组数','第一周贡献','第二周使用卡组数','第二周贡献','第三周使用卡组数','第三周贡献','第四周使用卡组数','第四周贡献','近一月使用卡组数','近一月贡献','近期参与的河道竞速',gettime.get_current_time()])
+        wb.save(filename = outputName)
+    elif operations.creat_last_month_donation_sheet() == operation:
+        sheetName = externs.lastMonthDonationSheetName
+        if checkFile(outputName):
+            delSheetFromWorkbook(outputName,sheetName)
+            wb = op.load_workbook(outputName)
+            wb.create_sheet(title = sheetName)
+        else:
+            wb = op.Workbook()
+            wb.create_sheet(title = sheetName)
+        ws = wb[sheetName]
+        ws.append(['部落','玩家','第一周捐赠','第二周捐赠','第三周捐赠','第四周捐赠','近一月捐赠',gettime.get_current_time()])
+        wb.save(filename = outputName)
+    elif operations.creat_sort_sheet() == operation:
+        sheetName = externs.sortedSheetName
+        if checkFile(outputName):
+            delSheetFromWorkbook(outputName,sheetName)
+            wb = op.load_workbook(outputName)
+            wb.create_sheet(title = sheetName)
+        else:
+            wb = op.Workbook()
+            wb.create_sheet(title = sheetName)
+        ws = wb[sheetName]
+        ws.append(['部落','玩家','上月贡献','上月捐赠','贡献',gettime.get_current_time()])
+        wb.save(filename = outputName)
     else :
         print("Undefined Query Type, Please Check Input Validity.")
 
@@ -128,10 +167,8 @@ def adjustColumnWidth(sheet):
         col_letter = get_column_letter(col[0].column)  # 获取列号字母
         for cell in col:
             if cell.value is not None:
-                # 根据内容计算宽度
                 adjusted_width = calculateAdjustedWidth(cell.value)
                 max_width = max(max_width, adjusted_width)
-        # Excel的列宽与字符宽度不同，这里乘1.2是一个经验调整值
         sheet.column_dimensions[col_letter].width = max_width * 1.2
 
 def processExcel(fileName):
@@ -159,6 +196,8 @@ def processExcel(fileName):
 
     # 遍历每个工作表
     for sheet in wb.worksheets:
+        # if sheet.title[-1] == "1":
+        #     delSheetFromWorkbook(fileName,sheet.title)
         # 调整列宽
         adjustColumnWidth(sheet)
 
@@ -182,43 +221,25 @@ def sort_xlsx_data(file_path, sheet_name, start_row, end_row, sort_column):
     :param sort_column: 排序依据列（从1开始，1表示第一列）
     :return: 排序后的数据（二维列表）
     """
-    # 加载工作簿
     wb = op.load_workbook(file_path)
     sheet = wb[sheet_name]
-
-    # 读取指定范围的行和列数据
     rows_to_sort = []
     for row in sheet.iter_rows(min_row=start_row, max_row=end_row, min_col=1, max_col=sheet.max_column, values_only=False):
         row_data = [cell.value for cell in row]
-        # for data in row_data:
-        #     print(f"type of data is {type(data)},data = {data}")  # 获取当前行的数据
         rows_to_sort.append(row_data)
-
-    # 处理 None 值，确保排序时不会出错
     def sort_key(value):
-        # 如果值为 None，则将其视为负无穷（float('-inf')），确保它排在最后
         if value is None:
             return float('-inf')
         return value
-
-    # 依据列为整数，直接按整数进行排序（降序）
     rows_to_sort.sort(key=lambda x: sort_key(x[sort_column - 1]), reverse=True)
-
-    # 根据排序后的数据更新工作表
     for i, row_data in enumerate(rows_to_sort, start=start_row):
         for j, value in enumerate(row_data):
-            # 将排序后的数据写回相应的单元格
             sheet.cell(row=i, column=j + 1, value=value)
-
-    # 保存修改后的文件
     wb.save(file_path)
 
 def convert_time_format(input_str):
-    # 定义时间单位和对应的中文格式
     time_units = {"w": "周", "d": "天", "h": "小时", "m": "分钟"}
     time_values = {"w": 0, "d": 0, "h": 0, "m": 0}
-    
-    # 提取输入字符串中的时间单位
     parts = input_str.split()
     for part in parts:
         if part.endswith("w"):
@@ -229,8 +250,6 @@ def convert_time_format(input_str):
             time_values["h"] = int(part[:-1])
         elif part.endswith("m"):
             time_values["m"] = int(part[:-1])
-
-    # 构建输出字符串，从第一个不为零的时间单位开始
     output = []
     if time_values["w"] > 0:
         output.append(f"{time_values['w']}周")
