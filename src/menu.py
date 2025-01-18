@@ -3,9 +3,11 @@ Creat the menu and judge choice which chosen by user
 """
 import clansInformation as infor
 import os
+import externs
 def creatMenu():
     print("欢迎使用皇室战争部落信息查询系统(By Arshtyi)！")
     print("本项目地址: https://github.com/Arshtyi/Clash-of-Royale ,建议阅读README.md.")
+    print("本项目最新版本V1.0.3更新于2025年1月18日")
     print("请确保input文件夹下已正确导入clansInformation.xlsx文件以及存在output文件夹！")
     input("键入任意内容以继续...\n")###暂停
     os.system('cls')###清屏
@@ -13,10 +15,13 @@ def creatMenu():
     for clan in infor.clans:
         print(clan,end = " ")###输出部落名
     print("\n请选择操作类型:")
-    print("1.查询部落战贡献")
-    print("2.查询部落成员捐赠")
+    print("0.清除输出文件")
+    print("1.查询当前部落战贡献")
+    print("2.查询当前部落成员捐赠")
     print("3.查询部落成员最近活跃情况")
-    print("4.查询近一个月部落战贡献和捐赠信息")
+    print("4.查询近一个月部落战贡献")
+    print("5.查询近一个月捐赠")
+    print("6.根据4、5进行排序")
     print("...更多功能敬请期待...")
     print("9.退出")
 
@@ -24,3 +29,19 @@ def creatMenu():
 def getChoice():
     choice = (int)(input())
     return choice
+
+def weight():
+    print(f"是否修改权重？（y/n）当前值：贡献——{externs.weightContribution}，捐赠——{externs.weightDonation}")
+    weight_change = input()
+    if weight == "n" or weight == "N":
+        return
+    elif weight_change == "y" or weight_change == "Y":
+        print("请输入贡献权重（0-1）：")
+        pre_weight = (float)(input())
+        if pre_weight < 0 or pre_weight > 1:
+            print(f"输入错误！启用默认值贡献——{externs.weightContribution}，捐赠——{externs.weightDonation}")
+        else:
+            externs.weightContribution = pre_weight
+            externs.weightDonation = 1 - pre_weight
+        print(f"权重设置完成，贡献——{externs.weightContribution}，捐赠——{externs.weightDonation}")
+            

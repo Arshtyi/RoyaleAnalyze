@@ -1,7 +1,6 @@
 """
 main function of this project
 """
-
 import menu
 import operations
 import formal
