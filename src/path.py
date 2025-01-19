@@ -20,3 +20,8 @@ def pathConcatenationForOutputTable(): ##输出路径拼接
     outputDir = os.path.join(currentDir,"output")
     outputInformationPath = os.path.join(outputDir,"Information.xlsx")
     return outputInformationPath
+def log_path():##日志路径拼接
+    currentDir = os.getcwd()
+    logDir = os.path.join(currentDir,"log")
+    logPath = os.path.join(logDir,"log.txt")
+    return logPath

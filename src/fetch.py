@@ -5,6 +5,7 @@ import urllib.request
 import urls
 import logging
 from selenium import webdriver
+from selenium.webdriver.remote.remote_connection import LOGGER
 from selenium.webdriver.edge.service import Service as EdgeService
 from selenium.webdriver.edge.options import Options
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
@@ -17,6 +18,7 @@ import openpyxl as op
 import formal
 import externs
 import os
+logging.disable(logging.CRITICAL)
 def deleteAll():
     if os.path.exists(externs.outputFileLocation):
          os.remove(externs.outputFileLocation)
@@ -204,6 +206,7 @@ def queryLastMonthWar():
     edge_options.add_experimental_option('excludeSwitches', ['enable-logging'])
     edge_options.add_argument("--disable-extensions")  
     edge_options.add_argument("--remote-debugging-port=0") 
+    edge_options.add_argument("--log-level=OFF")
     driver = webdriver.Edge(service=EdgeService(EdgeChromiumDriverManager().install()), options=edge_options)
     print("驱动配置完成")
     for clan in clans:
