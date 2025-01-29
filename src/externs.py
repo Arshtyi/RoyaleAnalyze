@@ -10,7 +10,9 @@ sortedSheetName = "Sorted"
 inputClansInformationLocation = path.pathConcatenationForClansInformationTable()
 inputGroupPlayerInformationLocation = path.pathConcatenationForGroupPlayerInformationTable()
 outputFileLocation = path.pathConcatenationForOutputTable()
-log_path = path.log_path()
+log_path1 = path.log_path1()
+log_path2 = path.log_path2()
+log_path3 = path.log_path3()
 weightContribution = 0.25
 weightDonation = 0.75
 def getClansInformation():

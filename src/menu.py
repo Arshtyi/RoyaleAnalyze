@@ -5,10 +5,10 @@ import clansInformation as infor
 import os
 import externs
 def creatMenu():
-    print("欢迎使用皇室战争部落信息查询系统(By Arshtyi)！")
-    print("本项目地址: https://github.com/Arshtyi/Clash-of-Royale ,建议阅读README.md.")
+    print("欢迎使用皇室战争部落信息分析系统(By Arshtyi)！")
+    print("本项目地址: https://github.com/Arshtyi/RoyaleAnalyze ,建议阅读README.md.")
     print("本项目最新版本V1.0.3更新于2025年1月18日")
-    print("请确保input文件夹下已正确导入clansInformation.xlsx文件以及存在output文件夹！")
+    print("请确保data/input/clansInformation.xlsx文件无误")
     input("键入任意内容以继续...\n")###暂停
     os.system('cls')###清屏
     print("当前操作对象：")
@@ -23,7 +23,7 @@ def creatMenu():
     print("5.查询近一个月捐赠")
     print("6.根据4、5进行排序")
     print("...更多功能敬请期待...")
-    print("9.退出")
+    print("9.格式化并退出")
 
 
 def getChoice():
@@ -39,9 +39,8 @@ def weight():
         print("请输入贡献权重（0-1）：")
         pre_weight = (float)(input())
         if pre_weight < 0 or pre_weight > 1:
-            print(f"输入错误！启用默认值贡献——{externs.weightContribution}，捐赠——{externs.weightDonation}")
+            print(f"输入错误！启用默认值：贡献——{externs.weightContribution}，捐赠——{externs.weightDonation}")
         else:
             externs.weightContribution = pre_weight
             externs.weightDonation = 1 - pre_weight
-        print(f"权重设置完成，贡献——{externs.weightContribution}，捐赠——{externs.weightDonation}")
-            
+        print(f"权重设置完成：贡献——{externs.weightContribution}，捐赠——{externs.weightDonation}")

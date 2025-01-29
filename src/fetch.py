@@ -18,30 +18,30 @@ import openpyxl as op
 import formal
 import externs
 import os
-logging.disable(logging.CRITICAL)
 def deleteAll():
     if os.path.exists(externs.outputFileLocation):
-         os.remove(externs.outputFileLocation)
+        os.remove(externs.outputFileLocation)
+        print(f"The file {externs.outputFileLocation} has been deleted")
     else:
-        print("The file does not exist")
+        print(f"The file {externs.outputFileLocation} does not exist")
 
 def queryContribution():
     sheet_name = externs.contributionsSheetName
     url_0 = urls.url_clan
     formal.creatSheet(operations.creat_contribution_sheet())
+    print("输出创建完成，准备启动程序...")
     wb = op.load_workbook(externs.outputFileLocation)
     ws = wb[sheet_name]
     now_row = 1
     start_row = 2
+    print("程序启动，正在运行...")
     for clan in clans:
-        url_war_race = url_0 + clans[clan] + "/war/race"#部落战信息
-        ###print(url_war_race)
+        url_war_race = url_0 + clans[clan] + "/war/race"
         requests = urllib.request.Request(url = url_war_race,headers = urls.HEADERS)
         response = urllib.request.urlopen(requests)
         content = response.read().decode("utf-8")
         soup = BeautifulSoup(content, 'html.parser')
         div_time = soup.find('div',{'class' : 'timeline'})
-        ####找li标签
         lis = div_time.find_all('li')
         day = 1####第四天开始战斗日
         in_war = 0##可能需要别的状态，不用bool
@@ -54,40 +54,36 @@ def queryContribution():
             day = day + 1 
         data = [clan]
         if 1 == in_war:
-            ####爬取总量
-            trs = soup.find_all('tr')#####完全匹配，速度慢不少
+            print(f"{clan}正处于战斗日，开始查询...")
+            trs = soup.find_all('tr')
             trs_players = [tr for tr in trs if 'player' in tr.get('class', []) and len(tr['class']) == 1]
+            trs_players = trs_players[1:]
             for tr in trs_players:
                 data = [clan]
-                player_name_location = tr.find('a',{'class':'player_name force_single_line_hidden'}) 
-                if player_name_location:
-                    player_name = player_name_location.get_text().strip()
-                    player_name = player_name.replace('\u200c','').replace('\u2006','')
-                    data.append(player_name)
+                player_name_location = tr.find('a',{'class':'player_name force_single_line_hidden'})
+                player_name = player_name_location.get_text().strip()
+                player_name = player_name.replace('\u200c','').replace('\u2006','')
+                data.append(player_name)
                 player_decks_used = tr.find('div',{'class':'value_bg decks_used'})
-                if player_decks_used:
-                    decks_uesd = (int)(player_decks_used.get_text())
-                    data.append(decks_uesd) 
+                decks_uesd = (int)(player_decks_used.get_text())
+                data.append(decks_uesd) 
                 player_boat_attack = tr.find('div',{'class':'value_bg boat_attacks'})
-                if player_boat_attack:
-                    boat_attack = (int)(player_boat_attack.get_text())
-                    data.append(boat_attack)
+                boat_attack = (int)(player_boat_attack.get_text())
+                data.append(boat_attack)
                 player_medal = tr.find('div',{'class':'value_bg fame'})
-                if player_medal:
-                    medal = (int)(player_medal.get_text())
-                    data.append(medal)
-                if len(data) > 1:
-                    data_num = data_num + 1
-                    ws.append(data)
-            if data_num:
-                    now_row = now_row + data_num
-                    wb.save(filename = externs.outputFileLocation)
-                    formal.sort_xlsx_data(externs.outputFileLocation,sheet_name,start_row = start_row,end_row = now_row,sort_column = 5) 
-                    wb = op.load_workbook(externs.outputFileLocation)
-                    ws = wb[sheet_name]
-                    ws.merge_cells(start_row = start_row,end_row = now_row,start_column = 1,end_column = 1)
-                    start_row = now_row + 1
+                medal = (int)(player_medal.get_text())
+                data.append(medal)
+                data_num = data_num + 1
+                ws.append(data)
+            now_row = now_row + data_num
+            wb.save(filename = externs.outputFileLocation)
+            formal.sort_xlsx_data(externs.outputFileLocation,sheet_name,start_row = start_row,end_row = now_row,sort_column = 5) 
+            wb = op.load_workbook(externs.outputFileLocation)
+            ws = wb[sheet_name]
+            ws.merge_cells(start_row = start_row,end_row = now_row,start_column = 1,end_column = 1)
+            start_row = now_row + 1
         elif 0 == in_war:
+            print(f"{clan}未处于战斗日，格式输出正在进行...")
             data = [clan]
             data.append('该部落未处于战斗日！')
             data.append('')
@@ -97,65 +93,66 @@ def queryContribution():
             now_row = now_row + 1
             start_row = now_row
             ws.merge_cells(start_column = 2,end_column = 5,start_row = now_row,end_row = now_row)
+        print(f"{clan}查询已完成！")
     wb.save(filename = externs.outputFileLocation)
 
 def queryDonation():
     sheet_name = formal.donationSheetName
     url_0 = urls.url_clan
     formal.creatSheet(operations.creat_donation_sheet())
+    print("输出创建完成，准备启动程序...")
     wb = op.load_workbook(externs.outputFileLocation)
     ws = wb[sheet_name]
     data_num = 0
     now_row = 1
     start_row = 2
+    print("程序启动，正在运行...")
     for clan in clans:
+        print(f"{clan}开始查询...")
         data_num = 0
         url_donation = url_0 + clans[clan]
-        # print(url_donation)
         requests = urllib.request.Request(url = url_donation,headers = urls.HEADERS)
         response = urllib.request.urlopen(requests)
         content = response.read().decode("utf-8")
         soup = BeautifulSoup(content, 'html.parser')
-        table_donation = soup.find('table', id='roster', class_='ui unstackable hover striped attached compact sortable table')##找到捐赠表
-        ##print(table_donation)
+        table_donation = soup.find('table', id='roster', class_='ui unstackable hover striped attached compact sortable table')
         trs = table_donation.find_all('tr')
+        trs = trs[1:]
         for tr in trs:
             data = [clan]
             a_ty = tr.find('a',class_='block member_link')
-            if a_ty:
-                player_name = formal.keep_before_first_newline(a_ty.get_text().strip())
-                player_name = player_name.replace('\u200c','').replace('\u2006','') 
-                data.append(player_name)
-            else:
-                continue
+            # if a_ty:
+            player_name = formal.keep_before_first_newline(a_ty.get_text().strip())
+            player_name = player_name.replace('\u200c','').replace('\u2006','') 
+            data.append(player_name)
             td_donation = tr.find('td',class_='donations right aligned mobile-hide')
-            if td_donation:
-                donation = (int)(td_donation.get_text().strip().replace(',',''))
-                data.append(donation)
-            if len(data) > 1:
-                data_num = data_num + 1
-               ### print(data)
-                ws.append(data)
-        if data_num:
-                now_row = now_row + data_num
-                wb.save(filename = externs.outputFileLocation)
-                formal.sort_xlsx_data(externs.outputFileLocation,sheet_name,start_row = start_row,end_row = now_row,sort_column = 3)
-                wb = op.load_workbook(externs.outputFileLocation)
-                ws = wb[sheet_name]
-                ws.merge_cells(start_row = start_row,end_row = now_row,start_column = 1,end_column = 1)
-                start_row = now_row + 1
+            donation = (int)(td_donation.get_text().strip().replace(',',''))
+            data.append(donation)
+            data_num = data_num + 1
+            ws.append(data)
+        now_row = now_row + data_num
+        wb.save(filename = externs.outputFileLocation)
+        formal.sort_xlsx_data(externs.outputFileLocation,sheet_name,start_row = start_row,end_row = now_row,sort_column = 3)
+        wb = op.load_workbook(externs.outputFileLocation)
+        ws = wb[sheet_name]
+        ws.merge_cells(start_row = start_row,end_row = now_row,start_column = 1,end_column = 1)
+        start_row = now_row + 1
+        print(f"{clan}查询已完成！")
     wb.save(filename = externs.outputFileLocation)    
 
 def queryActivity():
     sheet_name = formal.activitySheetName
     url_0 = urls.url_clan
     formal.creatSheet(operations.creat_activity_sheet())
+    print("输出创建完成，准备启动程序...")
     wb = op.load_workbook(externs.outputFileLocation)
     ws = wb[sheet_name]
     data_num = 0
     now_row = 1
     start_row = 2
+    print("程序启动，正在运行...")
     for clan in clans:
+        print(f"{clan}开始查询...")
         data_num = 0
         url_activity = url_0 + clans[clan]
         requests = urllib.request.Request(url = url_activity,headers = urls.HEADERS)
@@ -164,74 +161,75 @@ def queryActivity():
         soup = BeautifulSoup(content, 'html.parser')
         table_activity = soup.find('table', id='roster', class_='ui unstackable hover striped attached compact sortable table')
         trs = table_activity.find_all('tr')
+        trs = trs[1:]
         for tr in trs:
             data = [clan]
             a_ty = tr.find('a',class_='block member_link')
-            if a_ty:
-                player_name = formal.keep_before_first_newline(a_ty.get_text().strip())
-                player_name = player_name.replace('\u200c','').replace('\u2006','')
-                data.append(player_name)
+            player_name = formal.keep_before_first_newline(a_ty.get_text().strip())
+            player_name = player_name.replace('\u200c','').replace('\u2006','')
+            data.append(player_name)
             div = tr.find('div',class_='i18n_duration_short')
-            ###print(div)
-            if div:
-                activity = formal.convert_time_format(div.get_text().strip())
-                data.append(activity)
-            if len(data) > 1:
-                data_num = data_num + 1
-                ws.append(data)
-        if data_num:
-            now_row = now_row + data_num
-            wb.save(filename = externs.outputFileLocation)
-            wb = op.load_workbook(externs.outputFileLocation)
-            ws = wb[sheet_name]
-            ws.merge_cells(start_row = start_row,end_row = now_row,start_column = 1,end_column = 1)
-            start_row = now_row + 1
+            activity = formal.convert_time_format(div.get_text().strip())
+            data.append(activity)
+            data_num = data_num + 1
+            ws.append(data)
+        now_row = now_row + data_num
+        wb.save(filename = externs.outputFileLocation)
+        wb = op.load_workbook(externs.outputFileLocation)
+        ws = wb[sheet_name]
+        ws.merge_cells(start_row = start_row,end_row = now_row,start_column = 1,end_column = 1)
+        start_row = now_row + 1
+        print(f"{clan}查询已完成！")
     wb.save(filename = externs.outputFileLocation)
 
 def queryLastMonthWar():
     sheet_name = formal.lastMonthWarSheetName
     url_0 = urls.url_clan
     formal.creatSheet(operations.creat_last_month_war_sheet())
+    print("输出创建完成，准备启动程序...")
     wb = op.load_workbook(externs.outputFileLocation)
     ws = wb[sheet_name]
     data_num = 0
     now_row = 1
     start_row = 2
-    logging.getLogger('selenium.webdriver.remote.remote_connection').setLevel(logging.CRITICAL)
-    logging.getLogger('urllib3').setLevel(logging.CRITICAL)
-    edge_options = Options()
-    edge_options.add_argument("--headless") 
-    edge_options.add_argument("--disable-gpu") 
-    edge_options.add_argument("--no-sandbox")  
-    edge_options.add_experimental_option('excludeSwitches', ['enable-logging'])
-    edge_options.add_argument("--disable-extensions")  
-    edge_options.add_argument("--remote-debugging-port=0") 
-    edge_options.add_argument("--log-level=OFF")
-    driver = webdriver.Edge(service=EdgeService(EdgeChromiumDriverManager().install()), options=edge_options)
-    print("驱动配置完成")
+    print("程序启动，正在运行...")
     for clan in clans:
+        print("开始配置驱动...")
+        edge_options = Options()
+        edge_options.add_argument("--headless") 
+        edge_options.add_argument("--disable-gpu") 
+        edge_options.add_argument("--no-sandbox")  
+        edge_options.add_argument("--disable-extensions")  
+        edge_options.add_argument("--remote-debugging-port=0") 
+        edge_options.add_argument("--ignore-certificate-errors")
+        edge_options.add_argument("--ignore-ssl-errors")
+        edge_options.add_experimental_option('excludeSwitches', ['enable-logging'])
+        service = EdgeService(EdgeChromiumDriverManager().install())
+        print("驱动配置完成，准备启动...")
+        driver = webdriver.Edge(service = service,options = edge_options)
+        print("驱动已启动，准备开始查询...")
+        print(f"{clan}开始查询...")
         data_num = 0
         url_last_month_war = url_0 + clans[clan] +"/war/analytics"
         driver.get(url_last_month_war)
-        print("驱动正在运行......在驱动退出前请不要结束进程，否则将导致数据不完整！")
+        print("驱动正在运行......在驱动正确退出前请不要结束进程，否则将导致数据不完整和其他可能的错误！")
         content = driver.page_source
         soup = BeautifulSoup(content, 'html.parser')
         table_contributions = soup.find('table', id='roster')
         trs = table_contributions.find_all('tr')
+        trs = trs[1:]
         table_decks = soup.find('table', id='roster2')
         trs_2 = table_decks.find_all('tr')
+        trs_2 = trs_2[1:]
         length = max(len(trs),len(trs_2))
         data = []
         for i in range(length):
             tr = trs[i]
             data = [clan]
             td = tr.find('td',class_="sep fix first_col sticky")##名字标签
-            if td:
-                player_name = formal.keep_before_first_newline(td.get_text().strip())
-                player_name = player_name.replace('\u200c','').replace('\u2006','') 
-                data.append(player_name)
-            else:
-                continue
+            player_name = formal.keep_before_first_newline(td.get_text().strip())
+            player_name = player_name.replace('\u200c','').replace('\u2006','') 
+            data.append(player_name)
             tds_contributions = tr.find_all('td',limit = 8)
             tds_contributions = tds_contributions[4:]
             all_contribution = 0
@@ -244,9 +242,8 @@ def queryLastMonthWar():
                 all_contribution = all_contribution + (contribution)
             data.insert(7,all_contribution)
             td_paticipate = tr.find('td',class_='sorting_1')
-            if td_paticipate:
-                times = td_paticipate.get_text().strip().replace(" ","")
-                data.append(times)
+            times = td_paticipate.get_text().strip().replace(" ","")
+            data.append(times)
             tr_2 = trs_2[i]
             tds_2 = tr_2.find_all('td',limit = 8)
             tds_2 = tds_2[4:]
@@ -261,26 +258,30 @@ def queryLastMonthWar():
                 all_decks = all_decks + decks
                 data.insert(2 * j + 2,decks)
             data.insert(2 * length + 2,all_decks)
-            if len(data) > 1:
-                data_num = data_num + 1
-                ws.append(data)
-        if data_num:
-            now_row = now_row + data_num
-            ws.merge_cells(start_row = start_row,end_row = now_row,start_column = 1,end_column = 1)
-            start_row = now_row + 1
+            data_num = data_num + 1
+            ws.append(data)
+        now_row = now_row + data_num
+        ws.merge_cells(start_row = start_row,end_row = now_row,start_column = 1,end_column = 1)
+        start_row = now_row + 1
+        print(f"{clan}查询已完成！驱动准备退出...")
+        driver.quit()
+        print("驱动已正确退出")
+    print("所有查询已完成，准备保存数据...")
     wb.save(filename = externs.outputFileLocation)
-    driver.quit()
-    print("驱动正确退出")
+    print("数据已保存，查询结束")
 
 def queryLastMonthDonation():
     sheet_name = formal.lastMonthDonationSheetName
     url_0 = urls.url_clan
     formal.creatSheet(operations.creat_last_month_donation_sheet())
+    print("输出创建完成，准备启动程序...")
     wb = op.load_workbook(externs.outputFileLocation)
     ws = wb[sheet_name]
     data_num = 0
     now_row = 1
     start_row = 2
+    print("程序启动，正在运行...")
+    print("开始配置驱动...")
     logging.getLogger('selenium.webdriver.remote.remote_connection').setLevel(logging.CRITICAL)
     logging.getLogger('urllib3').setLevel(logging.CRITICAL)
     edge_options = Options()
@@ -290,14 +291,15 @@ def queryLastMonthDonation():
     edge_options.add_experimental_option('excludeSwitches', ['enable-logging'])
     edge_options.add_argument("--disable-extensions")
     edge_options.add_argument("--remote-debugging-port=0")
+    print("驱动配置完成，准备启动...")
     driver = webdriver.Edge(service=EdgeService(EdgeChromiumDriverManager().install()), options=edge_options)
-    print("驱动配置完成")
+    print("驱动已启动，开始查询...")
     for clan in clans:
+        print(f"{clan}开始查询...")
         data_num = 0
         url_last_month_donation = url_0 + clans[clan]+"/history"
-        #print(url_last_month_donation)
         driver.get(url_last_month_donation)
-        print("驱动正在运行......在驱动退出前请不要结束进程，否则将导致数据不完整！")
+        print("驱动正在运行......在驱动正确退出前请不要结束进程，否则将导致数据不完整和其他可能的错误！")
         content = driver.page_source
         soup = BeautifulSoup(content, 'html.parser')
         table_donnations = soup.find('table', id='roster')
@@ -307,12 +309,9 @@ def queryLastMonthDonation():
         for tr in trs:
             data = [clan]
             td_name = tr.find('td',class_='sticky_col')
-            if td_name:
-                player_name = formal.keep_before_first_newline(td_name.get_text().strip())
-                player_name = player_name.replace('\u200c','').replace('\u2006','')
-                data.append(player_name)
-            else:
-                continue
+            player_name = formal.keep_before_first_newline(td_name.get_text().strip())
+            player_name = player_name.replace('\u200c','').replace('\u2006','')
+            data.append(player_name)
             tds = tr.find_all('td',limit = 6)
             tds = tds[2:]
             all_donation = 0
@@ -324,28 +323,31 @@ def queryLastMonthDonation():
                 all_donation = all_donation + donation
                 data.insert(2,donation)
             data.insert(6,all_donation)
-            #print(data)
-            if len(data) > 1:
-                data_num = data_num + 1
-                ws.append(data)
-        if data_num:
-            now_row = now_row + data_num
-            wb.save(filename = externs.outputFileLocation)
-            formal.sort_xlsx_data(externs.outputFileLocation,sheet_name,start_row = start_row,end_row = now_row,sort_column = 7)
-            wb = op.load_workbook(externs.outputFileLocation)
-            ws = wb[sheet_name]
-            ws.merge_cells(start_row = start_row,end_row = now_row,start_column = 1,end_column = 1)
-            start_row = now_row + 1
+            data_num = data_num + 1
+            ws.append(data)
+        now_row = now_row + data_num
+        wb.save(filename = externs.outputFileLocation)
+        formal.sort_xlsx_data(externs.outputFileLocation,sheet_name,start_row = start_row,end_row = now_row,sort_column = 7)
+        wb = op.load_workbook(externs.outputFileLocation)
+        ws = wb[sheet_name]
+        ws.merge_cells(start_row = start_row,end_row = now_row,start_column = 1,end_column = 1)
+        start_row = now_row + 1
+        print(f"{clan}查询已完成！")
+    print("所有查询已完成，准备保存数据...")
     wb.save(filename = externs.outputFileLocation)
+    print("数据已保存，驱动准备退出...")
     driver.quit()
-    print("驱动正确退出")
+    print("驱动已正确退出")
 
 def queryAndSort():
     queryLastMonthWar()
     queryLastMonthDonation()
+    print("前置查询完成，准备设定权重并启动程序...")
     weight_1 = externs.weightContribution
     weight_2 = externs.weightDonation
+    print("权重设定完毕，准备创建输出...")
     formal.creatSheet(operations.creat_sort_sheet())
+    print("输出创建完成，准备启动程序...")
     wb = op.load_workbook(externs.outputFileLocation)
     ws_1 = wb[formal.lastMonthWarSheetName]
     ws_2 = wb[formal.lastMonthDonationSheetName]
@@ -373,9 +375,12 @@ def queryAndSort():
                 break
     end = ws_3.max_row
     wb.save(filename = externs.outputFileLocation)
+    print("数据已保存，准备排序...")
     formal.sort_xlsx_data(externs.outputFileLocation,formal.sortedSheetName,start_row = 2,end_row = end,sort_column = 5)
+    print("排序完成，准备保存权重信息...")
     wb = op.load_workbook(externs.outputFileLocation)
     ws = wb[formal.sortedSheetName]
     ws.append(['贡献权重','捐赠权重'])
     ws.append([weight_1,weight_2])
     wb.save(filename = externs.outputFileLocation)
+    print("权重信息已保存，程序已退出")

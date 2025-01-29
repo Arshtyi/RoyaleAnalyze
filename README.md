@@ -7,7 +7,7 @@
 
 此外,请确保已安装依赖的所有第三库.所有自定义模板均有相关功能实现的注释.
 # 功能实现
-截至此次更新，功能实现如下，具体见[CHANGELOG.md](https://github.com/Arshtyi/Clash-of-Royale/blob/main/CHANGELOG.md "更新日志")
+截至此次更新，功能实现如下，具体见[CHANGELOG.md](https://github.com/Arshtyi/RoyaleAnalyze/blob/main/CHANGELOG.md "更新日志")
 # 关于项目
 ## 目录结构
 ```
@@ -57,7 +57,7 @@
 ## 输出
 文件默认以`Information.xlsx`文件输出在output目录下，请注意执行退出指令以完成格式化.
 # 家庭信息
-[走遍万罪星空](https://github.com/Arshtyi/Clash-of-Royale/blob/main/%E8%B5%B0%E9%81%8D%E4%B8%87%E7%BD%AA%E6%98%9F%E7%A9%BA.yml "家庭信息")
+[走遍万罪星空](https://github.com/Arshtyi/RoyaleAnalyze/blob/main/%E8%B5%B0%E9%81%8D%E4%B8%87%E7%BD%AA%E6%98%9F%E7%A9%BA.yml "家庭信息")
 ```yml
 name: 走遍万罪星空
 key: 走遍万罪星空

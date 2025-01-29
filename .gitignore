@@ -15,12 +15,16 @@ dist/
 
 
 #input/output
-input/groupInformation.xlsx
-output/Information.xlsx
+data/input/groupInformation.xlsx
+data/output/Information.xlsx
 
 # tree
 /list.txt
 src/list.txt
 
+# logs
+logs/
+
 # .venv
 .venv/
+echo
