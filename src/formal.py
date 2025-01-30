@@ -16,6 +16,7 @@ activitySheetName = externs.activitySheetName
 lastMonthWarSheetName = externs.lastMonthWarSheetName
 lastMonthDonationSheetName = externs.lastMonthDonationSheetName
 sortedSheetName = externs.sortedSheetName
+recentChangeSheetName = externs.recentChangeSheetName
 clansInformationSheetName = externs.clansInformationSheetName
 def clearSheet(fileName, sheetName):
     """
@@ -136,6 +137,18 @@ def creatSheet(operation):
         ws = wb[sheetName]
         ws.append(['部落','玩家','上月贡献','上月捐赠','贡献',gettime.get_current_time()])
         wb.save(filename = outputName)
+    elif operations.creat_recent_change_sheet() == operation:
+        sheetName = "RecentChange"
+        if checkFile(outputName):
+            delSheetFromWorkbook(outputName,sheetName)
+            wb = op.load_workbook(outputName)
+            wb.create_sheet(title = sheetName)
+        else:
+            wb = op.Workbook()
+            wb.create_sheet(title = sheetName)
+        ws = wb[sheetName]
+        ws.append(['部落','玩家','加入','退出',gettime.get_current_time()])
+        wb.save(filename = outputName)
     else :
         print("Undefined Query Type, Please Check Input Validity.")
 
@@ -208,6 +221,7 @@ def processExcel(fileName):
 
     # 保存更改
     wb.save(fileName)
+    print(f"文件输出为 '{fileName}'")
 
 def sort_xlsx_data(file_path, sheet_name, start_row, end_row, sort_column):
     """
@@ -261,3 +275,23 @@ def convert_time_format(input_str):
         output.append(f"{time_values['m']}分钟")
 
     return "".join(output)
+
+def modify_line_in_file(file_path, line_number, new_content):
+    # 打开文件读取内容
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+
+    # 检查行号是否有效
+    if line_number <= 0 or line_number > len(lines):
+        print("Invalid line number!")
+        return
+
+    # 修改特定的行
+    lines[line_number - 1] = new_content + '\n'  # 需要换行符来保证行格式
+
+    # 打开文件进行写入
+    with open(file_path, 'w') as file:
+        file.writelines(lines)
+
+    print(f"{file_path} Line {line_number} has been updated.")
+

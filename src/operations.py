@@ -33,6 +33,10 @@ def queryAndSort():
     return 6
 
 constant
+def queryRecentChange():
+    return 7
+
+constant
 def queryExit():
     return 9
 
@@ -52,6 +56,8 @@ def judge(choice):
     elif queryAndSort() == choice:
         menu.weight()
         fetch.queryAndSort()
+    elif queryRecentChange() == choice:
+        fetch.queryRecentChange()
     elif queryExit == choice:
         print("Exit Successfully.")
     else :
@@ -80,3 +86,7 @@ def creat_last_month_donation_sheet():
 constant
 def creat_sort_sheet():
     return 6
+
+constant
+def creat_recent_change_sheet():
+    return 7
