@@ -7,6 +7,7 @@ activitySheetName = "Activity"
 lastMonthWarSheetName = "LastMonthWar"
 lastMonthDonationSheetName = "LastMonthDonation"
 sortedSheetName = "Sorted"
+recentChangeSheetName = "RecentChange"
 inputClansInformationLocation = path.pathConcatenationForClansInformationTable()
 inputGroupPlayerInformationLocation = path.pathConcatenationForGroupPlayerInformationTable()
 outputFileLocation = path.pathConcatenationForOutputTable()

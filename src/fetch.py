@@ -9,7 +9,7 @@ from selenium.webdriver.remote.remote_connection import LOGGER
 from selenium.webdriver.edge.service import Service as EdgeService
 from selenium.webdriver.edge.options import Options
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.webdriver.common import service
 import urllib
 import operations
 from bs4 import BeautifulSoup
@@ -18,6 +18,8 @@ import openpyxl as op
 import formal
 import externs
 import os
+service_path = service.__file__
+formal.modify_line_in_file(service_path,72,'        self.creation_flags = self.popen_kw.pop("creation_flags" ,134217728 )')
 def deleteAll():
     if os.path.exists(externs.outputFileLocation):
         os.remove(externs.outputFileLocation)
@@ -204,7 +206,9 @@ def queryLastMonthWar():
         edge_options.add_argument("--ignore-certificate-errors")
         edge_options.add_argument("--ignore-ssl-errors")
         edge_options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        service = EdgeService(EdgeChromiumDriverManager().install())
+        print("驱动相关设置完成，准备配置日志输出...")
+        service = EdgeService(EdgeChromiumDriverManager().install(),service_args=["--verbose","--log-path="+externs.log_path1])
+        print(f"驱动启动项初始化完毕，日志输出为'{externs.log_path1}'，准备启动...")
         print("驱动配置完成，准备启动...")
         driver = webdriver.Edge(service = service,options = edge_options)
         print("驱动已启动，准备开始查询...")
@@ -281,20 +285,23 @@ def queryLastMonthDonation():
     now_row = 1
     start_row = 2
     print("程序启动，正在运行...")
-    print("开始配置驱动...")
-    logging.getLogger('selenium.webdriver.remote.remote_connection').setLevel(logging.CRITICAL)
-    logging.getLogger('urllib3').setLevel(logging.CRITICAL)
-    edge_options = Options()
-    edge_options.add_argument("--headless")
-    edge_options.add_argument("--disable-gpu")
-    edge_options.add_argument("--no-sandbox")
-    edge_options.add_experimental_option('excludeSwitches', ['enable-logging'])
-    edge_options.add_argument("--disable-extensions")
-    edge_options.add_argument("--remote-debugging-port=0")
-    print("驱动配置完成，准备启动...")
-    driver = webdriver.Edge(service=EdgeService(EdgeChromiumDriverManager().install()), options=edge_options)
-    print("驱动已启动，开始查询...")
     for clan in clans:
+        print("开始配置驱动...")
+        edge_options = Options()
+        edge_options.add_argument("--headless") 
+        edge_options.add_argument("--disable-gpu") 
+        edge_options.add_argument("--no-sandbox")  
+        edge_options.add_argument("--disable-extensions")  
+        edge_options.add_argument("--remote-debugging-port=0") 
+        edge_options.add_argument("--ignore-certificate-errors")
+        edge_options.add_argument("--ignore-ssl-errors")
+        edge_options.add_experimental_option('excludeSwitches', ['enable-logging'])
+        print("驱动相关设置完成，准备配置日志输出...")
+        service = EdgeService(EdgeChromiumDriverManager().install(),service_args=["--verbose","--log-path="+externs.log_path1])
+        print(f"驱动启动项初始化完毕，日志输出为'{externs.log_path1}'，准备启动...")
+        print("驱动配置完成，准备启动...")
+        driver = webdriver.Edge(service = service,options = edge_options)
+        print("驱动已启动，准备开始查询...")
         print(f"{clan}开始查询...")
         data_num = 0
         url_last_month_donation = url_0 + clans[clan]+"/history"
@@ -302,7 +309,7 @@ def queryLastMonthDonation():
         print("驱动正在运行......在驱动正确退出前请不要结束进程，否则将导致数据不完整和其他可能的错误！")
         content = driver.page_source
         soup = BeautifulSoup(content, 'html.parser')
-        table_donnations = soup.find('table', id='roster')
+        table_donnations = soup.find('table', id = 'roster')
         trs = table_donnations.find_all('tr')
         trs = trs[1:]
         data = []
@@ -332,12 +339,13 @@ def queryLastMonthDonation():
         ws = wb[sheet_name]
         ws.merge_cells(start_row = start_row,end_row = now_row,start_column = 1,end_column = 1)
         start_row = now_row + 1
-        print(f"{clan}查询已完成！")
+        print(f"{clan}查询已完成！驱动准备退出...")
+        driver.quit()
+        print("驱动已正确退出")
     print("所有查询已完成，准备保存数据...")
     wb.save(filename = externs.outputFileLocation)
-    print("数据已保存，驱动准备退出...")
-    driver.quit()
-    print("驱动已正确退出")
+    print("数据已保存，查询结束")
+
 
 def queryAndSort():
     queryLastMonthWar()
@@ -384,3 +392,78 @@ def queryAndSort():
     ws.append([weight_1,weight_2])
     wb.save(filename = externs.outputFileLocation)
     print("权重信息已保存，程序已退出")
+
+def queryRecentChange():
+    sheet_name = formal.recentChangeSheetName
+    url_0 = urls.url_clan
+    formal.creatSheet(operations.creat_recent_change_sheet())
+    print("输出创建完成，准备启动程序...")
+    wb = op.load_workbook(externs.outputFileLocation)
+    ws = wb[sheet_name]
+    data_num = 0
+    now_row = 1
+    start_row = 2
+    print("程序启动，正在运行...")
+    for clan in clans:
+        print(f"{clan}开始查询...")
+        data_num = 0
+        url_change = url_0 + clans[clan] + "/history/join-leave"
+        requests = urllib.request.Request(url = url_change,headers = urls.HEADERS)
+        response = urllib.request.urlopen(requests)
+        content = response.read().decode("utf-8")
+        soup = BeautifulSoup(content, 'html.parser')
+        table_change = soup.find('div',class_ ='ui attached container sidemargin0 clan_history_join_leave')
+        a_s = table_change.find_all('a')
+        dict_change = {}
+        for a in a_s:
+            change_div = a.find('div',class_ = 'header')
+            player_name = change_div.get_text().strip()
+            if player_name not in dict_change:
+                dict_change[player_name] = 0
+            if "green plus icon" in str(a):
+                dict_change[player_name] = dict_change[player_name] + 1
+            elif "red minus icon" in str(a):
+                dict_change[player_name] = dict_change[player_name] - 1
+        #print(dict_change)
+        in_num = 0
+        out_num = 0
+        for player in dict_change:
+            data = [clan]
+            if dict_change[player] == 0:
+                continue
+            elif dict_change[player] == 1:
+                data.append(player)
+                data.append("是")
+                data.append("")
+                data_num = data_num + 1
+                in_num = in_num + 1
+                ws.append(data)
+            elif dict_change[player] == -1:
+                data.append(player)
+                data.append("")
+                data.append("是")
+                data_num = data_num + 1
+                out_num = out_num + 1
+                ws.append(data)
+        ws.append([clan,"合计",in_num,out_num])
+        url_all_members = url_0 + clans[clan]
+        requests = urllib.request.Request(url = url_all_members,headers = urls.HEADERS)
+        response = urllib.request.urlopen(requests)
+        content = response.read().decode("utf-8")
+        soup = BeautifulSoup(content, 'html.parser')
+        col = soup.find('div',class_ = 'doubling three column row')
+        cols = col.find_all('div',class_ = 'column',limit = 4)
+        cols = cols[3]
+        members =cols.find('div',class_ = 'value').get_text().split('/')[0].strip()
+        members = (int)(members)
+        ws.append([clan,"目前成员数",members,members])
+        data_num = data_num + 2
+        now_row = now_row + data_num
+        wb.save(filename = externs.outputFileLocation)
+        wb = op.load_workbook(externs.outputFileLocation)
+        ws = wb[sheet_name]
+        ws.merge_cells(start_row = start_row,end_row = now_row,start_column = 1,end_column = 1)
+        ws.merge_cells(start_row = now_row,start_column = 3,end_row = now_row,end_column = 4)
+        start_row = now_row + 1
+        print(f"{clan}查询已完成！")
+    wb.save(filename = externs.outputFileLocation)

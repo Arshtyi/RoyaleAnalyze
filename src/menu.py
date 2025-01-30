@@ -6,9 +6,9 @@ import os
 import externs
 def creatMenu():
     print("欢迎使用皇室战争部落信息分析系统(By Arshtyi)！")
-    print("本项目地址: https://github.com/Arshtyi/RoyaleAnalyze ,建议阅读README.md.")
-    print("本项目最新版本V1.0.3更新于2025年1月18日")
-    print("请确保data/input/clansInformation.xlsx文件无误")
+    print("本项目地址: https://github.com/Arshtyi/RoyaleAnalyze ,建议阅读README.md: https://github.com/Arshtyi/RoyaleAnalyze/blob/main/README.md")
+    print("本项目最新版本V1.1.0更新于2025年1月30日")
+    print("请确保目录结构完整且data/input/clansInformation.xlsx文件无误")
     input("键入任意内容以继续...\n")###暂停
     os.system('cls')###清屏
     print("当前操作对象：")
@@ -19,9 +19,10 @@ def creatMenu():
     print("1.查询当前部落战贡献")
     print("2.查询当前部落成员捐赠")
     print("3.查询部落成员最近活跃情况")
-    print("4.查询近一个月部落战贡献")
-    print("5.查询近一个月捐赠")
+    print("4.查询近一月部落战贡献")
+    print("5.查询近一月捐赠")
     print("6.根据4、5进行排序")
+    print("7.查询近一月成员变动")
     print("...更多功能敬请期待...")
     print("9.格式化并退出")
 

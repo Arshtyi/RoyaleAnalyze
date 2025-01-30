@@ -23,7 +23,7 @@ data/output/Information.xlsx
 src/list.txt
 
 # logs
-logs/
+*.log
 
 # .venv
 .venv/
