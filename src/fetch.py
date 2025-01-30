@@ -18,8 +18,6 @@ import openpyxl as op
 import formal
 import externs
 import os
-service_path = service.__file__
-formal.modify_line_in_file(service_path,72,'        self.creation_flags = self.popen_kw.pop("creation_flags" ,134217728 )')
 def deleteAll():
     if os.path.exists(externs.outputFileLocation):
         os.remove(externs.outputFileLocation)
