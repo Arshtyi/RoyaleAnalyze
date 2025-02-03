@@ -251,6 +251,39 @@ def sort_xlsx_data(file_path, sheet_name, start_row, end_row, sort_column):
             sheet.cell(row=i, column=j + 1, value=value)
     wb.save(file_path)
 
+def convert_time_number(input_str):
+    time_values = {"w": 0, "d": 0, "h": 0, "m": 0}
+    parts = input_str.split()
+    for part in parts:
+        if part.endswith("w"):
+            time_values["w"] = int(part[:-1])
+        elif part.endswith("d"):
+            time_values["d"] = int(part[:-1])
+        elif part.endswith("h"):
+            time_values["h"] = int(part[:-1])
+        elif part.endswith("m"):
+            time_values["m"] = int(part[:-1])
+    total_minutes = time_values["w"] * 7 * 24 * 60 + time_values["d"] * 24 * 60 + time_values["h"] * 60 + time_values["m"]
+    return total_minutes
+
+def convert_time_from_number(total_minutes):
+    time_units = {"w": "周", "d": "天", "h": "小时", "m": "分钟"}
+    time_values = {"w": 0, "d": 0, "h": 0, "m": 0}
+    time_values["w"], total_minutes = divmod(total_minutes, 7 * 24 * 60)
+    time_values["d"], total_minutes = divmod(total_minutes, 24 * 60)
+    time_values["h"], time_values["m"] = divmod(total_minutes, 60)
+    output = []
+    if time_values["w"] > 0:
+        output.append(f"{time_values['w']}周")
+    if time_values["d"] > 0 or (time_values["w"] > 0 and (time_values["h"] > 0 or time_values["m"] > 0)):
+        output.append(f"{time_values['d']}天")
+    if time_values["h"] > 0 or ((time_values["w"] > 0 or time_values["d"] > 0) and time_values["m"] > 0):
+        output.append(f"{time_values['h']}时")
+    if time_values["m"] > 0:
+        output.append(f"{time_values['m']}分")
+
+    return "".join(output)
+
 def convert_time_format(input_str):
     time_units = {"w": "周", "d": "天", "h": "小时", "m": "分钟"}
     time_values = {"w": 0, "d": 0, "h": 0, "m": 0}
@@ -270,9 +303,9 @@ def convert_time_format(input_str):
     if time_values["d"] > 0 or (time_values["w"] > 0 and (time_values["h"] > 0 or time_values["m"] > 0)):
         output.append(f"{time_values['d']}天")
     if time_values["h"] > 0 or ((time_values["w"] > 0 or time_values["d"] > 0) and time_values["m"] > 0):
-        output.append(f"{time_values['h']}小时")
+        output.append(f"{time_values['h']}时")
     if time_values["m"] > 0:
-        output.append(f"{time_values['m']}分钟")
+        output.append(f"{time_values['m']}分")
 
     return "".join(output)
 
@@ -293,5 +326,5 @@ def modify_line_in_file(file_path, line_number, new_content):
     with open(file_path, 'w') as file:
         file.writelines(lines)
 
-    print(f"{file_path} Line {line_number} has been updated.")
+    print(f"'{file_path}' Line {line_number} has been updated.")
 

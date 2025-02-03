@@ -1,6 +1,7 @@
 import path
 import openpyxl as op
-clansInformationSheetName = "clansInformation"
+clansInformationSheetName = "Clans"
+groupPlayerInformationSheetName = "Group"
 contributionsSheetName = "Contribution"
 donationsSheetName = "Donation"
 activitySheetName = "Activity"
@@ -16,6 +17,7 @@ log_path2 = path.log_path2()
 log_path3 = path.log_path3()
 weightContribution = 0.25
 weightDonation = 0.75
+inactivity = 5 * 24 * 60
 def getClansInformation():
     """
     从指定路径的 Excel 文件中读取 'clansInformation' sheet 的内容，

@@ -5,6 +5,10 @@ import fetch
 import constant
 import menu
 constant
+def updateInformation():
+    return -1
+
+constant
 def deleteAll():
     return 0
 
@@ -38,10 +42,12 @@ def queryRecentChange():
 
 constant
 def queryExit():
-    return 9
+    return 99
 
 def judge(choice):
-    if deleteAll() == choice:
+    if updateInformation() == choice:
+        fetch.updateInformation()
+    elif deleteAll() == choice:
         fetch.deleteAll()
     elif queryContribution() == choice:
         fetch.queryContribution()
