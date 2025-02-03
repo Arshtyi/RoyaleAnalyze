@@ -3,27 +3,94 @@ fetch and save
 """
 import urllib.request
 import urls
-import logging
 from selenium import webdriver
-from selenium.webdriver.remote.remote_connection import LOGGER
 from selenium.webdriver.edge.service import Service as EdgeService
 from selenium.webdriver.edge.options import Options
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
-from selenium.webdriver.common import service
 import urllib
 import operations
 from bs4 import BeautifulSoup
 from clansInformation import clans
 import openpyxl as op
+from openpyxl.styles import PatternFill
 import formal
 import externs
 import os
+def updateInformation():
+    print("准备更新部落信息和玩家信息...")
+    print("检查文件...")
+    if os.path.exists(externs.inputClansInformationLocation):
+        print("文件存在，准备读取...")
+        wb = op.load_workbook(externs.inputClansInformationLocation)
+        ws = wb[externs.clansInformationSheetName]
+        max_row = ws.max_row
+        print("文件读取完成，准备更新部落信息...")
+        for row in range(2,max_row + 1):
+            clan = ws.cell(row = row,column = 2).value
+            if clan is None:
+                break
+            clan = clan[1:]
+            url_clan = urls.url_clan + clan
+            requests = urllib.request.Request(url = url_clan,headers = urls.HEADERS)
+            response = urllib.request.urlopen(requests)
+            content = response.read().decode("utf-8")
+            soup = BeautifulSoup(content, 'html.parser')
+            hs = soup.find('h1',class_ = 'ui header margin0')
+            clan_name = hs.get_text().strip().replace(' ','')
+            ws.cell(row = row,column = 1).value = clan_name
+            print(f"<{clan_name}>更新完成！")
+        wb.save(filename = externs.inputClansInformationLocation)
+        print("全部部落信息更新完成！准备格式化...")
+        formal.processExcel(externs.inputClansInformationLocation)
+        print("格式化完成！")
+    else:
+        print(f"The file '{externs.inputClansInformationLocation}' does not exist")
+    if os.path.exists(externs.inputGroupPlayerInformationLocation):
+        print("文件存在，准备读取...")
+        wb = op.load_workbook(externs.inputGroupPlayerInformationLocation)
+        ws = wb[externs.groupPlayerInformationSheetName]
+        max_row = ws.max_row
+        print("文件读取完成，准备玩家更新...")
+        for row in range(2,max_row + 1):
+            player = ws.cell(row = row,column = 4).value
+            if player is None:
+                break
+            player = player[1:]
+            url_player = urls.url_player + player
+            requests = urllib.request.Request(url = url_player,headers = urls.HEADERS)
+            response = urllib.request.urlopen(requests)
+            content = response.read().decode("utf-8")
+            soup = BeautifulSoup(content, 'html.parser')
+            hs = soup.find('h1',class_ = 'ui header')
+            player_name = hs.get_text().strip().replace('\u200c','').replace('\u2006','')
+            div = soup.find('div',class_ = 'ui horizontal divided list')
+            div = div.find('div',class_ = 'ui header item')
+            a = div.find('a')
+            if a is None:
+                clan = "无"
+            else:
+                clan = a.get_text().strip().replace(' ','')
+            ws.cell(row = row,column = 1).value = clan
+            if clan not in externs.clans:
+                fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
+                ws.cell(row = row,column = 1).fill = fill
+            ws.cell(row = row,column = 2).value = player_name
+            print(f"<{player_name}>更新完成！")
+        wb.save(filename = externs.inputGroupPlayerInformationLocation)
+        print("全部玩家信息更新完成！准备格式化...")
+        formal.processExcel(externs.inputGroupPlayerInformationLocation)
+        print("格式化完成！")
+    else:
+        print(f"The file '{externs.inputGroupPlayerInformationLocation}' does not exist")
+
 def deleteAll():
+    print("准备删除输出文件...")
+    print("检查文件...")
     if os.path.exists(externs.outputFileLocation):
         os.remove(externs.outputFileLocation)
-        print(f"The file {externs.outputFileLocation} has been deleted")
+        print(f"The file '{externs.outputFileLocation}' has been deleted")
     else:
-        print(f"The file {externs.outputFileLocation} does not exist")
+        print(f"The file '{externs.outputFileLocation}' does not exist")
 
 def queryContribution():
     sheet_name = externs.contributionsSheetName
@@ -54,7 +121,7 @@ def queryContribution():
             day = day + 1 
         data = [clan]
         if 1 == in_war:
-            print(f"{clan}正处于战斗日，开始查询...")
+            print(f"<{clan}>正处于战斗日，开始查询...")
             trs = soup.find_all('tr')
             trs_players = [tr for tr in trs if 'player' in tr.get('class', []) and len(tr['class']) == 1]
             trs_players = trs_players[1:]
@@ -83,7 +150,7 @@ def queryContribution():
             ws.merge_cells(start_row = start_row,end_row = now_row,start_column = 1,end_column = 1)
             start_row = now_row + 1
         elif 0 == in_war:
-            print(f"{clan}未处于战斗日，格式输出正在进行...")
+            print(f"<{clan}>未处于战斗日，格式输出正在进行...")
             data = [clan]
             data.append('该部落未处于战斗日！')
             data.append('')
@@ -93,7 +160,11 @@ def queryContribution():
             now_row = now_row + 1
             start_row = now_row
             ws.merge_cells(start_column = 2,end_column = 5,start_row = now_row,end_row = now_row)
-        print(f"{clan}查询已完成！")
+        print(f"<{clan}>查询已完成！")
+    for row in ws.iter_rows(min_row = 2,max_row = ws.max_row,min_col=5,max_col=5):
+        if row[0].value == 0:
+            fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
+            ws.cell(row = row[0].row,column = 5).fill = fill
     wb.save(filename = externs.outputFileLocation)
 
 def queryDonation():
@@ -108,7 +179,7 @@ def queryDonation():
     start_row = 2
     print("程序启动，正在运行...")
     for clan in clans:
-        print(f"{clan}开始查询...")
+        print(f"<{clan}>开始查询...")
         data_num = 0
         url_donation = url_0 + clans[clan]
         requests = urllib.request.Request(url = url_donation,headers = urls.HEADERS)
@@ -137,7 +208,11 @@ def queryDonation():
         ws = wb[sheet_name]
         ws.merge_cells(start_row = start_row,end_row = now_row,start_column = 1,end_column = 1)
         start_row = now_row + 1
-        print(f"{clan}查询已完成！")
+        print(f"<{clan}>查询已完成！")
+    for row in ws.iter_rows(min_row = 2,max_row = ws.max_row,min_col=3,max_col=3):
+        if row[0].value == 0:
+            fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
+            ws.cell(row = row[0].row,column = 3).fill = fill
     wb.save(filename = externs.outputFileLocation)    
 
 def queryActivity():
@@ -152,7 +227,7 @@ def queryActivity():
     start_row = 2
     print("程序启动，正在运行...")
     for clan in clans:
-        print(f"{clan}开始查询...")
+        print(f"<{clan}>开始查询...")
         data_num = 0
         url_activity = url_0 + clans[clan]
         requests = urllib.request.Request(url = url_activity,headers = urls.HEADERS)
@@ -169,7 +244,7 @@ def queryActivity():
             player_name = player_name.replace('\u200c','').replace('\u2006','')
             data.append(player_name)
             div = tr.find('div',class_='i18n_duration_short')
-            activity = formal.convert_time_format(div.get_text().strip())
+            activity = formal.convert_time_number(div.get_text().strip())
             data.append(activity)
             data_num = data_num + 1
             ws.append(data)
@@ -179,7 +254,12 @@ def queryActivity():
         ws = wb[sheet_name]
         ws.merge_cells(start_row = start_row,end_row = now_row,start_column = 1,end_column = 1)
         start_row = now_row + 1
-        print(f"{clan}查询已完成！")
+        print(f"<{clan}>查询已完成！")
+    for row in ws.iter_rows(min_row = 2,max_row = ws.max_row,min_col=3,max_col=3):
+        if row[0].value >= externs.inactivity:
+            fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
+            ws.cell(row = row[0].row,column = 3).fill = fill
+        ws.cell(row = row[0].row,column = 3).value = formal.convert_time_from_number(row[0].value)
     wb.save(filename = externs.outputFileLocation)
 
 def queryLastMonthWar():
@@ -210,7 +290,7 @@ def queryLastMonthWar():
         print("驱动配置完成，准备启动...")
         driver = webdriver.Edge(service = service,options = edge_options)
         print("驱动已启动，准备开始查询...")
-        print(f"{clan}开始查询...")
+        print(f"<{clan}>开始查询...")
         data_num = 0
         url_last_month_war = url_0 + clans[clan] +"/war/analytics"
         driver.get(url_last_month_war)
@@ -265,9 +345,25 @@ def queryLastMonthWar():
         now_row = now_row + data_num
         ws.merge_cells(start_row = start_row,end_row = now_row,start_column = 1,end_column = 1)
         start_row = now_row + 1
-        print(f"{clan}查询已完成！驱动准备退出...")
+        print(f"<{clan}>查询已完成！驱动准备退出...")
         driver.quit()
         print("驱动已正确退出")
+    for row in ws.iter_rows(min_row = 2,max_row = ws.max_row,min_col=4,max_col=12):
+        if row[0].value == 0:
+            fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
+            ws.cell(row = row[0].row,column = 4).fill = fill
+        if row[2].value == 0:
+            fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
+            ws.cell(row = row[0].row,column = 6).fill = fill
+        if row[4].value == 0:
+            fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
+            ws.cell(row = row[0].row,column = 8).fill = fill
+        if row[6].value == 0:
+            fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
+            ws.cell(row = row[0].row,column = 10).fill = fill
+        if row[8].value == 0:
+            fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
+            ws.cell(row = row[0].row,column = 12).fill = fill
     print("所有查询已完成，准备保存数据...")
     wb.save(filename = externs.outputFileLocation)
     print("数据已保存，查询结束")
@@ -300,7 +396,7 @@ def queryLastMonthDonation():
         print("驱动配置完成，准备启动...")
         driver = webdriver.Edge(service = service,options = edge_options)
         print("驱动已启动，准备开始查询...")
-        print(f"{clan}开始查询...")
+        print(f"<{clan}>开始查询...")
         data_num = 0
         url_last_month_donation = url_0 + clans[clan]+"/history"
         driver.get(url_last_month_donation)
@@ -337,9 +433,25 @@ def queryLastMonthDonation():
         ws = wb[sheet_name]
         ws.merge_cells(start_row = start_row,end_row = now_row,start_column = 1,end_column = 1)
         start_row = now_row + 1
-        print(f"{clan}查询已完成！驱动准备退出...")
+        print(f"<{clan}>查询已完成！驱动准备退出...")
         driver.quit()
         print("驱动已正确退出")
+    for row in ws.iter_rows(min_row = 2,max_row = ws.max_row,min_col=3,max_col=7):
+        if row[0].value == 0:
+            fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
+            ws.cell(row = row[0].row,column = 3).fill = fill
+        if row[1].value == 0:
+            fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
+            ws.cell(row = row[0].row,column = 4).fill = fill
+        if row[2].value == 0:
+            fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
+            ws.cell(row = row[0].row,column = 5).fill = fill
+        if row[3].value == 0:
+            fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
+            ws.cell(row = row[0].row,column = 6).fill = fill
+        if row[4].value == 0:
+            fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
+            ws.cell(row = row[0].row,column = 7).fill = fill
     print("所有查询已完成，准备保存数据...")
     wb.save(filename = externs.outputFileLocation)
     print("数据已保存，查询结束")
@@ -383,9 +495,19 @@ def queryAndSort():
     wb.save(filename = externs.outputFileLocation)
     print("数据已保存，准备排序...")
     formal.sort_xlsx_data(externs.outputFileLocation,formal.sortedSheetName,start_row = 2,end_row = end,sort_column = 5)
-    print("排序完成，准备保存权重信息...")
     wb = op.load_workbook(externs.outputFileLocation)
     ws = wb[formal.sortedSheetName]
+    for row in ws.iter_rows(min_row = 2,max_row = ws.max_row,min_col = 3,max_col = 5):
+        if row[0].value == 0:
+            fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
+            ws.cell(row = row[0].row,column = 3).fill = fill
+        if row[1].value == 0:
+            fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
+            ws.cell(row = row[0].row,column = 4).fill = fill
+        if row[2].value == 0:
+            fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
+            ws.cell(row = row[0].row,column = 5).fill = fill
+    print("排序完成，准备保存权重信息...")
     ws.append(['贡献权重','捐赠权重'])
     ws.append([weight_1,weight_2])
     wb.save(filename = externs.outputFileLocation)
@@ -403,7 +525,7 @@ def queryRecentChange():
     start_row = 2
     print("程序启动，正在运行...")
     for clan in clans:
-        print(f"{clan}开始查询...")
+        print(f"<{clan}>开始查询...")
         data_num = 0
         url_change = url_0 + clans[clan] + "/history/join-leave"
         requests = urllib.request.Request(url = url_change,headers = urls.HEADERS)
@@ -422,7 +544,6 @@ def queryRecentChange():
                 dict_change[player_name] = dict_change[player_name] + 1
             elif "red minus icon" in str(a):
                 dict_change[player_name] = dict_change[player_name] - 1
-        #print(dict_change)
         in_num = 0
         out_num = 0
         for player in dict_change:
@@ -463,5 +584,14 @@ def queryRecentChange():
         ws.merge_cells(start_row = start_row,end_row = now_row,start_column = 1,end_column = 1)
         ws.merge_cells(start_row = now_row,start_column = 3,end_row = now_row,end_column = 4)
         start_row = now_row + 1
-        print(f"{clan}查询已完成！")
+        print(f"<{clan}>查询已完成！")
+    for row in ws.iter_rows(min_row = 2,max_row = ws.max_row,min_col = 3,max_col = 4):
+        if row[0].value == "是":
+            ws.cell(row = row[0].row,column = 3).value = ""
+            fill = PatternFill(fill_type = 'solid',fgColor = '538DD5')
+            ws.cell(row = row[0].row,column = 3).fill = fill
+        elif row[1].value == "是":
+            ws.cell(row = row[1].row,column = 4).value = ""
+            fill = PatternFill(fill_type = 'solid',fgColor = 'DA9694')
+            ws.cell(row = row[0].row,column = 4).fill = fill
     wb.save(filename = externs.outputFileLocation)

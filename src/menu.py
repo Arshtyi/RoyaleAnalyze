@@ -4,17 +4,19 @@ Creat the menu and judge choice which chosen by user
 import clansInformation as infor
 import os
 import externs
+import urls
 def creatMenu():
     print("欢迎使用皇室战争部落信息分析系统(By Arshtyi)！")
-    print("本项目地址: https://github.com/Arshtyi/RoyaleAnalyze ,建议阅读README.md: https://github.com/Arshtyi/RoyaleAnalyze/blob/main/README.md")
+    print(f"本项目地址:'{urls.url_repository}',建议阅读README.md:'{urls.url_readme}'")
     print("本项目最新版本V1.1.0更新于2025年1月30日")
-    print("请确保目录结构完整且data/input/clansInformation.xlsx文件无误")
+    print(f"请确保目录结构完整且'{externs.inputClansInformationLocation}'文件无误")
     input("键入任意内容以继续...\n")###暂停
     os.system('cls')###清屏
     print("当前操作对象：")
     for clan in infor.clans:
         print(clan,end = " ")###输出部落名
     print("\n请选择操作类型:")
+    print("-1.比对更新部落信息和玩家信息")
     print("0.清除输出文件")
     print("1.查询当前部落战贡献")
     print("2.查询当前部落成员捐赠")
@@ -24,7 +26,7 @@ def creatMenu():
     print("6.根据4、5进行排序")
     print("7.查询近一月成员变动")
     print("...更多功能敬请期待...")
-    print("9.格式化并退出")
+    print("99.格式化并退出")
 
 
 def getChoice():
