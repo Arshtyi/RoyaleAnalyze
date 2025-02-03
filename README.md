@@ -7,7 +7,7 @@
 
 此外,请确保已安装依赖的所有第三库.所有自定义模板均有相关功能实现的注释.
 # 功能实现
-截至此次更新，功能实现如下，具体见[CHANGELOG.md](https://github.com/Arshtyi/RoyaleAnalyze/blob/main/CHANGELOG.md "更新日志")
+见[CHANGELOG.md](https://github.com/Arshtyi/RoyaleAnalyze/blob/main/CHANGELOG.md "更新日志")
 # 关于项目
 ## 目录结构
 ```
