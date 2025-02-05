@@ -15,9 +15,9 @@ import clansInformation as infor
 import externs
 import urls
 def creatMenu():
-    print("欢迎使用皇室战争部落信息分析系统(By Arshtyi)！")
-    print(f"本项目地址:'{urls.url_repository}',建议阅读README.md:'{urls.url_readme}'")
-    print(f"本项目最新版本V1.1.2更新于2025年1月30日:'{urls.url_releases}',更新日志:'{urls.url_changelog}'")
+    print("欢迎使用RoyaleAnalyze-V1.1.2(By Arshtyi)！")
+    print(f"本项目地址:'{urls.url_repository}'")
+    print(f"更新日志:'{urls.url_changelog}'")
     print(f"请确保目录结构完整且'{externs.inputClansInformationLocation}'文件无误")
     input("键入任意内容以继续...\n")
     print("当前操作对象：")
@@ -54,7 +54,9 @@ def weight():
         else:
             externs.weightContribution = pre_weight
             externs.weightDonation = 1 - pre_weight
-        print(f"[MENU][INFO]: 权重设置完成：贡献——{externs.weightContribution}，捐赠——{externs.weightDonation}")
+    else:
+        print("[MENU][INFO]: 输入错误！启用默认值：贡献——{externs.weightContribution}，捐赠——{externs.weightDonation}")
+    print(f"[MENU][INFO]: 权重设置完成：贡献——{externs.weightContribution}，捐赠——{externs.weightDonation}")
 
 def filterOrNot():
     print("是否对结果进行群内玩家筛选？（y/n）默认为否...")

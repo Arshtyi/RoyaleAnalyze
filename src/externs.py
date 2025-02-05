@@ -27,6 +27,7 @@ Functions:
 """
 import path
 import openpyxl as op
+import os
 clansInformationSheetName = "Clans"
 groupPlayerInformationSheetName = "Group"
 contributionsSheetName = "Contribution"
@@ -73,6 +74,8 @@ def getClansInformation():
     workbook.close()
     return result
 def getGroupPlayersInformation():
+    if not os.path.exists(inputGroupPlayerInformationLocation):
+        return {}
     wb = op.load_workbook(filename = inputGroupPlayerInformationLocation)
     if groupPlayerInformationSheetName not in wb.sheetnames:
         raise ValueError(f"Excel 文件中没有名为 <{groupPlayerInformationSheetName}> 的 sheet")
