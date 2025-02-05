@@ -1,5 +1,19 @@
 """
-some formatting operations
+This module provides various functions to manipulate and process Excel files using the openpyxl library. It includes functions to clear sheets, check file existence, delete sheets, create sheets based on operations, adjust column widths, process Excel files, sort data, and convert time formats.
+Functions:
+- clearSheet(fileName, sheetName): Clears all content, formatting, and merged cells in the specified sheet, completely resetting it.
+- checkFile(fileName): Checks if the specified file exists in the current directory.
+- delSheetFromWorkbook(fileName, sheetName): Deletes the specified sheet from the workbook if it exists.
+- keep_before_first_newline(input_string): Returns the part of the input string before the first newline character.
+- creatSheet(operation): Creates a sheet based on the specified operation and appends headers.
+- calculateAdjustedWidth(value): Calculates the width of a cell's content, considering wide characters like Chinese, Japanese, Korean, and emojis.
+- adjustColumnWidth(sheet): Dynamically adjusts the column widths of the sheet to ensure proper display of wide characters.
+- processExcel(fileName): Processes the Excel file by checking its existence, deleting the default "Sheet" if necessary, adjusting column widths, and setting cell alignment.
+- sort_xlsx_data(file_path, sheet_name, start_row, end_row, sort_column): Sorts the specified range of rows in the sheet based on the values in the specified column in descending order.
+- convert_time_number(input_str): Converts a time string with units (weeks, days, hours, minutes) into total minutes.
+- convert_time_from_number(total_minutes): Converts total minutes into a formatted time string with units (weeks, days, hours, minutes).
+- convert_time_format(input_str): Converts a time string with units (weeks, days, hours, minutes) into a formatted time string with Chinese characters.
+- modify_line_in_file(file_path, line_number, new_content): Modifies the specified line in the file with new content.
 """
 import externs
 import openpyxl as op
@@ -150,7 +164,7 @@ def creatSheet(operation):
         ws.append(['部落','玩家','加入','退出',gettime.get_current_time()])
         wb.save(filename = outputName)
     else :
-        print("Undefined Query Type, Please Check Input Validity.")
+        print("[FORMAL][ERROR]: Undefined Query Type, Please Check Input Validity.")
 
 def calculateAdjustedWidth(value):
     """
@@ -197,7 +211,7 @@ def processExcel(fileName):
     """
     # 检查当前目录是否存在指定文件
     if not os.path.exists(fileName):
-        print(f"文件 '{fileName}' 不存在！请检查文件名和路径。")
+        print(f"[FORMAL][ERROR]: 文件 '{fileName}' 不存在！请检查文件名和路径。")
         return
 
     # 加载工作簿
@@ -221,7 +235,7 @@ def processExcel(fileName):
 
     # 保存更改
     wb.save(fileName)
-    print(f"文件输出为 '{fileName}'")
+    print(f"[FORMAL][INFO]: 文件输出为 '{fileName}'")
 
 def sort_xlsx_data(file_path, sheet_name, start_row, end_row, sort_column):
     """
@@ -316,7 +330,7 @@ def modify_line_in_file(file_path, line_number, new_content):
 
     # 检查行号是否有效
     if line_number <= 0 or line_number > len(lines):
-        print("Invalid line number!")
+        print("[FORMAL][ERROR]: Invalid line number!")
         return
 
     # 修改特定的行
@@ -326,5 +340,5 @@ def modify_line_in_file(file_path, line_number, new_content):
     with open(file_path, 'w') as file:
         file.writelines(lines)
 
-    print(f"'{file_path}' Line {line_number} has been updated.")
+    print(f"[FORMAL][INFO]: '{file_path}' Line {line_number} has been updated.")
 

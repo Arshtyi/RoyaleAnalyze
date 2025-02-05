@@ -1,5 +1,43 @@
 """
-Definations of operations based on the choices of user and the judging program
+This module provides various operations for managing and querying data.
+Functions:
+    updateInformation():
+        Updates information. Returns -1.
+    deleteAll():
+        Deletes all data. Returns 0.
+    queryContribution():
+        Queries contribution data. Returns 1.
+    queryDonation():
+        Queries donation data. Returns 2.
+    queryActivity():
+        Queries activity data. Returns 3.
+    queryLastMonthWar():
+        Queries last month's war data. Returns 4.
+    queryLastMonthDonation():
+        Queries last month's donation data. Returns 5.
+    queryAndSort():
+        Queries and sorts data. Returns 6.
+    queryRecentChange():
+        Queries recent changes. Returns 7.
+    queryExit():
+        Exits the program. Returns 99.
+    judge(choice):
+        Executes the appropriate function based on the given choice.
+    creat_contribution_sheet():
+        Creates a contribution sheet. Returns 1.
+    creat_donation_sheet():
+        Creates a donation sheet. Returns 2.
+    creat_activity_sheet():
+        Creates an activity sheet. Returns 3.
+    creat_last_month_war_sheet():
+        Creates a last month war sheet. Returns 4.
+    creat_last_month_donation_sheet():
+        Creates a last month donation sheet. Returns 5.
+    creat_sort_sheet():
+        Creates a sorted sheet. Returns 6.
+    creat_recent_change_sheet():
+        Creates a recent change sheet. Returns 7.
+
 """
 import fetch
 import constant
@@ -50,24 +88,24 @@ def judge(choice):
     elif deleteAll() == choice:
         fetch.deleteAll()
     elif queryContribution() == choice:
-        fetch.queryContribution()
+        fetch.queryContribution(menu.filterOrNot())
     elif queryDonation() == choice:
-        fetch.queryDonation()
+        fetch.queryDonation(menu.filterOrNot())
     elif queryActivity() == choice:
         fetch.queryActivity()
     elif queryLastMonthWar() == choice:
-        fetch.queryLastMonthWar()
+        fetch.queryLastMonthWar(menu.filterOrNot())
     elif queryLastMonthDonation() == choice:
-        fetch.queryLastMonthDonation()
+        fetch.queryLastMonthDonation(menu.filterOrNot())
     elif queryAndSort() == choice:
         menu.weight()
-        fetch.queryAndSort()
+        fetch.queryAndSort(menu.filterOrNot())
     elif queryRecentChange() == choice:
         fetch.queryRecentChange()
     elif queryExit == choice:
-        print("Exit Successfully.")
+        print("[OPERATIONS][INFO]: Exit Successfully.")
     else :
-        print("Undefined Query Type, Please Check Input Validity.")
+        print("[OPERATIONS][ERROR]: Undefined Query Type, Please Check Input Validity.")
 
 constant
 def creat_contribution_sheet():

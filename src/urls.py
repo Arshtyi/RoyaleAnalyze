@@ -1,5 +1,15 @@
 """
-all urls which may be used ,some joining url or just piece ,and the headers 
+This module contains URL configurations and HTTP request settings for the RoyaleAnalyze project.
+Constants:
+    HEADERS (dict): HTTP headers used for making requests.
+    proxies (dict): Proxy settings for HTTP and HTTPS requests.
+    url_0 (str): Base URL for RoyaleAPI.
+    url_repository (str): GitHub repository URL for the project.
+    url_clan (str): URL for accessing clan information.
+    url_player (str): URL for accessing player information.
+    url_readme (str): URL for accessing the project's README file.
+    url_releases (str): URL for accessing the project's releases page.
+
 """
 """
 headers
@@ -26,3 +36,5 @@ token urls
 url_clan = url_0 + "clan/" #部落url
 url_player = url_0 + "player/" #玩家url
 url_readme = url_repository + "/blob/main/README.md" #readme地址
+url_releases = url_repository + "/releases" #releases地址
+url_changelog = url_repository + "/blob/main/CHANGELOG.md" #changelog地址

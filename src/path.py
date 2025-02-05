@@ -1,5 +1,13 @@
 """"
-Path Concatenation
+This module provides functions to concatenate paths for various files used in the project.
+Functions:
+    pathConcatenationForGroupPlayerInformationTable: Concatenates the path for the group player information table.
+    pathConcatenationForClansInformationTable: Concatenates the path for the clans information table.
+    pathConcatenationForOutputTable: Concatenates the path for the output table.
+    log_path1: Concatenates the path for the first log file.
+    log_path2: Concatenates the path for the second log file.
+    log_path3: Concatenates the path for the third log file.
+
 """
 import os
 

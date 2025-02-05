@@ -1,17 +1,25 @@
 """
-Creat the menu and judge choice which chosen by user
+This module provides a menu interface for the RoyaleAnalyze project, allowing users to interact with the system and perform various operations related to clan information analysis.
+Functions:
+    creatMenu():
+        Displays the main menu and prompts the user to select an operation type.
+    getChoice() -> int:
+        Prompts the user to input a choice and returns it as an integer.
+    weight():
+        Allows the user to modify the weights for contribution and donation. If the user chooses to modify, prompts for new weights and updates the values accordingly.
+    filterOrNot() -> bool:
+        Asks the user whether to filter results based on group players. Returns True if filtering is chosen, otherwise returns False.
+
 """
 import clansInformation as infor
-import os
 import externs
 import urls
 def creatMenu():
     print("欢迎使用皇室战争部落信息分析系统(By Arshtyi)！")
     print(f"本项目地址:'{urls.url_repository}',建议阅读README.md:'{urls.url_readme}'")
-    print("本项目最新版本V1.1.0更新于2025年1月30日")
+    print(f"本项目最新版本V1.1.2更新于2025年1月30日:'{urls.url_releases}',更新日志:'{urls.url_changelog}'")
     print(f"请确保目录结构完整且'{externs.inputClansInformationLocation}'文件无误")
-    input("键入任意内容以继续...\n")###暂停
-    os.system('cls')###清屏
+    input("键入任意内容以继续...\n")
     print("当前操作对象：")
     for clan in infor.clans:
         print(clan,end = " ")###输出部落名
@@ -42,8 +50,20 @@ def weight():
         print("请输入贡献权重（0-1）：")
         pre_weight = (float)(input())
         if pre_weight < 0 or pre_weight > 1:
-            print(f"输入错误！启用默认值：贡献——{externs.weightContribution}，捐赠——{externs.weightDonation}")
+            print(f"[MENU][INFO]: 输入错误！启用默认值：贡献——{externs.weightContribution}，捐赠——{externs.weightDonation}")
         else:
             externs.weightContribution = pre_weight
             externs.weightDonation = 1 - pre_weight
-        print(f"权重设置完成：贡献——{externs.weightContribution}，捐赠——{externs.weightDonation}")
+        print(f"[MENU][INFO]: 权重设置完成：贡献——{externs.weightContribution}，捐赠——{externs.weightDonation}")
+
+def filterOrNot():
+    print("是否对结果进行群内玩家筛选？（y/n）默认为否...")
+    print(f"当前'{externs.inputGroupPlayerInformationLocation}'文件中共{len(infor.players)}名玩家")
+    filter = input()
+    if filter == "n" or filter == "N":
+        return False
+    elif filter == "y" or filter == "Y":
+        return True
+    else:
+        print("[MENU][INFO]: 输入错误！启用默认值：否")
+        return False
