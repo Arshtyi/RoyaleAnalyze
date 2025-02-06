@@ -44,8 +44,8 @@ def getChoice():
 def weight():
     print(f"是否修改权重？（y/n）当前值：贡献——{externs.weightContribution}，捐赠——{externs.weightDonation}")
     weight_change = input()
-    if weight == "n" or weight == "N":
-        return
+    if weight_change == "n" or weight == "N":
+        print(f"[MENU][INFO]: 未修改权重，启用默认值：贡献——{externs.weightContribution}，捐赠——{externs.weightDonation}")
     elif weight_change == "y" or weight_change == "Y":
         print("请输入贡献权重（0-1）：")
         pre_weight = (float)(input())
