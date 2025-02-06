@@ -223,8 +223,10 @@ def processExcel(fileName):
 
     # 遍历每个工作表
     for sheet in wb.worksheets:
-        # if sheet.title[-1] == "1":
-        #     delSheetFromWorkbook(fileName,sheet.title)
+        if sheet.title[-1] == "1":
+            delSheetFromWorkbook(fileName,sheet.title)
+        if len(wb.sheetnames) == 0:
+            os.remove(fileName)
         # 调整列宽
         adjustColumnWidth(sheet)
 
