@@ -15,14 +15,14 @@ Functions:
 - convert_time_format(input_str): Converts a time string with units (weeks, days, hours, minutes) into a formatted time string with Chinese characters.
 - modify_line_in_file(file_path, line_number, new_content): Modifies the specified line in the file with new content.
 """
-import externs
+import src.externs as externs
 import openpyxl as op
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Alignment
 from openpyxl.styles import PatternFill
-import operations 
+import src.operations as operations
 import os
-import gettime
+import src.gettime as gettime
 outputName = externs.outputFileLocation
 contributionSheetName = externs.contributionsSheetName
 donationSheetName = externs.donationsSheetName

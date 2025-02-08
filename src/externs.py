@@ -25,7 +25,7 @@ Functions:
     getGroupPlayersInformation() -> dict:
         Reads the 'groupPlayerInformation' sheet from the specified Excel file and returns its content as a dictionary.
 """
-import path
+import src.path as path
 import openpyxl as op
 import os
 clansInformationSheetName = "Clans"
@@ -41,6 +41,7 @@ inputClansInformationLocation = path.pathConcatenationForClansInformationTable()
 inputGroupPlayerInformationLocation = path.pathConcatenationForGroupPlayerInformationTable()
 outputFileLocation = path.pathConcatenationForOutputTable()
 log_path= path.log_path()
+readme_path = path.readme_path()
 weightContribution = 0.25
 weightDonation = 0.75
 inactivity = 5 * 24 * 60
@@ -79,8 +80,8 @@ def getGroupPlayersInformation():
         raise ValueError(f"Excel 文件中没有名为 <{groupPlayerInformationSheetName}> 的 sheet")
     ws = wb[groupPlayerInformationSheetName]
     result = {}
-    for row in ws.iter_rows(min_row=2, min_col=1, max_col=4, values_only=True):
-        if row[0] in clans:
+    for row in ws.iter_rows(min_row=2, min_col=1, max_col=5, values_only=True):
+        if row[0] in clans and (row[4] != 'y' and row[4] != 'Y' and row[4] != '是'):
             result[row[1]] = [row[0], row[2], row[3]]
     wb.close()
     return result

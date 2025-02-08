@@ -35,6 +35,6 @@ token urls
 """
 url_clan = url_0 + "clan/" #部落url
 url_player = url_0 + "player/" #玩家url
-url_readme = url_repository + "/blob/main/README.md" #readme地址
+url_readme = url_repository + "/blob/main/assets/README.md" #readme地址
 url_releases = url_repository + "/releases" #releases地址
 url_changelog = url_repository + "/blob/main/CHANGELOG.md" #changelog地址

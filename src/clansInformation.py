@@ -16,7 +16,7 @@ Variables:
 
 """
 from types import MappingProxyType
-import externs
+import src.externs as externs
 original_clans = externs.getClansInformation() #获取原始字典
 original_players = externs.getGroupPlayersInformation() #获取原始玩家字典
 for clan in original_clans:

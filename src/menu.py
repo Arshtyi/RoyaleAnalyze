@@ -11,13 +11,14 @@ Functions:
         Asks the user whether to filter results based on group players. Returns True if filtering is chosen, otherwise returns False.
 
 """
-import clansInformation as infor
-import externs
-import urls
+import src.clansInformation as infor
+import src.externs as externs
+import src.urls as urls
 def creatMenu():
-    print("欢迎使用RoyaleAnalyze-V1.1.2(By Arshtyi)！")
+    print("欢迎使用RoyaleAnalyze-V1.1.3(By Arshtyi)！")
     print(f"本项目地址:'{urls.url_repository}'")
     print(f"更新日志:'{urls.url_changelog}'")
+    print(f"使用说明:'{urls.url_readme}'或'{externs.readme_path}'")
     print(f"请确保目录结构完整且'{externs.inputClansInformationLocation}'文件无误")
     input("键入任意内容以继续...\n")
     print("当前操作对象：")
@@ -43,10 +44,10 @@ def getChoice():
 
 def weight():
     print(f"是否修改权重？（y/n）当前值：贡献——{externs.weightContribution}，捐赠——{externs.weightDonation}")
-    weight_change = input()
-    if weight_change == "n" or weight == "N":
+    weight_change = input().lower()
+    if weight_change == "n" or weight == "no":
         print(f"[MENU][INFO]: 未修改权重，启用默认值：贡献——{externs.weightContribution}，捐赠——{externs.weightDonation}")
-    elif weight_change == "y" or weight_change == "Y":
+    elif weight_change == "y" or weight_change == "yes":
         print("请输入贡献权重（0-1）：")
         pre_weight = (float)(input())
         if pre_weight < 0 or pre_weight > 1:
@@ -59,12 +60,15 @@ def weight():
     print(f"[MENU][INFO]: 权重设置完成：贡献——{externs.weightContribution}，捐赠——{externs.weightDonation}")
 
 def filterOrNot():
-    print("是否对结果进行群内玩家筛选？（y/n）默认为否...")
-    print(f"当前'{externs.inputGroupPlayerInformationLocation}'文件中共{len(infor.players)}名玩家")
-    filter = input()
-    if filter == "n" or filter == "N":
+    if len(infor.players) == 0:
+        print("[MENU][INFO]: 未读取到玩家信息！")
         return False
-    elif filter == "y" or filter == "Y":
+    print("是否对结果进行群内非请假玩家筛选？（y/n）默认为否...")
+    print(f"当前'{externs.inputGroupPlayerInformationLocation}'文件中共{len(infor.players)}名玩家")
+    filter = input().lower()
+    if filter == "n" or filter == "no":
+        return False
+    elif filter == "y" or filter == "yes":
         return True
     else:
         print("[MENU][INFO]: 输入错误！启用默认值：否")

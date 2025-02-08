@@ -22,20 +22,20 @@ Functions:
 
 """
 import urllib.request
-import urls
+import src.urls as urls
 from selenium import webdriver
 from selenium.webdriver.edge.service import Service as EdgeService
 from selenium.webdriver.edge.options import Options
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
 import urllib
-import operations
+import src.operations as operations
 from bs4 import BeautifulSoup
-from clansInformation import clans
-from clansInformation import players
+from src.clansInformation import clans
+from src.clansInformation import players
 import openpyxl as op
 from openpyxl.styles import PatternFill
-import formal
-import externs
+import src.formal as formal
+import src.externs as externs
 import os
 def updateInformation():
     print("[FETCH][INFO]: 准备更新部落信息和玩家信息...")
@@ -237,7 +237,7 @@ def queryDonation(filter):
             ws.cell(row = row[0].row,column = 3).fill = fill
     wb.save(filename = externs.outputFileLocation)    
 
-def queryActivity():
+def queryActivity(filter):
     sheet_name = formal.activitySheetName
     url_0 = urls.url_clan
     formal.creatSheet(operations.creat_activity_sheet())
@@ -262,8 +262,9 @@ def queryActivity():
         for tr in trs:
             data = [clan]
             a_ty = tr.find('a',class_='block member_link')
-            player_name = formal.keep_before_first_newline(a_ty.get_text().strip())
-            player_name = player_name.replace('\u200c','').replace('\u2006','')
+            player_name = formal.keep_before_first_newline(a_ty.get_text().strip()).replace('\u200c','').replace('\u2006','')
+            if filter and player_name not in players:
+                continue
             data.append(player_name)
             div = tr.find('div',class_='i18n_duration_short')
             activity = formal.convert_time_number(div.get_text().strip())
@@ -366,6 +367,10 @@ def queryLastMonthWar(filter):
             data_num = data_num + 1
             ws.append(data)
         now_row = now_row + data_num
+        wb.save(filename = externs.outputFileLocation)
+        formal.sort_xlsx_data(externs.outputFileLocation,sheet_name,start_row = start_row,end_row = now_row,sort_column = 12)
+        wb = op.load_workbook(externs.outputFileLocation)
+        ws = wb[sheet_name]
         ws.merge_cells(start_row = start_row,end_row = now_row,start_column = 1,end_column = 1)
         start_row = now_row + 1
         print(f"[FETCH][INFO]: <{clan}>查询已完成！驱动准备退出...")

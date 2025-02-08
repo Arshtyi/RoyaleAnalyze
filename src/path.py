@@ -33,6 +33,13 @@ def pathConcatenationForOutputTable(): ##输出路径拼接
     return outputInformationPath
 def log_path():##日志路径拼接
     currentDir = os.getcwd()
-    logDir = os.path.join(currentDir,"logs")
+    logDir = os.path.join(currentDir,"data")
+    logDir = os.path.join(logDir,"logs")
     logPath = os.path.join(logDir,"brower.log")
     return logPath
+
+def readme_path():##readme路径拼接
+    currentDir = os.getcwd()
+    currentDir = os.path.join(currentDir,"assets")
+    readmepath = os.path.join(currentDir,"README.md")
+    return readmepath

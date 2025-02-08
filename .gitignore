@@ -12,19 +12,14 @@ __pycache__/
 *.spec
 build/
 dist/
-
+out/
 
 #input/output
 data/input/groupInformation.xlsx
 data/output/Information.xlsx
-
-# tree
-/list.txt
-src/list.txt
 
 # logs
 *.log
 
 # .venv
 .venv/
-echo

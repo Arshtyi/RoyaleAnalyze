@@ -22,10 +22,10 @@ Functions:
     formal.processExcel(file_location): Formats and processes the Excel file at the given location.
 
 """
-import menu
-import operations
-import formal
-import externs
+import src.menu as menu
+import src.operations as operations
+import src.formal as formal
+import src.externs as externs
 if __name__ == '__main__':
     while True:
         menu.creatMenu()

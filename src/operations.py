@@ -39,9 +39,9 @@ Functions:
         Creates a recent change sheet. Returns 7.
 
 """
-import fetch
+import src.fetch as fetch
 import constant
-import menu
+import src.menu as menu
 constant
 def updateInformation():
     return -1
@@ -92,7 +92,7 @@ def judge(choice):
     elif queryDonation() == choice:
         fetch.queryDonation(menu.filterOrNot())
     elif queryActivity() == choice:
-        fetch.queryActivity()
+        fetch.queryActivity(menu.filterOrNot())
     elif queryLastMonthWar() == choice:
         fetch.queryLastMonthWar(menu.filterOrNot())
     elif queryLastMonthDonation() == choice:
