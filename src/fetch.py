@@ -1,24 +1,25 @@
 """
-This module provides functions to fetch and update clan and player information, query contributions, donations, activity, and recent changes, and sort data based on specific criteria.
-Functions:
-    updateInformation():
-        Updates clan and player information from external sources and saves the data to an Excel file.
-    deleteAll():
-        Deletes the output file if it exists.
-    queryContribution(filter):
-        Queries and updates contribution data for clans and players, and saves the data to an Excel file.
-    queryDonation(filter):
-        Queries and updates donation data for clans and players, and saves the data to an Excel file.
-    queryActivity():
-        Queries and updates activity data for clans and players, and saves the data to an Excel file.
-    queryLastMonthWar(filter):
-        Queries and updates last month's war data for clans and players using a web driver, and saves the data to an Excel file.
-    queryLastMonthDonation(filter):
-        Queries and updates last month's donation data for clans and players using a web driver, and saves the data to an Excel file.
-    queryAndSort(filter):
-        Queries last month's war and donation data, calculates weighted scores, sorts the data, and saves the results to an Excel file.
-    queryRecentChange():
-        Queries and updates recent join and leave changes for clans, and saves the data to an Excel file.
+该模块用于从指定的URL获取部落和玩家信息,并将其更新到Excel文件中。模块主要功能包括:
+1. updateInformation: 更新部落和玩家信息。
+2. deleteAll: 删除输出文件。
+3. queryContribution: 查询部落战贡献信息。
+4. queryDonation: 查询部落捐赠信息。
+5. queryActivity: 查询玩家活动信息。
+6. queryLastMonthWar: 查询上个月的部落战信息。
+7. queryLastMonthDonation: 查询上个月的捐赠信息。
+8. queryAndSort: 查询并排序贡献和捐赠信息。
+9. queryRecentChange: 查询最近的成员变动信息。
+模块依赖于以下库和模块:
+- urllib.request: 用于发送HTTP请求。
+- selenium: 用于自动化浏览器操作。
+- BeautifulSoup: 用于解析HTML内容。
+- openpyxl: 用于操作Excel文件。
+- src.urls: 包含URL和请求头信息。
+- src.operations: 包含Excel操作函数。
+- src.clansInformation: 包含部落和玩家信息。
+- src.formal: 包含格式化和排序函数。
+- src.externs: 包含外部配置和路径信息。
+模块通过调用上述函数,实现对部落和玩家信息的自动化获取、更新和处理,并将结果保存到指定的Excel文件中。
 
 """
 import urllib.request
@@ -27,6 +28,9 @@ from selenium import webdriver
 from selenium.webdriver.edge.service import Service as EdgeService
 from selenium.webdriver.edge.options import Options
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import urllib
 import src.operations as operations
 from bs4 import BeautifulSoup
@@ -38,14 +42,15 @@ import src.formal as formal
 import src.externs as externs
 import os
 def updateInformation():
+    flag = True
     print("[FETCH][INFO]: 准备更新部落信息和玩家信息...")
     print("[FETCH][INFO]: 检查文件...")
     if os.path.exists(externs.inputClansInformationLocation):
-        print("[FETCH][INFO]: 文件存在，准备读取...")
+        print("[FETCH][INFO]: 文件存在,准备读取...")
         wb = op.load_workbook(externs.inputClansInformationLocation)
         ws = wb[externs.clansInformationSheetName]
         max_row = ws.max_row
-        print("[FETCH][INFO]: 文件读取完成，准备更新部落信息...")
+        print("[FETCH][INFO]: 文件读取完成,准备更新部落信息...")
         for row in range(2,max_row + 1):
             clan = ws.cell(row = row,column = 2).value
             if clan is None:
@@ -67,11 +72,11 @@ def updateInformation():
     else:
         print(f"[FETCH][INFO]: The file '{externs.inputClansInformationLocation}' does not exist")
     if os.path.exists(externs.inputGroupPlayerInformationLocation):
-        print("[FETCH][INFO]: 文件存在，准备读取...")
+        print("[FETCH][INFO]: 文件存在,准备读取...")
         wb = op.load_workbook(externs.inputGroupPlayerInformationLocation)
         ws = wb[externs.groupPlayerInformationSheetName]
         max_row = ws.max_row
-        print("[FETCH][INFO]: 文件读取完成，准备玩家更新...")
+        print("[FETCH][INFO]: 文件读取完成,准备玩家更新...")
         for row in range(2,max_row + 1):
             player = ws.cell(row = row,column = 4).value
             if player is None:
@@ -103,8 +108,10 @@ def updateInformation():
         print("[FETCH][INFO]: 格式化完成！")
     else:
         print(f"[FETCH][INFO]: The file '{externs.inputGroupPlayerInformationLocation}' does not exist")
+    return flag
 
 def deleteAll():
+    flag = True
     print("[FETCH][INFO]: 准备删除输出文件...")
     print("[FETCH][INFO]: 检查文件...")
     if os.path.exists(externs.outputFileLocation):
@@ -112,17 +119,18 @@ def deleteAll():
         print(f"[FETCH][INFO]: The file '{externs.outputFileLocation}' has been deleted")
     else:
         print(f"[FETCH][INFO]: The file '{externs.outputFileLocation}' does not exist")
-
+    return flag
 def queryContribution(filter):
+    flag = True
     sheet_name = externs.contributionsSheetName
     url_0 = urls.url_clan
     formal.creatSheet(operations.creat_contribution_sheet())
-    print("[FETCH][INFO]: 输出创建完成，准备启动程序...")
+    print("[FETCH][INFO]: 输出创建完成,准备启动程序...")
     wb = op.load_workbook(externs.outputFileLocation)
     ws = wb[sheet_name]
     now_row = 1
     start_row = 2
-    print("[FETCH][INFO]: 程序启动，正在运行...")
+    print("[FETCH][INFO]: 程序启动,正在运行...")
     for clan in clans:
         url_war_race = url_0 + clans[clan] + "/war/race"
         requests = urllib.request.Request(url = url_war_race,headers = urls.HEADERS)
@@ -131,8 +139,8 @@ def queryContribution(filter):
         soup = BeautifulSoup(content, 'html.parser')
         div_time = soup.find('div',{'class' : 'timeline'})
         lis = div_time.find_all('li')
-        day = 1####第四天开始战斗日
-        in_war = 0##可能需要别的状态，不用bool
+        day = 1##第四天开始战斗日
+        in_war = 0##可能需要别的状态,不用bool
         data_num = 0
         for li in lis:
             div_unjudge = li.find('div',{'class' : "dot active"})
@@ -142,7 +150,7 @@ def queryContribution(filter):
             day = day + 1 
         data = [clan]
         if 1 == in_war:
-            print(f"[FETCH][INFO]: <{clan}>正处于战斗日，开始查询...")
+            print(f"[FETCH][INFO]: <{clan}>正处于战斗日,开始查询...")
             trs = soup.find_all('tr')
             trs_players = [tr for tr in trs if 'player' in tr.get('class', []) and len(tr['class']) == 1]
             trs_players = trs_players[1:]
@@ -172,7 +180,7 @@ def queryContribution(filter):
             ws.merge_cells(start_row = start_row,end_row = now_row,start_column = 1,end_column = 1)
             start_row = now_row + 1
         elif 0 == in_war:
-            print(f"[FETCH][INFO]: <{clan}>未处于战斗日，格式输出正在进行...")
+            print(f"[FETCH][INFO]: <{clan}>未处于战斗日,格式输出正在进行...")
             data = [clan]
             data.append('该部落未处于战斗日！')
             data.append('')
@@ -188,18 +196,20 @@ def queryContribution(filter):
             fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
             ws.cell(row = row[0].row,column = 5).fill = fill
     wb.save(filename = externs.outputFileLocation)
+    return flag
 
 def queryDonation(filter):
+    flag = True
     sheet_name = formal.donationSheetName
     url_0 = urls.url_clan
     formal.creatSheet(operations.creat_donation_sheet())
-    print("[FETCH][INFO]: 输出创建完成，准备启动程序...")
+    print("[FETCH][INFO]: 输出创建完成,准备启动程序...")
     wb = op.load_workbook(externs.outputFileLocation)
     ws = wb[sheet_name]
     data_num = 0
     now_row = 1
     start_row = 2
-    print("[FETCH][INFO]: 程序启动，正在运行...")
+    print("[FETCH][INFO]: 程序启动,正在运行...")
     for clan in clans:
         print(f"[FETCH][INFO]: <{clan}>开始查询...")
         data_num = 0
@@ -236,18 +246,20 @@ def queryDonation(filter):
             fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
             ws.cell(row = row[0].row,column = 3).fill = fill
     wb.save(filename = externs.outputFileLocation)    
+    return flag
 
 def queryActivity(filter):
+    flag = True
     sheet_name = formal.activitySheetName
     url_0 = urls.url_clan
     formal.creatSheet(operations.creat_activity_sheet())
-    print("[FETCH][INFO]: 输出创建完成，准备启动程序...")
+    print("[FETCH][INFO]: 输出创建完成,准备启动程序...")
     wb = op.load_workbook(externs.outputFileLocation)
     ws = wb[sheet_name]
     data_num = 0
     now_row = 1
     start_row = 2
-    print("[FETCH][INFO]: 程序启动，正在运行...")
+    print("[FETCH][INFO]: 程序启动,正在运行...")
     for clan in clans:
         print(f"[FETCH][INFO]: <{clan}>开始查询...")
         data_num = 0
@@ -284,18 +296,20 @@ def queryActivity(filter):
             ws.cell(row = row[0].row,column = 3).fill = fill
         ws.cell(row = row[0].row,column = 3).value = formal.convert_time_from_number(row[0].value)
     wb.save(filename = externs.outputFileLocation)
+    return flag
 
 def queryLastMonthWar(filter):
+    flag = True
     sheet_name = formal.lastMonthWarSheetName
     url_0 = urls.url_clan
     formal.creatSheet(operations.creat_last_month_war_sheet())
-    print("[FETCH][INFO]: 输出创建完成，准备启动程序...")
+    print("[FETCH][INFO]: 输出创建完成,准备启动程序...")
     wb = op.load_workbook(externs.outputFileLocation)
     ws = wb[sheet_name]
     data_num = 0
     now_row = 1
     start_row = 2
-    print("[FETCH][INFO]: 程序启动，正在运行...")
+    print("[FETCH][INFO]: 程序启动,正在运行...")
     for clan in clans:
         print("[FETCH][INFO]: 开始配置驱动...")
         edge_options = Options()
@@ -307,18 +321,31 @@ def queryLastMonthWar(filter):
         edge_options.add_argument("--ignore-certificate-errors")
         edge_options.add_argument("--ignore-ssl-errors")
         edge_options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        print("[FETCH][INFO]: 驱动相关设置完成，准备配置日志输出...")
-        service = EdgeService(EdgeChromiumDriverManager().install(),service_args=["--verbose","--log-path="+externs.log_path])
-        print(f"[FETCH][INFO]: 驱动启动项初始化完毕，日志输出为'{externs.log_path}'，准备启动...")
-        print("[FETCH][INFO]: 驱动配置完成，准备启动...")
+        print("[FETCH][INFO]: 驱动相关设置完成,准备配置日志输出...")
+        log_path = externs.Contributionslog_path + "\\" + clans[clan] + ".log"
+        service = EdgeService(EdgeChromiumDriverManager().install(), service_args=["--verbose", " --log-path="+log_path])
+        print(f"[FETCH][INFO]: 驱动启动项初始化完毕,日志输出为'{log_path}',准备启动...")
+        print("[FETCH][INFO]: 驱动配置完成,准备启动...")
         driver = webdriver.Edge(service = service,options = edge_options)
-        print("[FETCH][INFO]: 驱动已启动，准备开始查询...")
+        print("[FETCH][INFO]: 驱动已启动,准备开始查询...")
         print(f"[FETCH][INFO]: <{clan}>开始查询...")
         data_num = 0
         url_last_month_war = url_0 + clans[clan] +"/war/analytics"
         driver.get(url_last_month_war)
-        print("[FETCH][INFO]: 驱动正在运行......在驱动正确退出前请不要结束进程，否则将导致数据不完整和其他可能的错误！")
-        content = driver.page_source
+        print("[FETCH][INFO]: 驱动正在运行......在驱动正确退出前请不要结束进程,否则将导致数据不完整和其他可能的错误！")
+        print("[FETCH][INFO]: 页面加载中...")
+        try:
+            element = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.XPATH,externs.XPaths["LastMonthWar"]
+            )))
+            print("[FETCH][INFO]: 页面加载完成,准备解析...")
+            content = driver.page_source
+        except:
+            print("[FETCH][ERROR]: 页面加载超时,驱动即将退出...")
+            driver.quit()
+            print("[FETCH][INFO]: 驱动已正确退出")
+            flag = False
+            continue
         soup = BeautifulSoup(content, 'html.parser')
         table_contributions = soup.find('table', id='roster')
         trs = table_contributions.find_all('tr')
@@ -326,7 +353,7 @@ def queryLastMonthWar(filter):
         table_decks = soup.find('table', id='roster2')
         trs_2 = table_decks.find_all('tr')
         trs_2 = trs_2[1:]
-        length = max(len(trs),len(trs_2))
+        length = max(len(trs),len(trs_2))##其实是一样的
         data = []
         for i in range(length):
             tr = trs[i]
@@ -392,21 +419,23 @@ def queryLastMonthWar(filter):
         if row[8].value == 0:
             fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
             ws.cell(row = row[0].row,column = 12).fill = fill
-    print("[FETCH][INFO]: 所有查询已完成，准备保存数据...")
+    print("[FETCH][INFO]: 所有查询已完成,准备保存数据...")
     wb.save(filename = externs.outputFileLocation)
-    print("[FETCH][INFO]: 数据已保存，查询结束")
+    print("[FETCH][INFO]: 数据已保存,查询结束")
+    return flag
 
 def queryLastMonthDonation(filter):
+    flag = True
     sheet_name = formal.lastMonthDonationSheetName
     url_0 = urls.url_clan
     formal.creatSheet(operations.creat_last_month_donation_sheet())
-    print("[FETCH][INFO]: 输出创建完成，准备启动程序...")
+    print("[FETCH][INFO]: 输出创建完成,准备启动程序...")
     wb = op.load_workbook(externs.outputFileLocation)
     ws = wb[sheet_name]
     data_num = 0
     now_row = 1
     start_row = 2
-    print("[FETCH][INFO]: 程序启动，正在运行...")
+    print("[FETCH][INFO]: 程序启动,正在运行...")
     for clan in clans:
         print("[FETCH][INFO]: 开始配置驱动...")
         edge_options = Options()
@@ -418,20 +447,33 @@ def queryLastMonthDonation(filter):
         edge_options.add_argument("--ignore-certificate-errors")
         edge_options.add_argument("--ignore-ssl-errors")
         edge_options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        print("[FETCH][INFO]: 驱动相关设置完成，准备配置日志输出...")
-        service = EdgeService(EdgeChromiumDriverManager().install(),service_args=["--verbose","--log-path="+externs.log_path])
-        print(f"[FETCH][INFO]: 驱动启动项初始化完毕，日志输出为'{externs.log_path}'，准备启动...")
-        print("[FETCH][INFO]: 驱动配置完成，准备启动...")
+        print("[FETCH][INFO]: 驱动相关设置完成,准备配置日志输出...")
+        log_path = externs.Donationslog_path + "\\" + clans[clan] + ".log"
+        service = EdgeService(EdgeChromiumDriverManager().install(), service_args=["--verbose", " --log-path="+log_path])
+        print(f"[FETCH][INFO]: 驱动启动项初始化完毕,日志输出为'{log_path}',准备启动...")
+        print("[FETCH][INFO]: 驱动配置完成,准备启动...")
         driver = webdriver.Edge(service = service,options = edge_options)
-        print("[FETCH][INFO]: 驱动已启动，准备开始查询...")
+        print("[FETCH][INFO]: 驱动已启动,准备开始查询...")
         print(f"[FETCH][INFO]: <{clan}>开始查询...")
         data_num = 0
         url_last_month_donation = url_0 + clans[clan]+"/history"
         driver.get(url_last_month_donation)
-        print("[FETCH][INFO]: 驱动正在运行......在驱动正确退出前请不要结束进程，否则将导致数据不完整和其他可能的错误！")
-        content = driver.page_source
+        print("[FETCH][INFO]: 驱动正在运行......在驱动正确退出前请不要结束进程,否则将导致数据不完整和其他可能的错误！")
+        print("[FETCH][INFO]: 页面加载中...")
+        try:
+            element = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.XPATH,externs.XPaths["LastMonthDonation"]
+            )))
+            print("[FETCH][INFO]: 页面加载完成,准备解析...")
+            content = driver.page_source
+        except:
+            print("[FETCH][ERROR]: 页面加载超时,驱动即将退出...")
+            driver.quit()
+            print("[FETCH][INFO]: 驱动已正确退出")
+            flag = False
+            continue
         soup = BeautifulSoup(content, 'html.parser')
-        table_donnations = soup.find('table', id = 'roster')
+        table_donnations = soup.find('table', id='roster')
         trs = table_donnations.find_all('tr')
         trs = trs[1:]
         data = []
@@ -481,21 +523,24 @@ def queryLastMonthDonation(filter):
         if row[4].value == 0:
             fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
             ws.cell(row = row[0].row,column = 7).fill = fill
-    print("[FETCH][INFO]: 所有查询已完成，准备保存数据...")
+    print("[FETCH][INFO]: 所有查询已完成,准备保存数据...")
     wb.save(filename = externs.outputFileLocation)
-    print("[FETCH][INFO]: 数据已保存，查询结束")
-
+    print("[FETCH][INFO]: 数据已保存,查询结束")
+    return flag
 
 def queryAndSort(filter):
+    flag = True
     print("[FETCH][INFO]: 准备查询前置信息...")
-    queryLastMonthWar(filter)
-    queryLastMonthDonation(filter)
-    print("[FETCH][INFO]: 前置查询完成，准备设定权重并启动程序...")
-    weight_1 = externs.weightContribution
-    weight_2 = externs.weightDonation
-    print("[FETCH][INFO]: 权重设定完毕，准备创建输出...")
+    flag = queryLastMonthWar(filter) and queryLastMonthDonation(filter)
+    if flag == False:
+        print("[FETCH][ERROR]: 前置查询失败,程序准备退出...")
+        return flag
+    print("[FETCH][INFO]: 前置查询完成,准备设定权重并启动程序...")
+    contribution_weight = externs.weightContribution
+    donation_weight = externs.weightDonation
+    print("[FETCH][INFO]: 权重设定完毕,准备创建输出...")
     formal.creatSheet(operations.creat_sort_sheet())
-    print("[FETCH][INFO]: 输出创建完成，准备启动程序...")
+    print("[FETCH][INFO]: 输出创建完成,准备启动程序...")
     wb = op.load_workbook(externs.outputFileLocation)
     ws_1 = wb[formal.lastMonthWarSheetName]
     ws_2 = wb[formal.lastMonthDonationSheetName]
@@ -514,7 +559,7 @@ def queryAndSort(filter):
             if row_2[0].value == str_value:
                 value_1 = ws_1.cell(row=row_1[0].row, column=12).value
                 value_2 = ws_2.cell(row=row_2[0].row, column=7).value
-                result = (value_1 * weight_1) + (value_2 * weight_2)
+                result = (value_1 * contribution_weight) + (value_2 * donation_weight)
                 result = (int)(result)
                 results.append(value_1)
                 results.append(value_2)
@@ -523,7 +568,7 @@ def queryAndSort(filter):
                 break
     end = ws_3.max_row
     wb.save(filename = externs.outputFileLocation)
-    print("[FETCH][INFO]: 数据已保存，准备排序...")
+    print("[FETCH][INFO]: 数据已保存,准备排序...")
     formal.sort_xlsx_data(externs.outputFileLocation,formal.sortedSheetName,start_row = 2,end_row = end,sort_column = 5)
     wb = op.load_workbook(externs.outputFileLocation)
     ws = wb[formal.sortedSheetName]
@@ -537,23 +582,25 @@ def queryAndSort(filter):
         if row[2].value == 0:
             fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
             ws.cell(row = row[0].row,column = 5).fill = fill
-    print("[FETCH][INFO]: 排序完成，准备保存权重信息...")
+    print("[FETCH][INFO]: 排序完成,准备保存权重信息...")
     ws.append(['贡献权重','捐赠权重'])
-    ws.append([weight_1,weight_2])
+    ws.append([contribution_weight,donation_weight])
     wb.save(filename = externs.outputFileLocation)
-    print("[FETCH][INFO]: 权重信息已保存，程序已退出")
+    print("[FETCH][INFO]: 权重信息已保存,程序已退出")
+    return flag
 
 def queryRecentChange():
+    flag = True
     sheet_name = formal.recentChangeSheetName
     url_0 = urls.url_clan
     formal.creatSheet(operations.creat_recent_change_sheet())
-    print("[FETCH][INFO]: 输出创建完成，准备启动程序...")
+    print("[FETCH][INFO]: 输出创建完成,准备启动程序...")
     wb = op.load_workbook(externs.outputFileLocation)
     ws = wb[sheet_name]
     data_num = 0
     now_row = 1
     start_row = 2
-    print("[FETCH][INFO]: 程序启动，正在运行...")
+    print("[FETCH][INFO]: 程序启动,正在运行...")
     for clan in clans:
         print(f"[FETCH][INFO]: <{clan}>开始查询...")
         data_num = 0
@@ -625,3 +672,4 @@ def queryRecentChange():
             fill = PatternFill(fill_type = 'solid',fgColor = 'DA9694')
             ws.cell(row = row[0].row,column = 4).fill = fill
     wb.save(filename = externs.outputFileLocation)
+    return flag

@@ -1,19 +1,14 @@
 """
-This module processes and transforms clan and player information.
-Functions:
-    - getClansInformation: Retrieves the original dictionary of clans.
-    - getGroupPlayersInformation: Retrieves the original dictionary of players.
-Workflow:
-1. Retrieve the original clan and player dictionaries using functions from the externs module.
-2. For each clan in the original_clans dictionary, remove the first character.
-3. For each player in the original_players dictionary, remove the first character of the third element.
-4. Convert the modified original_clans and original_players dictionaries to immutable MappingProxyType objects.
-Variables:
-    - original_clans (dict): The original dictionary of clans.
-    - original_players (dict): The original dictionary of players.
-    - clans (MappingProxyType): An immutable version of the modified original_clans dictionary.
-    - players (MappingProxyType): An immutable version of the modified original_players dictionary.
-
+clansInformation 模块
+这个模块是RoyaleAnalyze项目的一部分,负责处理和管理有关部落和玩家的信息。它从`externs`模块导入必要的函数来检索部落和玩家的原始数据。然后,该模块通过删除特定字符来处理这些数据,并使用`MappingProxyType`将字典转换为不可变类型。
+函数:
+- getClansInformation: 检索部落信息的原始字典。
+- getGroupPlayersInformation: 检索玩家信息的原始字典。
+处理过程:
+- 对于原始部落字典中的每个部落,删除第一个字符。
+- 对于原始玩家字典中的每个玩家,删除第三个字符。
+- 然后将处理后的字典转换为不可变类型,以防止进一步修改。
+该模块确保部落和玩家信息被处理并以只读格式存储,以便在RoyaleAnalyze项目中进行进一步分析。
 """
 from types import MappingProxyType
 import src.externs as externs

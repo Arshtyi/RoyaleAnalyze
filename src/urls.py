@@ -1,16 +1,25 @@
 """
-This module contains URL configurations and HTTP request settings for the RoyaleAnalyze project.
-Constants:
-    HEADERS (dict): HTTP headers used for making requests.
-    proxies (dict): Proxy settings for HTTP and HTTPS requests.
-    url_0 (str): Base URL for RoyaleAPI.
-    url_repository (str): GitHub repository URL for the project.
-    url_clan (str): URL for accessing clan information.
-    url_player (str): URL for accessing player information.
-    url_readme (str): URL for accessing the project's README file.
-    url_releases (str): URL for accessing the project's releases page.
-
+该模块定义了用于网络请求的头信息、代理设置以及项目相关的URL地址。
+HEADERS:
+    包含了用于HTTP请求的头信息,包括User-Agent和Content-Type。
+proxies:
+    定义了HTTP和HTTPS请求的代理设置,指向本地代理服务器。
+url_0:
+    RoyaleAPI的初始URL,用于构建其他相关URL。
+url_repository:
+    项目的GitHub仓库地址。
+url_clan:
+    部落信息的URL,基于初始URL构建。
+url_player:
+    玩家信息的URL,基于初始URL构建。
+url_readme:
+    项目README文件的URL,指向GitHub仓库中的README.md文件。
+url_releases:
+    项目发布版本的URL,指向GitHub仓库中的releases页面。
+url_changelog:
+    项目变更日志的URL,指向GitHub仓库中的CHANGELOG.md文件。
 """
+
 """
 headers
 """

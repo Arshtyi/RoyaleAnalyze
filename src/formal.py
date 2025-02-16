@@ -1,19 +1,22 @@
 """
-This module provides various functions to manipulate and process Excel files using the openpyxl library. It includes functions to clear sheets, check file existence, delete sheets, create sheets based on operations, adjust column widths, process Excel files, sort data, and convert time formats.
-Functions:
-- clearSheet(fileName, sheetName): Clears all content, formatting, and merged cells in the specified sheet, completely resetting it.
-- checkFile(fileName): Checks if the specified file exists in the current directory.
-- delSheetFromWorkbook(fileName, sheetName): Deletes the specified sheet from the workbook if it exists.
-- keep_before_first_newline(input_string): Returns the part of the input string before the first newline character.
-- creatSheet(operation): Creates a sheet based on the specified operation and appends headers.
-- calculateAdjustedWidth(value): Calculates the width of a cell's content, considering wide characters like Chinese, Japanese, Korean, and emojis.
-- adjustColumnWidth(sheet): Dynamically adjusts the column widths of the sheet to ensure proper display of wide characters.
-- processExcel(fileName): Processes the Excel file by checking its existence, deleting the default "Sheet" if necessary, adjusting column widths, and setting cell alignment.
-- sort_xlsx_data(file_path, sheet_name, start_row, end_row, sort_column): Sorts the specified range of rows in the sheet based on the values in the specified column in descending order.
-- convert_time_number(input_str): Converts a time string with units (weeks, days, hours, minutes) into total minutes.
-- convert_time_from_number(total_minutes): Converts total minutes into a formatted time string with units (weeks, days, hours, minutes).
-- convert_time_format(input_str): Converts a time string with units (weeks, days, hours, minutes) into a formatted time string with Chinese characters.
-- modify_line_in_file(file_path, line_number, new_content): Modifies the specified line in the file with new content.
+formal.py
+该模块是 RoyaleAnalyze 项目的一部分,主要负责处理 Excel 文件的创建、修改和格式化操作。模块中的函数用于清除工作表内容、检查文件存在性、删除工作表、创建特定格式的工作表、调整列宽、设置单元格对齐方式、排序数据以及时间格式转换等操作。
+模块包含以下主要功能:
+1. clearSheet(fileName, sheetName): 清除指定工作表的所有内容、格式和合并单元格,完全重置工作表。
+2. checkFile(fileName): 检查当前目录下是否存在指定的 Excel 文件。
+3. delSheetFromWorkbook(fileName, sheetName): 删除特定的工作表,如果工作表数量大于1则删除,否则清除内容。
+4. keep_before_first_newline(input_string): 保留字符串中第一个换行符之前的内容。
+5. creatSheet(operation): 根据操作类型创建特定格式的工作表,并添加表头。
+6. calculateAdjustedWidth(value): 根据单元格内容计算宽度,处理中文繁体和宽字符的显示宽度。
+7. adjustColumnWidth(sheet): 动态调整工作表的列宽,确保中文繁体和宽字符正确显示。
+8. processExcel(fileName): 处理 Excel 文件,调整列宽和设置单元格居中。
+9. sort_xlsx_data(file_path, sheet_name, start_row, end_row, sort_column): 按照给定的依据列对指定范围的行进行降序排序。
+10. convert_time_number(input_str): 将时间字符串转换为总分钟数。
+11. convert_time_from_number(total_minutes): 将总分钟数转换为时间字符串格式。
+12. convert_time_format(input_str): 将时间字符串转换为带有中文单位的格式。
+13. modify_line_in_file(file_path, line_number, new_content): 修改文件中特定行的内容。
+该模块依赖于 openpyxl 库进行 Excel 文件操作,并使用 os 库进行文件系统操作。
+
 """
 import src.externs as externs
 import openpyxl as op
@@ -34,7 +37,7 @@ recentChangeSheetName = externs.recentChangeSheetName
 clansInformationSheetName = externs.clansInformationSheetName
 def clearSheet(fileName, sheetName):
     """
-    清除指定工作表的所有内容、格式和合并单元格，完全重置工作表。
+    清除指定工作表的所有内容、格式和合并单元格,完全重置工作表.
     
     :param file_name: Excel 文件的名称
     :param sheet_name: 目标工作表的名称
@@ -74,7 +77,7 @@ def delSheetFromWorkbook(fileName,sheetName):##特定的sheet是否存在
     ###不存在无事
 
 def keep_before_first_newline(input_string):
-    # 使用split方法按照 '\n' 切分字符串，取第一个部分
+    # 使用split方法按照 '\n' 切分字符串,取第一个部分
     return input_string.split('\n')[0]
 
 def creatSheet(operation):
@@ -168,9 +171,9 @@ def creatSheet(operation):
 
 def calculateAdjustedWidth(value):
     """
-    根据单元格内容计算宽度，处理中文繁体和宽字符的显示宽度。
+    根据单元格内容计算宽度,处理中文繁体和宽字符的显示宽度.
     :param value: 单元格内容
-    :return: 调整后的宽度（适配 Excel 的列宽标准）
+    :return: 调整后的宽度(适配 Excel 的列宽标准)
     """
     if value is None:
         return 0
@@ -186,7 +189,7 @@ def calculateAdjustedWidth(value):
 
 def adjustColumnWidth(sheet):
     """
-    动态调整工作表的列宽，确保中文繁体和宽字符正确显示。
+    动态调整工作表的列宽,确保中文繁体和宽字符正确显示.
     :param sheet: 当前工作表
     """
     for col in sheet.columns:
@@ -200,18 +203,18 @@ def adjustColumnWidth(sheet):
 
 def processExcel(fileName):
     """
-    处理Excel文件：
-    1. 检查当前目录是否存在指定的Excel文件。
-       - 如果不存在，抛出错误提示。
-    2. 删除名为 "Sheet" 的工作表（如果 sheetnames 数量大于1）。
-    3. 对剩下的每个工作表：
-        - 调整列宽。
-        - 设置单元格内容居中。
-    :param file_name: str, Excel 文件名。
+    处理Excel文件;
+    1. 检查当前目录是否存在指定的Excel文件.
+       - 如果不存在,抛出错误提示.
+    2. 删除名为 "Sheet" 的工作表(如果 sheetnames 数量大于1).
+    3. 对剩下的每个工作表;
+        - 调整列宽.
+        - 设置单元格内容居中.
+    :param file_name: str, Excel 文件名.
     """
     # 检查当前目录是否存在指定文件
     if not os.path.exists(fileName):
-        print(f"[FORMAL][ERROR]: 文件 '{fileName}' 不存在！请检查文件名和路径。")
+        print(f"[FORMAL][ERROR]: 文件 '{fileName}' 不存在！请检查文件名和路径.")
         return
 
     # 加载工作簿
@@ -241,15 +244,15 @@ def processExcel(fileName):
 
 def sort_xlsx_data(file_path, sheet_name, start_row, end_row, sort_column):
     """
-    按照给定的依据列对指定范围的行进行降序排序，
-    其中，依据列内容为整数，且不能直接交换数据。
+    按照给定的依据列对指定范围的行进行降序排序,
+    其中,依据列内容为整数,且不能直接交换数据.
 
     :param file_path: Excel文件路径
     :param sheet_name: 工作表名
     :param start_row: 起始行
     :param end_row: 终止行
-    :param sort_column: 排序依据列（从1开始，1表示第一列）
-    :return: 排序后的数据（二维列表）
+    :param sort_column: 排序依据列(从1开始,1表示第一列)
+    :return: 排序后的数据(二维列表)
     """
     wb = op.load_workbook(file_path)
     sheet = wb[sheet_name]

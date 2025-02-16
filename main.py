@@ -1,41 +1,43 @@
 """
-This script is the main entry point for the RoyaleAnalyze project.
-Modules:
-    menu: Handles the creation and interaction with the menu.
-    operations: Contains functions for various operations and decision-making.
-    formal: Provides functionality for formatting and processing Excel files.
-    externs: Contains external configurations and file locations.
-    clansInformation: Provides functions for reading and processing information from Excel sheets related to clans and group players.
-    fetch: Contains functions for fetching data from URLs.
-    gettime: Provides functions for getting the current time.
-    path: Provides functions for managing file paths.
-    urls: Contains URL configurations and HTTP request settings for the project.
-Execution:
-    The script runs an infinite loop to display a menu and process user choices.
-    It exits the loop when the user chooses to exit.
-    After exiting the loop, it processes an Excel file and waits for user input before closing.
-Functions:
-    menu.creatMenu(): Displays the menu to the user.
-    menu.getChoice(): Gets the user's menu choice.
-    operations.queryExit(): Checks if the user's choice is to exit.
-    operations.judge(choice): Processes the user's choice.
-    formal.processExcel(file_location): Formats and processes the Excel file at the given location.
-
+RoyaleAnalyze 主模块
+该模块是 RoyaleAnalyze 程序的入口点,负责启动程序并进行环境检查.
+如果环境检查通过,则启动主菜单并根据用户选择执行相应的操作.
+在程序结束时,进行数据格式化并提示用户程序已完成.
+模块功能;
+1. 环境检查和修复
+2. 启动主菜单并处理用户选择
+3. 数据格式化
+依赖模块;
+- src.errorcheck: 用于环境检查和修复
+- src.menu: 用于创建和处理主菜单
+- src.operations: 用于处理用户选择的操作
+- src.formal: 用于数据格式化
+- src.externs: 用于获取输出文件位置
 """
-import src.menu as menu
-import src.operations as operations
-import src.formal as formal
-import src.externs as externs
+import src.errorcheck as errorcheck
+import sys
 if __name__ == '__main__':
+    print("[MAIN][INFO]: RoyaleAnalyze 正在启动...")
+    print("[MAIN][INFO]: 开始检查和修复环境...")
+    if errorcheck.pathCheckAndFix() == False:
+        print("[MAIN][ERROR]: 你的环境存在问题,请检查相关文件夹是否存在以及是否允许访问后重新启动程序")
+        print("[MAIN][ERROR]: 程序因为环境不完整且无法修复而终止...")
+        sys.exit()
+    print("[MAIN][INFO]: 环境检查和修复通过...启动程序...")
+    import src.menu as menu
+    import src.operations as operations
+    import src.formal as formal
+    import src.externs as externs
     while True:
         menu.creatMenu()
         choice = menu.getChoice()
         if operations.queryExit() == choice:
             break
-        else :
+        else:
             operations.judge(choice)
     print("[MAIN][INFO]: 准备进行格式化...")
     formal.processExcel(externs.outputFileLocation)
-    input("[MAIN][INFO]: 格式化完成，程序准备退出，键入任意内容以退出...\n")
-    print("[MAIN][INFO]: 正在关闭进程...")
-    print("[MAIN][INFO]: 进程已关闭，程序结束并退出...")
+    print("[MAIN][INFO]: 格式化完成...")
+    menu.faultsDisplay()
+    input("[MAIN][INFO]: 程序结束运行,按任意键退出...\n")
+    sys.exit()

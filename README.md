@@ -1,8 +1,8 @@
-# 本项目主体已于2025-02-07正式完成所有开发,最后版本V1.1.3：[releases](https://github.com/Arshtyi/RoyaleAnalyze/releases)
+# 本项目主体已于2025-02-07正式完成所有开发,最后版本V1.1.4:[releases](https://github.com/Arshtyi/RoyaleAnalyze/releases)
 
 # 项目介绍
 
-项目采用_python3.12.7_开发.
+项目采用_python3.12.7_开发,本质上只是个小爬虫,其替代品正在开发中(暂未开源).
 
 ## 项目目的
 
@@ -31,7 +31,7 @@ color: blue
 emblem: Arrow_01
 info:
   description: >
-    中国人为主的部落，欢迎各方朋友加入，主要交流频道为QQ群：939160021
+    中国人为主的部落,欢迎各方朋友加入,主要交流频道为QQ群:939160021
     A clan mainly composed of Chinese people, welcoming friends from all sides to join. The main communication channel is QQ group: 939160021
 clans:
   - name: 零度轩辕

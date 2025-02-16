@@ -1,29 +1,17 @@
 """
-This module provides functions to read and process information from Excel sheets related to clans and group players.
-Constants:
-    clansInformationSheetName (str): The name of the sheet containing clans information.
-    groupPlayerInformationSheetName (str): The name of the sheet containing group player information.
-    contributionsSheetName (str): The name of the sheet containing contributions information.
-    donationsSheetName (str): The name of the sheet containing donations information.
-    activitySheetName (str): The name of the sheet containing activity information.
-    lastMonthWarSheetName (str): The name of the sheet containing last month's war information.
-    lastMonthDonationSheetName (str): The name of the sheet containing last month's donation information.
-    sortedSheetName (str): The name of the sheet containing sorted information.
-    recentChangeSheetName (str): The name of the sheet containing recent changes information.
-    inputClansInformationLocation (str): The file path for the clans information table.
-    inputGroupPlayerInformationLocation (str): The file path for the group player information table.
-    outputFileLocation (str): The file path for the output table.
-    log_path1 (str): The file path for the first log.
-    log_path2 (str): The file path for the second log.
-    log_path3 (str): The file path for the third log.
-    weightContribution (float): The weight for contributions.
-    weightDonation (float): The weight for donations.
-    inactivity (int): The inactivity threshold in minutes.
-Functions:
-    getClansInformation() -> dict:
-        Reads the 'clansInformation' sheet from the specified Excel file and returns its content as a dictionary.
-    getGroupPlayersInformation() -> dict:
-        Reads the 'groupPlayerInformation' sheet from the specified Excel file and returns its content as a dictionary.
+该模块是 RoyaleAnalyze 项目的一部分,主要用于处理部落和玩家信息的读取和操作。
+模块包含以下内容:
+- 常量定义:包括工作表名称、文件路径、日志路径、权重、活动时间等。
+- 函数定义:
+    - getClansInformation(): 从指定路径的 Excel 文件中读取 'clansInformation' sheet 的内容,并返回一个字典。
+    - getGroupPlayersInformation(): 从指定路径的 Excel 文件中读取 'groupPlayerInformation' sheet 的内容,并返回一个字典。
+- 全局变量:
+    - clans: 存储部落信息的字典,由 getClansInformation() 函数生成。
+    - players: 存储玩家信息的字典,由 getGroupPlayersInformation() 函数生成。
+    - operations: 操作码与操作描述的映射字典。
+    - XPaths: 存储用于查询网页元素的 XPath 字典。
+该模块的主要功能是从 Excel 文件中读取部落和玩家信息,并根据特定的规则进行处理和存储。
+
 """
 import src.path as path
 import openpyxl as op
@@ -42,13 +30,16 @@ inputGroupPlayerInformationLocation = path.pathConcatenationForGroupPlayerInform
 outputFileLocation = path.pathConcatenationForOutputTable()
 log_path= path.log_path()
 readme_path = path.readme_path()
+Contributionslog_path = path.Contributionslog_path()
+Donationslog_path = path.Donationslog_path()
+FaultsLog_path = path.FaultsLog_path()
 weightContribution = 0.25
 weightDonation = 0.75
 inactivity = 5 * 24 * 60
 def getClansInformation():
     """
-    从指定路径的 Excel 文件中读取 'clansInformation' sheet 的内容，
-    从第二行开始，将第一列作为字典的 key，第二列作为对应的 value。
+    从指定路径的 Excel 文件中读取 'clansInformation' sheet 的内容,
+    从第二行开始,将第一列作为字典的 key,第二列作为对应的 value.
     
     :param file_path: str, Excel 文件路径
     :return: dict, 从 sheet 中读取的字典
@@ -87,3 +78,19 @@ def getGroupPlayersInformation():
     return result
 clans = getClansInformation()
 players = getGroupPlayersInformation()
+operations = {
+    -1: "比对更新部落信息和玩家信息",
+    0: "清除输出文件",
+    1: "查询当前部落战贡献",
+    2: "查询当前部落成员捐赠",
+    3: "查询部落成员最近活跃情况",
+    4: "查询近一月部落战贡献",
+    5: "查询近一月捐赠",
+    6: "根据4、5进行排序",
+    7: "查询近一月成员变动",
+    99: "格式化并退出"
+}
+XPaths = {
+    "LastMonthWar": '/html/body/div[3]/div[4]/div[2]/div[4]/div[2]/div/div/div/div[2]/div/table',
+    "LastMonthDonation": '/html/body/div[3]/div[4]/div[2]/div[4]/div[3]/div/div[2]/div/table',
+}
