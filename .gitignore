@@ -23,3 +23,6 @@ data/output/Information.xlsx
 
 # .venv
 .venv/
+
+#Nuitka
+nuitka-crash-report.xml
