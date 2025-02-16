@@ -83,62 +83,62 @@ def judge(choice):
     elif deleteAll() == choice:
         flag = fetch.deleteAll()
         if flag:
-            print("[OPERATIONS][INFO]: 删除数据成功...")
+            print("[OPERATIONS][INFO]: 删除输出文件成功...")
         else:
-            print("[OPERATIONS][ERROR]: 删除数据失败,第二次尝试...")
+            print("[OPERATIONS][ERROR]: 删除输出文件失败,第二次尝试...")
             flag = fetch.deleteAll()
             if flag:
-                print("[OPERATIONS][INFO]: 第二次删除数据成功...")
+                print("[OPERATIONS][INFO]: 第二次删除输出文件成功...")
             else:
-                print("[OPERATIONS][ERROR]: 第二次删除数据失败...不再重新尝试,请进行检查更新后手动重试")
+                print("[OPERATIONS][ERROR]: 第二次删除输出文件失败...不再重新尝试,请进行检查更新后手动重试")
     elif queryContribution() == choice:
         filter = menu.filterOrNot()
         flag = fetch.queryContribution(filter)
         if flag:
-            print("[OPERATIONS][INFO]: 查询贡献数据成功...")
+            print("[OPERATIONS][INFO]: 查询本周贡献数据成功...")
         else:
-            print("[OPERATIONS][ERROR]: 查询贡献数据失败,第二次尝试...")
+            print("[OPERATIONS][ERROR]: 查询本周贡献数据失败,第二次尝试...")
             flag = fetch.queryContribution(filter)
             if flag:
-                print("[OPERATIONS][INFO]: 第二次查询贡献数据成功...")
+                print("[OPERATIONS][INFO]: 第二次查询本周贡献数据成功...")
             else:
-                print("[OPERATIONS][ERROR]: 第二次查询贡献数据失败,不再重新尝试,请进行检查更新后手动重试")
+                print("[OPERATIONS][ERROR]: 第二次查询本周贡献数据失败,不再重新尝试,请进行检查更新后手动重试")
     elif queryDonation() == choice:
         filter = menu.filterOrNot()
         flag = fetch.queryDonation(filter)
         if flag:
-            print("[OPERATIONS][INFO]: 查询捐赠数据成功...")
+            print("[OPERATIONS][INFO]: 查询本周捐赠数据成功...")
         else:
-            print("[OPERATIONS][ERROR]: 查询捐赠数据失败,第二次尝试...")
+            print("[OPERATIONS][ERROR]: 查询本周捐赠数据失败,第二次尝试...")
             flag = fetch.queryDonation(filter)
             if flag:
-                print("[OPERATIONS][INFO]: 第二次查询捐赠数据成功...")
+                print("[OPERATIONS][INFO]: 第二次查询本周捐赠数据成功...")
             else:
-                print("[OPERATIONS][ERROR]: 第二次查询捐赠数据失败,不再重新尝试,请进行检查更新后手动重试")
+                print("[OPERATIONS][ERROR]: 第二次查询本周捐赠数据失败,不再重新尝试,请进行检查更新后手动重试")
     elif queryActivity() == choice:
         filter = menu.filterOrNot()
         flag = fetch.queryActivity(filter)
         if flag:
-            print("[OPERATIONS][INFO]: 查询活跃数据成功...")
+            print("[OPERATIONS][INFO]: 查询当前活跃数据成功...")
         else:
-            print("[OPERATIONS][ERROR]: 查询活跃数据失败,第二次尝试...")
+            print("[OPERATIONS][ERROR]: 查询当前活跃数据失败,第二次尝试...")
             flag = fetch.queryActivity(filter)
             if flag:
-                print("[OPERATIONS][INFO]: 第二次查询活跃数据成功...")
+                print("[OPERATIONS][INFO]: 第二次查询当前活跃数据成功...")
             else:
-                print("[OPERATIONS][ERROR]: 第二次查询活跃数据失败,不再重新尝试,请进行检查更新后手动重试")
+                print("[OPERATIONS][ERROR]: 第二次查询当前活跃数据失败,不再重新尝试,请进行检查更新后手动重试")
     elif queryLastMonthWar() == choice:
         filter = menu.filterOrNot()
         flag = fetch.queryLastMonthWar(filter)
         if flag:
-            print("[OPERATIONS][INFO]: 查询上月战争数据成功...")
+            print("[OPERATIONS][INFO]: 查询上月部落战贡献数据成功...")
         else:
-            print("[OPERATIONS][ERROR]: 查询上月战争数据失败,第二次尝试...")
+            print("[OPERATIONS][ERROR]: 查询上月部落战贡献数据失败,第二次尝试...")
             flag = fetch.queryLastMonthWar(filter)
             if flag:
-                print("[OPERATIONS][INFO]: 第二次查询上月战争数据成功...")
+                print("[OPERATIONS][INFO]: 第二次查询上月部落战贡献数据成功...")
             else:
-                print("[OPERATIONS][ERROR]: 第二次查询上月战争数据失败,不再重新尝试,请进行检查更新后手动重试")
+                print("[OPERATIONS][ERROR]: 第二次查询上月部落战贡献数据失败,不再重新尝试,请进行检查更新后手动重试")
     elif queryLastMonthDonation() == choice:
         filter = menu.filterOrNot()
         flag = fetch.queryLastMonthDonation(filter)
@@ -156,9 +156,9 @@ def judge(choice):
         filter = menu.filterOrNot()
         flag = fetch.queryAndSort(filter)
         if flag:
-            print("[OPERATIONS][INFO]: 查询上月战争数据成功...")
+            print("[OPERATIONS][INFO]: 查询上月贡献数据成功...")
         else:
-            print("[OPERATIONS][ERROR]: 查询上月战争数据失败,第二次尝试...")
+            print("[OPERATIONS][ERROR]: 查询上月贡献失败,第二次尝试...")
             flag = fetch.queryLastMonthWar(filter)
             if flag:
                 print("[OPERATIONS][INFO]: 第二次查询并排序数据成功...")
@@ -167,14 +167,14 @@ def judge(choice):
     elif queryRecentChange() == choice:
         flag = fetch.queryRecentChange()
         if flag:
-            print("[OPERATIONS][INFO]: 查询最近变动数据成功...")
+            print("[OPERATIONS][INFO]: 查询最近成员变动数据成功...")
         else:
-            print("[OPERATIONS][ERROR]: 查询最近变动数据失败,第二次尝试...")
+            print("[OPERATIONS][ERROR]: 查询最近成员变动数据失败,第二次尝试...")
             flag = fetch.queryRecentChange()
             if flag:
-                print("[OPERATIONS][INFO]: 第二次查询最近变动数据成功...")
+                print("[OPERATIONS][INFO]: 第二次查询最近成员变动数据成功...")
             else:
-                print("[OPERATIONS][ERROR]: 第二次查询最近变动数据失败,不再重新尝试,请进行检查更新后手动重试")
+                print("[OPERATIONS][ERROR]: 第二次查询最近成员变动数据失败,不再重新尝试,请进行检查更新后手动重试")
     elif queryExit() == choice:
         print("[OPERATIONS][INFO]: 退出程序...")
     else :
