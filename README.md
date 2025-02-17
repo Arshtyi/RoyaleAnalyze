@@ -1,4 +1,4 @@
-# 本项目主体已于2025-02-016正式完成所有开发,最后版本V1.1.4:[releases](https://github.com/Arshtyi/RoyaleAnalyze/releases)
+# 本项目主体已于2025-02-16正式完成所有开发,最后版本V1.1.4:[releases](https://github.com/Arshtyi/RoyaleAnalyze/releases)
 
 # 项目介绍
 
