@@ -24,11 +24,10 @@ import src.externs as externs
 import src.urls as urls
 import os
 def creatMenu():
-    print("欢迎使用RoyaleAnalyze-V1.1.4(By Arshtyi)！")
-    print(f"本项目地址:'{urls.url_repository}'")
+    print("欢迎使用RoyaleAnalyze-V1.1.5(By Arshtyi)！")
+    print(f"本项目地址:'{urls.url_repository}',此外,本项目于2025/2/18结束所有开发与维护,后续开发工作见'{urls.url_repository_2}'")
     print(f"更新日志:'{urls.url_changelog}'")
     print(f"使用说明:'{urls.url_readme}'或'{externs.readme_path}'")
-    print(f"请确保目录结构完整且'{externs.inputClansInformationLocation}'文件无误")
     input("键入任意内容以继续...\n")
     print("当前操作对象;")
     for clan in infor.clans:
@@ -43,21 +42,21 @@ def getChoice():
     return choice
 
 def weight():
-    print(f"是否修改权重？(y/n)当前值;贡献——{externs.weightContribution},捐赠——{externs.weightDonation}")
+    print(f"是否修改权重？(y/n)当前值;贡献--{externs.weightContribution},捐赠--{externs.weightDonation}")
     weight_change = input().lower()
     if weight_change == "n" or weight == "no":
-        print(f"[MENU][INFO]: 未修改权重,启用默认值;贡献——{externs.weightContribution},捐赠——{externs.weightDonation}")
+        print(f"[MENU][INFO]: 未修改权重,启用默认值;贡献--{externs.weightContribution},捐赠--{externs.weightDonation}")
     elif weight_change == "y" or weight_change == "yes":
         print("请输入贡献权重(0-1);")
         pre_weight = (float)(input())
         if pre_weight < 0 or pre_weight > 1:
-            print(f"[MENU][INFO]: 输入错误！启用默认值;贡献——{externs.weightContribution},捐赠——{externs.weightDonation}")
+            print(f"[MENU][INFO]: 输入错误！启用默认值;贡献--{externs.weightContribution},捐赠--{externs.weightDonation}")
         else:
             externs.weightContribution = pre_weight
             externs.weightDonation = 1 - pre_weight
     else:
-        print("[MENU][INFO]: 输入错误！启用默认值;贡献——{externs.weightContribution},捐赠——{externs.weightDonation}")
-    print(f"[MENU][INFO]: 权重设置完成;贡献——{externs.weightContribution},捐赠——{externs.weightDonation}")
+        print("[MENU][INFO]: 输入错误！启用默认值;贡献--{externs.weightContribution},捐赠--{externs.weightDonation}")
+    print(f"[MENU][INFO]: 权重设置完成;贡献--{externs.weightContribution},捐赠--{externs.weightDonation}")
 
 def filterOrNot():
     if len(infor.players) == 0:
