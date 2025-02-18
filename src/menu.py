@@ -42,21 +42,21 @@ def getChoice():
     return choice
 
 def weight():
-    print(f"是否修改权重？(y/n)当前值;贡献——{externs.weightContribution},捐赠——{externs.weightDonation}")
+    print(f"是否修改权重？(y/n)当前值;贡献--{externs.weightContribution},捐赠--{externs.weightDonation}")
     weight_change = input().lower()
     if weight_change == "n" or weight == "no":
-        print(f"[MENU][INFO]: 未修改权重,启用默认值;贡献——{externs.weightContribution},捐赠——{externs.weightDonation}")
+        print(f"[MENU][INFO]: 未修改权重,启用默认值;贡献--{externs.weightContribution},捐赠--{externs.weightDonation}")
     elif weight_change == "y" or weight_change == "yes":
         print("请输入贡献权重(0-1);")
         pre_weight = (float)(input())
         if pre_weight < 0 or pre_weight > 1:
-            print(f"[MENU][INFO]: 输入错误！启用默认值;贡献——{externs.weightContribution},捐赠——{externs.weightDonation}")
+            print(f"[MENU][INFO]: 输入错误！启用默认值;贡献--{externs.weightContribution},捐赠--{externs.weightDonation}")
         else:
             externs.weightContribution = pre_weight
             externs.weightDonation = 1 - pre_weight
     else:
-        print("[MENU][INFO]: 输入错误！启用默认值;贡献——{externs.weightContribution},捐赠——{externs.weightDonation}")
-    print(f"[MENU][INFO]: 权重设置完成;贡献——{externs.weightContribution},捐赠——{externs.weightDonation}")
+        print("[MENU][INFO]: 输入错误！启用默认值;贡献--{externs.weightContribution},捐赠--{externs.weightDonation}")
+    print(f"[MENU][INFO]: 权重设置完成;贡献--{externs.weightContribution},捐赠--{externs.weightDonation}")
 
 def filterOrNot():
     if len(infor.players) == 0:
