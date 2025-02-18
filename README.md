@@ -1,8 +1,8 @@
-# 本项目主体已于2025-02-16正式完成所有开发,最后版本V1.1.4:[releases](https://github.com/Arshtyi/RoyaleAnalyze/releases)
+# 本项目已于2025-02-18正式完成所有开发,最后版本[V1.1.5](https://github.com/Arshtyi/RoyaleAnalyze/releases).后续开发见[RoyaleAnalyze2.0](https://github.com/Arshtyi/RoyaleAnalyze-2.0)
 
 # 项目介绍
 
-项目采用_python3.12.7_开发,本质上只是个小爬虫,其替代品正在开发中(暂未开源).
+项目采用_python3.12.7_开发,本质上只是个小爬虫,其替代品[RoyaleAnalyze2.0](https://github.com/Arshtyi/RoyaleAnalyze-2.0)正在开发中(暂未开源).
 
 ## 项目目的
 
@@ -47,4 +47,4 @@ QQ:640006128 或 3842004484
 email:8956230x@gmail.com或上述qq邮箱
 # 我们的部落QQ群
 唯一群聊:939160021
-# 截至2025-02-16,本项目主体已经完成全部开发工作,本项目也暂停新功能开发,日后仅会做一些BUG的修复工作
+# 截至2025-02-18,本项目结束所有开发与维护.后续开发见[RoyaleAnalyze2.0](https://github.com/Arshtyi/RoyaleAnalyze-2.0)

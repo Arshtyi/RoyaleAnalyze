@@ -39,6 +39,7 @@ original urls
 """
 url_0 = "https://royaleapi.com/" #初始依赖url
 url_repository = "https://github.com/Arshtyi/RoyaleAnalyze" #项目地址
+url_repository_2 = "https://github.com/Arshtyi/RoyaleAnalyze-2.0" #项目地址
 """
 token urls
 """

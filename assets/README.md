@@ -1,12 +1,14 @@
-# <center> RoyaleAnalyze-V1.1.4 使用说明 </center>
+# <center> RoyaleAnalyze-V1.1.5 使用说明 </center>
 
 [TOC]
 
 
 
+# <center> 本项目于2025/2/18正式结束所有开发与维护,后续开发见[RoyaleAnalyze2.0](https://github.com/Arshtyi/RoyaleAnalyze-2.0)</center>
+
 # <center> 项目介绍 </center>
 
-本项目[RoyaleAnalyze](https://github.com/Arshtyi/RoyaleAnalyze)是依赖于[RoyaleAPI](https://royaleapi.com/)的皇室战争信息收集分析项目,项目截至本文更新至V1.1.4版本(见[CHANGELOG.md](https://github.com/Arshtyi/RoyaleAnalyze/blob/main/CHANGELOG.md)),因为项目主体已开发结束,故于2025/2/16正式暂停功能开发与更新(维护工作仍然继续),发行版见[releases](https://github.com/Arshtyi/RoyaleAnalyze/releases).
+本项目[RoyaleAnalyze](https://github.com/Arshtyi/RoyaleAnalyze)是依赖于[RoyaleAPI](https://royaleapi.com/)的皇室战争信息收集分析项目,项目截至本文更新至V1.1.5版本(见[CHANGELOG.md](https://github.com/Arshtyi/RoyaleAnalyze/blob/main/CHANGELOG.md)),项目于2025/2/18正式结束开发与维护,后续开发见[RoyaleAnalyze2.0](https://github.com/Arshtyi/RoyaleAnalyze-2.0).
 
 # <center> 项目依赖与环境 </center>
 
@@ -283,7 +285,7 @@
 >
 > Q:未来开放方向？
 >
-> A:本项目主体已于2025/2/16完成所有功能开发,后续本项目会再进行一段时间的BUG修复,之后停止维护,转而开发另一个替代项目(暂未开源).
+> A:本项目主体已于2025/2/18完成所有功能开发,后续本项目会再进行一段时间的BUG修复,之后停止维护,转而开发另一个替代项目(暂未开源).
 
 
 
