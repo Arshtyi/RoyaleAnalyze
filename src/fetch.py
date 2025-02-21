@@ -100,6 +100,9 @@ def updateInformation():
             if clan not in externs.clans:
                 fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
                 ws.cell(row = row,column = 1).fill = fill
+            else :
+                fill = PatternFill(fill_type='solid', fgColor='00FF00')
+                ws.cell(row=row, column=1).fill = fill
             ws.cell(row = row,column = 2).value = player_name
             print(f"[FETCH][INFO]: <{player_name}>更新完成！")
         wb.save(filename = externs.inputGroupPlayerInformationLocation)
