@@ -101,7 +101,7 @@ def updateInformation():
                 fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
                 ws.cell(row = row,column = 1).fill = fill
             else :
-                fill = PatternFill(fill_type='solid', fgColor='00FF00')
+                fill = PatternFill(fill_type=None)
                 ws.cell(row=row, column=1).fill = fill
             ws.cell(row = row,column = 2).value = player_name
             print(f"[FETCH][INFO]: <{player_name}>更新完成！")
