@@ -28,6 +28,7 @@ if __name__ == '__main__':
     import src.operations as operations
     import src.formal as formal
     import src.externs as externs
+    menu.welcome()
     while True:
         menu.creatMenu()
         choice = menu.getChoice()
