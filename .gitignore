@@ -26,3 +26,4 @@ data/output/Information.xlsx
 
 #Nuitka
 nuitka-crash-report.xml
+Compiler.txt
