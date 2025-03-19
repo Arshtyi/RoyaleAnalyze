@@ -16,29 +16,40 @@ RoyaleAnalyze 主模块
 """
 import src.errorcheck as errorcheck
 import sys
+import src.log as log
+import src.externs as externs
 if __name__ == '__main__':
-    print("[MAIN][INFO]: RoyaleAnalyze 正在启动...")
-    print("[MAIN][INFO]: 开始检查和修复环境...")
+    log.log("TRACE", "MAIN", "RoyaleAnalyze 正在启动...", )
+    log.log("TRACE", "MAIN", "开始检查和修复环境...", )
     if errorcheck.pathCheckAndFix() == False:
-        print("[MAIN][ERROR]: 你的环境存在问题,请检查相关文件夹是否存在以及是否允许访问后重新启动程序")
-        print("[MAIN][ERROR]: 程序因为环境不完整且无法修复而终止...")
+        log.log("CRITICAL", "MAIN", "程序因为环墨不完整且无法修复而终止...", )
+        log.log("TRACE", "MAIN", "正在终止程序...", )
         sys.exit()
-    print("[MAIN][INFO]: 环境检查和修复通过...启动程序...")
+    log.log("TRACE", "MAIN", "环境检查和修复通过...启动程序...",externs.log_path )
+    log.log("TRACE", "MAIN", "环境检查和修复通过...启动程序...", )
+    # 以上是环境检查和修复
     import src.menu as menu
     import src.operations as operations
     import src.formal as formal
     import src.externs as externs
     menu.welcome()
+    # 欢迎界面
     while True:
         menu.creatMenu()
+        # 菜单，获取选择，判断
         choice = menu.getChoice()
         if operations.queryExit() == choice:
             break
         else:
             operations.judge(choice)
-    print("[MAIN][INFO]: 准备进行格式化...")
+    log.log("TRACE", "MAIN", "准备进行格式化...", )
+    log.log("TRACE", "MAIN", "准备进行格式化...", externs.log_path)
     formal.processExcel(externs.outputFileLocation)
-    print("[MAIN][INFO]: 格式化完成...")
+    log.log("TRACE", "MAIN", "格式化完成...", )
+    log.log("TRACE", "MAIN", "格式化完成...", externs.log_path)
     menu.faultsDisplay()
-    input("[MAIN][INFO]: 程序结束运行,按任意键退出...\n")
+    # 展示未成功操作
+    input("程序结束运行,按任意键退出...\n")
+    log.log("TRACE", "MAIN", "程序已正常结束.", externs.log_path)
+    # 退出
     sys.exit()

@@ -26,4 +26,12 @@ data/output/Information.xlsx
 
 #Nuitka
 nuitka-crash-report.xml
-Compiler.txt
+compiler.txt
+
+## pycharm
+.idea/
+#temp
+temp/
+
+# pdfs
+*.pdf

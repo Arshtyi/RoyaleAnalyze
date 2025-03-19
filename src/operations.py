@@ -27,6 +27,7 @@ import src.fetch as fetch
 import constant
 import src.menu as menu
 import src.externs as externs
+import src.log as log
 constant
 def updateInformation():
     return -1
@@ -72,115 +73,154 @@ def judge(choice):
     if updateInformation() == choice:
         flag = fetch.updateInformation()
         if flag:
-            print("[OPERATIONS][INFO]: 更新数据成功...")
+            log.log("INFO", "OPERATIONS", "更新数据成功...", externs.log_path)
+            log.log("INFO", "OPERATIONS", "更新数据成功...", )
         else:
-            print("[OPERATIONS][ERROR]: 更新数据失败,第二次尝试...")
+            log.log("ERROR", "OPERATIONS", "更新数据失败,第二次尝试...", externs.log_path)
+            log.log("ERROR", "OPERATIONS", "更新数据失败,第二次尝试...", )
             flag = fetch.updateInformation()
             if flag:
-                print("[OPERATIONS][INFO]: 第二次更新数据成功...")
+                log.log("INFO", "OPERATIONS", "第二次更新数据成功...", )
+                log.log("INFO", "OPERATIONS", "第二次更新数据成功...", externs.log_path)
             else:
-                print("[OPERATIONS][ERROR]: 第二次更新数据失败...不再重新尝试,请进行检查更新后手动重试")
+                log.log("ERROR", "OPERATIONS", "第二次更新数据失败...不再重新尝试,请进行检查更新后手动重试", )
+                log.log("ERROR", "OPERATIONS", "第二次更新数据失败...不再重新尝试,请进行检查更新后手动重试", externs.log_path)
     elif deleteAll() == choice:
         flag = fetch.deleteAll()
         if flag:
-            print("[OPERATIONS][INFO]: 删除输出文件成功...")
+            log.log("INFO", "OPERATIONS", "删除输出文件成功...", )
+            log.log("INFO", "OPERATIONS", "删除输出文件成功...", externs.log_path)
         else:
-            print("[OPERATIONS][ERROR]: 删除输出文件失败,第二次尝试...")
+            log.log("ERROR", "OPERATIONS", "删除输出文件失败,第二次尝试...", )
+            log.log("ERROR", "OPERATIONS", "删除输出文件失败,第二次尝试...", externs.log_path)
             flag = fetch.deleteAll()
             if flag:
-                print("[OPERATIONS][INFO]: 第二次删除输出文件成功...")
+                log.log("INFO", "OPERATIONS", "第二次删除输出文件成功...", )
+                log.log("INFO", "OPERATIONS", "第二次删除输出文件成功...", externs.log_path)
             else:
-                print("[OPERATIONS][ERROR]: 第二次删除输出文件失败...不再重新尝试,请进行检查更新后手动重试")
+                log.log("ERROR", "OPERATIONS", "第二次删除输出文件失败...不再重新尝试,请进行检查更新后手动重试", )
+                log.log("ERROR", "OPERATIONS", "第二次删除输出文件失败...不再重新尝试,请进行检查更新后手动重试", externs.log_path)
     elif queryContribution() == choice:
         filter = menu.filterOrNot()
         flag = fetch.queryContribution(filter)
         if flag:
-            print("[OPERATIONS][INFO]: 查询本周贡献数据成功...")
+            log.log("INFO", "OPERATIONS", "查询本周贡献数据成功...", )
+            log.log("INFO", "OPERATIONS", "查询本周贡献数据成功...", externs.log_path)
         else:
-            print("[OPERATIONS][ERROR]: 查询本周贡献数据失败,第二次尝试...")
+            log.log("ERROR", "OPERATIONS", "查询本周贡献数据失败,第二次尝试...", )
+            log.log("ERROR", "OPERATIONS", "查询本周贡献数据失败,第二次尝试...", externs.log_path)
             flag = fetch.queryContribution(filter)
             if flag:
-                print("[OPERATIONS][INFO]: 第二次查询本周贡献数据成功...")
+                log.log("INFO", "OPERATIONS", "第二次查询本周贡献数据成功...", )
+                log.log("INFO", "OPERATIONS", "第二次查询本周贡献数据成功...", externs.log_path)
             else:
-                print("[OPERATIONS][ERROR]: 第二次查询本周贡献数据失败,不再重新尝试,请进行检查更新后手动重试")
+                log.log("ERROR", "OPERATIONS", "第二次查询本周贡献数据失败,不再重新尝试,请进行检查更新后手动重试", )
+                log.log("ERROR", "OPERATIONS", "第二次查询本周贡献数据失败,不再重新尝试,请进行检查更新后手动重试", externs.log_path)
     elif queryDonation() == choice:
         filter = menu.filterOrNot()
         flag = fetch.queryDonation(filter)
         if flag:
-            print("[OPERATIONS][INFO]: 查询本周捐赠数据成功...")
+            log.log("INFO", "OPERATIONS", "查询本周捐赠数据成功...", )
+            log.log("INFO", "OPERATIONS", "查询本周捐赠数据成功...", externs.log_path)
         else:
-            print("[OPERATIONS][ERROR]: 查询本周捐赠数据失败,第二次尝试...")
+            log.log("ERROR", "OPERATIONS", "查询本周捐赠数据失败,第二次尝试...")
+            log.log("ERROR", "OPERATIONS", "查询本周捐赠数据失败,第二次尝试...", externs.log_path)
             flag = fetch.queryDonation(filter)
             if flag:
-                print("[OPERATIONS][INFO]: 第二次查询本周捐赠数据成功...")
+                log.log("INFO", "OPERATIONS", "第二次查询本周捐赠数据成功...", )
+                log.log("INFO", "OPERATIONS", "第二次查询本周捐赠数据成功...", externs.log_path)
             else:
-                print("[OPERATIONS][ERROR]: 第二次查询本周捐赠数据失败,不再重新尝试,请进行检查更新后手动重试")
+                log.log("ERROR", "OPERATIONS", "第二次查询本周捐赠数据失败,不再重新尝试,请进行检查更新后手动重试", )
+                log.log("ERROR", "OPERATIONS", "第二次查询本周捐赠数据失败,不再重新尝试,请进行检查更新后手动重试", externs.log_path)
     elif queryActivity() == choice:
         filter = menu.filterOrNot()
         flag = fetch.queryActivity(filter)
         if flag:
-            print("[OPERATIONS][INFO]: 查询当前活跃数据成功...")
+            log.log("INFO", "OPERATIONS", "查询当前活跃数据成功...", )
+            log.log("INFO", "OPERATIONS", "查询当前活跃数据成功...", externs.log_path)
         else:
-            print("[OPERATIONS][ERROR]: 查询当前活跃数据失败,第二次尝试...")
+            log.log("ERROR", "OPERATIONS", "查询当前活跃数据失败,第二次尝试...", )
+            log.log("ERROR", "OPERATIONS", "查询当前活跃数据失败,第二次尝试...", externs.log_path)
             flag = fetch.queryActivity(filter)
             if flag:
-                print("[OPERATIONS][INFO]: 第二次查询当前活跃数据成功...")
+                log.log("INFO", "OPERATIONS", "第二次查询当前活跃数据成功...", )
+                log.log("INFO", "OPERATIONS", "第二次查询当前活跃数据成功...", externs.log_path)
             else:
-                print("[OPERATIONS][ERROR]: 第二次查询当前活跃数据失败,不再重新尝试,请进行检查更新后手动重试")
+                log.log("ERROR", "OPERATIONS", "第二次查询当前活跃数据失败,不再重新尝试,请进行检查更新后手动重试", )
+                log.log("ERROR", "OPERATIONS", "第二次查询当前活跃数据失败,不再重新尝试,请进行检查更新后手动重试", externs.log_path)
     elif queryLastMonthWar() == choice:
         filter = menu.filterOrNot()
         flag = fetch.queryLastMonthWar(filter)
         if flag:
-            print("[OPERATIONS][INFO]: 查询上月部落战贡献数据成功...")
+            log.log("INFO", "OPERATIONS", "查询上月部落战贡献数据成功...", )
+            log.log("INFO", "OPERATIONS", "查询上月部落战贡献数据成功...", externs.log_path)
         else:
-            print("[OPERATIONS][ERROR]: 查询上月部落战贡献数据失败,第二次尝试...")
+            log.log("ERROR", "OPERATIONS", "查询上月部落战贡献数据失败,第二次尝试...", )
+            log.log("ERROR", "OPERATIONS", "查询上月部落战贡献数据失败,第二次尝试...", externs.log_path)
             flag = fetch.queryLastMonthWar(filter)
             if flag:
-                print("[OPERATIONS][INFO]: 第二次查询上月部落战贡献数据成功...")
+                log.log("INFO", "OPERATIONS", "第二次查询上月部落战贡献数据成功...", )
+                log.log("INFO", "OPERATIONS", "第二次查询上月部落战贡献数据成功...", externs.log_path)
             else:
-                print("[OPERATIONS][ERROR]: 第二次查询上月部落战贡献数据失败,不再重新尝试,请进行检查更新后手动重试")
+                log.log("ERROR", "OPERATIONS", "第二次查询上月部落战贡献数据失败,不再重新尝试,请进行检查更新后手动重试", )
+                log.log("ERROR", "OPERATIONS", "第二次查询上月部落战贡献数据失败,不再重新尝试,请进行检查更新后手动重试", externs.log_path)
     elif queryLastMonthDonation() == choice:
         filter = menu.filterOrNot()
         flag = fetch.queryLastMonthDonation(filter)
         if flag:
-            print("[OPERATIONS][INFO]: 查询上月捐赠数据成功...")
+            log.log("INFO", "OPERATIONS", "查询上月捐赠数据成功...", )
+            log.log("INFO", "OPERATIONS", "查询上月捐赠数据成功...", externs.log_path)
         else:
-            print("[OPERATIONS][ERROR]: 查询上月捐赠数据失败,第二次尝试...")
+            log.log("ERROR", "OPERATIONS", "查询上月捐赠数据失败,第二次尝试...", )
+            log.log("ERROR", "OPERATIONS", "查询上月捐赠数据失败,第二次尝试...", externs.log_path)
             flag = fetch.queryLastMonthDonation(filter)
             if flag:
-                print("[OPERATIONS][INFO]: 第二次查询上月捐赠数据成功...")
+                log.log("INFO", "OPERATIONS", "第二次查询上月捐赠数据成功...", )
+                log.log("INFO", "OPERATIONS", "第二次查询上月捐赠数据成功...", externs.log_path)
             else:
-                print("[OPERATIONS][ERROR]: 第二次查询上月捐赠数据失败,不再重新尝试,请进行检查更新后手动重试")
+                log.log("ERROR", "OPERATIONS", "第二次查询上月捐赠数据失败,不再重新尝试,请进行检查更新后手动重试", )
+                log.log("ERROR", "OPERATIONS", "第二次查询上月捐赠数据失败,不再重新尝试,请进行检查更新后手动重试", externs.log_path)
     elif queryAndSort() == choice:
         menu.weight()
         filter = menu.filterOrNot()
         flag = fetch.queryAndSort(filter)
         if flag:
-            print("[OPERATIONS][INFO]: 查询上月贡献数据成功...")
+            log.log("INFO", "OPERATIONS", "查询并排序数据成功...", )
+            log.log("INFO", "OPERATIONS", "查询上月贡献数据成功...", externs.log_path)
         else:
-            print("[OPERATIONS][ERROR]: 查询上月贡献失败,第二次尝试...")
+            log.log("ERROR", "OPERATIONS", "查询并排序数据失败,第二次尝试...", )
+            log.log("ERROR", "OPERATIONS", "查询上月贡献失败,第二次尝试...", externs.log_path)
             flag = fetch.queryLastMonthWar(filter)
             if flag:
-                print("[OPERATIONS][INFO]: 第二次查询并排序数据成功...")
+                log.log("INFO", "OPERATIONS", "第二次查询并排序数据成功...", )
+                log.log("INFO", "OPERATIONS", "第二次查询并排序数据成功...", externs.log_path)
             else:
-                print("[OPERATIONS][ERROR]: 第二次查询并排序数据失败,不再重新尝试,请进行检查更新后手动重试")
+                log.log("ERROR", "OPERATIONS", "第二次查询并排序数据失败,不再重新尝试,请进行检查更新后手动重试", )
+                log.log("ERROR", "OPERATIONS", "第二次查询并排序数据失败,不再重新尝试,请进行检查更新后手动重试", externs.log_path)
     elif queryRecentChange() == choice:
         flag = fetch.queryRecentChange()
         if flag:
-            print("[OPERATIONS][INFO]: 查询最近成员变动数据成功...")
+            log.log("INFO", "OPERATIONS", "查询最近成员变动数据成功...", )
+            log.log("INFO", "OPERATIONS", "查询最近成员变动数据成功...", externs.log_path)
         else:
-            print("[OPERATIONS][ERROR]: 查询最近成员变动数据失败,第二次尝试...")
+            log.log("ERROR", "OPERATIONS", "查询最近成员变动数据失败,第二次尝试...", )
+            log.log("ERROR", "OPERATIONS", "查询最近成员变动数据失败,第二次尝试...", externs.log_path)
             flag = fetch.queryRecentChange()
             if flag:
-                print("[OPERATIONS][INFO]: 第二次查询最近成员变动数据成功...")
+                log.log("INFO", "OPERATIONS", "第二次查询最近成员变动数据成功...", )
+                log.log("INFO", "OPERATIONS", "第二次查询最近成员变动数据成功...", externs.log_path)
             else:
-                print("[OPERATIONS][ERROR]: 第二次查询最近成员变动数据失败,不再重新尝试,请进行检查更新后手动重试")
+                log.log("ERROR", "OPERATIONS", "第二次查询最近成员变动数据失败,不再重新尝试,请进行检查更新后手动重试", )
+                log.log("ERROR", "OPERATIONS", "第二次查询最近成员变动数据失败,不再重新尝试,请进行检查更新后手动重试", externs.log_path)
     elif queryExit() == choice:
-        print("[OPERATIONS][INFO]: 退出程序...")
+        log.log("INFO", "OPERATIONS", "退出程序...", )
+        log.log("INFO", "OPERATIONS", "退出程序...", externs.log_path)
     else :
         print("[OPERATIONS][ERROR]: 未定义的操作值,请重新输入")
+        log.log("ERROR", "OPERATIONS", "未定义的操作值", externs.FaultsLog_path)
     if flag == False:
-        print(f"[OPERATIONS][ERROR]: 此次操作失败,该条信息记录到'{externs.FaultsLog_path}'")
+        log.log("ERROR", "OPERATIONS", f"此次操作失败,该条信息记录到'{externs.FaultsLog_path}'", )
+        log.log("ERROR", "OPERATIONS", f"此次操作失败,该条信息记录到'{externs.FaultsLog_path}'", externs.log_path)
         with open(externs.FaultsLog_path, "a") as f:
             f.write(f"{choice} ")
             f.close()

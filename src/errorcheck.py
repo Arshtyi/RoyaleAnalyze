@@ -16,74 +16,111 @@ errorcheck 模块
 """
 import src.path as path
 import os
+import src.log as log
+import src.externs as externs
 def pathCheckAndFix():
     flag = True
-    if os.path.exists(path.pathConcatenationForClansInformationTable()):
-        print("[ERRORCHECK][INFO]: 部落信息检查正确...")
+    if os.path.exists(path.log_path()):
+        log.log("INFO", "ERRORCHECK", "程序日志路径检查正确...", )
+        os.remove(path.log_path())
+        log.log("INFO", "ERRORCHECK", "程序日志文件删除成功...", )
     else:
-        print(f"[ERRORCHECK][ERROR]: 部落信息检查失败,路径应为:'{path.pathConcatenationForClansInformationTable()}',这将导致程序无法正常运行")
-        print("[ERRORCHECK][ERROR]: 基于上述错误,准备终止程序...")
+        log.log("ERROR", "ERRORCHECK", f"程序日志路径检查失败,路径应为:'{path.log_path()}'", )
+        log.log("INFO", "ERRORCHECK", "尝试创建程序日志路径...", )
+        try:
+            os.makedirs(path.log_dir_path())
+            with open(path.log_path(), 'w') as f:
+                pass
+            log.log("INFO", "ERRORCHECK", f"程序日志路径:'{path.log_path()}'创建成功...", externs.log_path)
+        except Exception as e:
+            log.log("CRITICAL", "ERRORCHECK", f"创建程序日志路径失败,这将导致程序无法正常运行", )
+            log.log("CRITICAL", "ERRORCHECK", "基于上述错误,准备终止程序...", )
+            log.log("CRITICAL", "ERRORCHECK", f"请在终止程序后尝试手动创建路径:'{path.log_path()}'", )
+            flag = False
+            return flag
+    if os.path.exists(path.pathConcatenationForClansInformationTable()):
+        log.log("INFO", "ERRORCHECK", "部落信息检查正确...", externs.log_path)
+    else:
+        log.log("CRITICAL", "ERRORCHECK", f"部落信息检查失败,路径应为:'{path.pathConcatenationForClansInformationTable()}',这将导致程序无法正常运行...", externs.log_path)
+        log.log("CRITICAL", "ERRORCHECK", f"部落信息检查失败,路径应为:'{path.pathConcatenationForClansInformationTable()}',这将导致程序无法正常运行...", )
+        log.log("CRITICAL", "ERRORCHECK", "基于上述错误,准备终止程序...", externs.log_path)
+        log.log("CRITICAL", "ERRORCHECK", "基于上述错误,准备终止程序...", )
         flag = False
         return flag
     if os.path.exists(path.pathConcatenationForGroupPlayerInformationTable()):
-        print("[ERRORCHECK][INFO]: 玩家信息检查正确...")
+        log.log("INFO", "ERRORCHECK", "玩家信息检查正确...", externs.log_path)
     else:
-        print(f"[ERRORCHECK][ERROR]: 玩家信息检查失败,路径应为:'{path.pathConcatenationForGroupPlayerInformationTable()}',尽管这不会使得程序无法正常运行,但你将无法对玩家进行筛选")
+        log.log("WARNING", "ERRORCHECK", f"玩家信息检查失败,路径应为:'{path.pathConcatenationForGroupPlayerInformationTable()}',尽管这不会使得程序无法正常运行,但你将无法对玩家进行筛选", externs.log_path)
+        log.log("WARNING", "ERRORCHECK", f"玩家信息检查失败,路径应为:'{path.pathConcatenationForGroupPlayerInformationTable()}',尽管这不会使得程序无法正常运行,但你将无法对玩家进行筛选", )
     if os.path.exists(path.pathConcatenationForOutputTableDir()):
-        print("[ERRORCHECK][INFO]: 输出路径检查正确...")
+        log.log("INFO", "ERRORCHECK", "输出路径检查正确...", externs.log_path)
     else:
-        print(f"[ERRORCHECK][ERROR]: 输出路径检查失败,路径应为:'{path.pathConcatenationForOutputTableDir()}'")
-        print("[ERRORCHECK][INFO]: 尝试创建输出路径...")
+        log.log("WARNING", "ERRORCHECK", f"输出路径检查失败,路径应为:'{path.pathConcatenationForOutputTableDir()}',尝试创建输出路径...", externs.log_path)
         try:
             os.makedirs(path.pathConcatenationForOutputTableDir())
-            print(f"[ERRORCHECK][INFO]: 输出路径:'{path.pathConcatenationForOutputTableDir()}'创建成功...")
+            log.log("INFO", "ERRORCHECK", f"输出路径:'{path.pathConcatenationForOutputTableDir()}'创建成功...", externs.log_path)
         except Exception as e:
-            print(f"[ERRORCHECK][ERROR]: 创建输出路径失败,这将导致程序无法正常运行")
-            print("[ERRORCHECK][ERROR]: 基于上述错误,准备终止程序...")
-            print(f"[ERRORCHECK][ERROR]: 请在终止程序后尝试手动创建路径'{path.pathConcatenationForOutputTableDir()}'")
+            log.log("CRITICAL", "ERRORCHECK", f"创建输出路径失败,这将导致程序无法正常运行", externs.log_path)
+            log.log("CRITICAL", "ERRORCHECK", f"创建输出路径失败,这将导致程序无法正常运行", )
+            log.log("CRITICAL", "ERRORCHECK", "基于上述错误,准备终止程序...", externs.log_path)
+            log.log("CRITICAL", "ERRORCHECK", "基于上述错误,准备终止程序...", )
+            log.log("CRITICAL", "ERRORCHECK", f"请在终止程序后尝试手动创建路径'{path.pathConcatenationForOutputTableDir()}'", externs.log_path)
+            log.log("CRITICAL", "ERRORCHECK", f"请在终止程序后尝试手动创建路径'{path.pathConcatenationForOutputTableDir()}'", )
             flag = False
             return flag
+
     if os.path.exists(path.Contributionslog_path()):
-        print("[ERRORCHECK][INFO]: Contributions日志路径检查正确...")
+        log.log("INFO", "ERRORCHECK", "Contributions日志路径检查正确...", externs.log_path)
     else:
-        print(f"[ERRORCHECK][ERROR]: Contributions日志路径检查失败,路径应为:'{path.Contributionslog_path()}'")
-        print("[ERRORCHECK][INFO]: 尝试创建Contributions日志路径...")
+        log.log("ERROR", "ERRORCHECK", f"Contributions日志路径检查失败,路径应为:'{path.Contributionslog_path()}'", externs.log_path)
+        log.log("INFO", "ERRORCHECK", "尝试创建Contributions日志路径...", externs.log_path)
         try:
             os.makedirs(path.Contributionslog_path())
-            print(f"[ERRORCHECK][INFO]: Contributions日志路径:'{path.Contributionslog_path()}'创建成功...")
+            log.log("INFO", "ERRORCHECK", f"Contributions日志路径:'{path.Contributionslog_path()}'创建成功...", externs.log_path)
         except Exception as e:
-            print(f"[ERRORCHECK][ERROR]: 创建Contributions日志路径失败,这将导致程序无法正常运行")
-            print("[ERRORCHECK][ERROR]: 基于上述错误,准备终止程序...")
-            print(f"[ERRORCHECK][ERROR]: 请在终止程序后尝试手动创建路径:'{path.Contributionslog_path()}'")
+            log.log("CRITICAL", "ERRORCHECK", f"创建Contributions日志路径失败,这将导致程序无法正常运行", externs.log_path)
+            log.log("CRITICAL", "ERRORCHECK", f"创建Contributions日志路径失败,这将导致程序无法正常运行", )
+            log.log("CRITICAL", "ERRORCHECK", "基于上述错误,准备终止程序...", externs.log_path)
+            log.log("CRITICAL", "ERRORCHECK", "基于上述错误,准备终止程序...", )
+            log.log("CRITICAL", "ERRORCHECK", f"请在终止程序后尝试手动创建路径:'{path.Contributionslog_path()}'", externs.log_path)
+            log.log("CRITICAL", "ERRORCHECK", f"请在终止程序后尝试手动创建路径:'{path.Contributionslog_path()}'", )
             flag = False
             return flag
     if os.path.exists(path.Donationslog_path()):
-        print("[ERRORCHECK][INFO]: Donations日志路径检查正确...")
+        log.log("INFO", "ERRORCHECK", "Donations日志路径检查正确...", externs.log_path)
     else:
-        print(f"[ERRORCHECK][ERROR]: Donations日志路径检查失败,路径应为:'{path.Donationslog_path()}'")
-        print("[ERRORCHECK][INFO]: 尝试创建Donations日志路径...")
+        log.log("ERROR", "ERRORCHECK", f"Donations日志路径检查失败,路径应为:'{path.Donationslog_path()}'", externs.log_path)
+        log.log("INFO", "ERRORCHECK", "尝试创建Donations日志路径...", externs.log_path)
         try:
             os.makedirs(path.Donationslog_path())
-            print(f"[ERRORCHECK][INFO]: Donations日志路径:'{path.Donationslog_path()}'创建成功...")
+            log.log("INFO", "ERRORCHECK", f"Donations日志路径:'{path.Donationslog_path()}'创建成功...", externs.log_path)
         except Exception as e:
-            print(f"[ERRORCHECK][ERROR]: 创建Donations日志路径失败,这将导致程序无法正常运行")
-            print("[ERRORCHECK][ERROR]: 基于上述错误,准备终止程序...")
-            print(f"[ERRORCHECK][ERROR]: 请在终止程序后尝试手动创建路径:'{path.Donationslog_path()}'")
+            log.log("CRITICAL", "ERRORCHECK", f"创建Donations日志路径失败,这将导致程序无法正常运行", externs.log_path)
+            log.log("CRITICAL", "ERRORCHECK", f"创建Donations日志路径失败,这将导致程序无法正常运行", )
+            log.log("CRITICAL", "ERRORCHECK", "基于上述错误,准备终止程序...", externs.log_path)
+            log.log("CRITICAL", "ERRORCHECK", "基于上述错误,准备终止程序...", )
+            log.log("CRITICAL", "ERRORCHECK", f"请在终止程序后尝试手动创建路径:'{path.Donationslog_path()}'", externs.log_path)
+            log.log("CRITICAL", "ERRORCHECK", f"请在终止程序后尝试手动创建路径:'{path.Donationslog_path()}'", )
             flag = False
             return flag
     if os.path.exists(path.FaultsLogDir_path()):
-        print("[ERRORCHECK][INFO]: Faults日志路径检查正确...")
+        log.log("INFO", "ERRORCHECK", "Faults日志路径检查正确...", externs.log_path)
     else:
-        print(f"[ERRORCHECK][ERROR]: Faults日志路径检查失败,路径应为:'{path.FaultsLogDir_path()}'")
-        print("[ERRORCHECK][INFO]: 尝试创建Faults日志路径...")
+        log.log("ERROR", "ERRORCHECK", f"Faults日志路径检查失败,路径应为:'{path.FaultsLogDir_path()}'", externs.log_path)
+        log.log("INFO", "ERRORCHECK", "尝试创建Faults日志路径...", externs.log_path)
         try:
             os.makedirs(path.FaultsLogDir_path())
-            print(f"[ERRORCHECK][INFO]: Faults日志路径:'{path.FaultsLogDir_path()}'创建成功...")
+            log.log("INFO", "ERRORCHECK", f"Faults日志路径:'{path.FaultsLogDir_path()}'创建成功...", externs.log_path)
         except Exception as e:
-            print(f"[ERRORCHECK][ERROR]: 创建Faults日志路径失败,这将导致程序无法正常运行")
-            print("[ERRORCHECK][ERROR]: 基于上述错误,准备终止程序...")
-            print(f"[ERRORCHECK][ERROR]: 请在终止程序后尝试手动创建路径:'{path.FaultsLogDir_path()}'")
+            log.log("CRITICAL", "ERRORCHECK", f"创建Faults日志路径失败,这将导致程序无法正常运行", externs.log_path)
+            log.log("CRITICAL", "ERRORCHECK", f"创建Faults日志路径失败,这将导致程序无法正常运行", )
+            log.log("CRITICAL", "ERRORCHECK", "基于上述错误,准备终止程序...", externs.log_path)
+            log.log("CRITICAL", "ERRORCHECK", "基于上述错误,准备终止程序...", )
+            log.log("CRITICAL", "ERRORCHECK", f"请在终止程序后尝试手动创建路径:'{path.FaultsLogDir_path()}'", externs.log_path)
+            log.log("CRITICAL", "ERRORCHECK", f"请在终止程序后尝试手动创建路径:'{path.FaultsLogDir_path()}'", )
             flag = False
             return flag
     if os.path.exists(path.FaultsLog_path()):
+        log.log("INFO", "ERRORCHECK", "Faults日志文件检查正确,准备删除...", externs.log_path)
         os.remove(path.FaultsLog_path())
+        log.log("INFO", "ERRORCHECK", "Faults日志文件删除成功...", externs.log_path)

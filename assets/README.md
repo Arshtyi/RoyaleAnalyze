@@ -1,20 +1,20 @@
-# <center> RoyaleAnalyze-V1.1.5 使用说明 </center>
+# <center> RoyaleAnalyze-V1.1.6 使用说明 </center>
 
 [TOC]
 
 
 
-# <center> 本项目于2025/2/18正式结束所有开发与维护,后续开发见[RoyaleAnalyze2.0](https://github.com/Arshtyi/RoyaleAnalyze-2.0)</center>
+# <center> 本项目于2025/3/19正式结束所有开发与维护,后续开发见[RoyaleAnalyze2.0](https://github.com/Arshtyi/RoyaleAnalyze-2.0)</center>
 
 # <center> 项目介绍 </center>
 
-本项目[RoyaleAnalyze](https://github.com/Arshtyi/RoyaleAnalyze)是依赖于[RoyaleAPI](https://royaleapi.com/)的皇室战争信息收集分析项目,项目截至本文更新至V1.1.5版本(见[CHANGELOG.md](https://github.com/Arshtyi/RoyaleAnalyze/blob/main/CHANGELOG.md)),项目于2025/2/18正式结束开发与维护,后续开发见[RoyaleAnalyze2.0](https://github.com/Arshtyi/RoyaleAnalyze-2.0).
+本项目[RoyaleAnalyze](https://github.com/Arshtyi/RoyaleAnalyze)是依赖于[RoyaleAPI](https://royaleapi.com/)的皇室战争信息收集分析项目,项目截至本文更新至V1.1.6版本(见[CHANGELOG.md](https://github.com/Arshtyi/RoyaleAnalyze/blob/main/CHANGELOG.md)),项目于2025/3/19正式结束开发与维护,后续开发见[RoyaleAnalyze2.0](https://github.com/Arshtyi/RoyaleAnalyze-2.0).
 
 # <center> 项目依赖与环境 </center>
 
 ## 项目开发与运行环境
 
-- 本项目使用_python3.12.7_开发,因为部分功能的原因,不保证兼容3.12更早的版本.
+- 本项目使用_python3.12.9_开发,因为部分功能的原因,不保证兼容3.12更早的版本.
 - 项目部分功能使用edge驱动,须确保edge版本(开发使用132.0.2957.140,更早版本测试时部分已不兼容)与驱动(某些平台上,这一功能需要一定权限)相容.
 - 更推荐使用项目源代码,项目发行版仅测试过windows11系统,不保证其他平台的可行性.
 
@@ -52,6 +52,10 @@
 ## data
 
 这一文件夹下是项目相关的数据文件,包括输入、输出与日志文件.
+
+## compiler
+
+该文件夹下是编译命令（Nuitka)生成脚本.
 
 ### input
 
@@ -121,7 +125,7 @@
 
 - `data/logs`路径缺失将导致使用驱动的功能无法使用.
 
-- 日志文件输出均来自edge.
+- 日志文件输出包括本项目输出和来自edge的部分内容.
 
 ### 控制台信息
 
@@ -270,7 +274,7 @@
 >
 > Q:目前开发情况？
 >
-> A:目前该脚本主体已经完成了所有功能开发,最新版本[V1.1.4](https://github.com/Arshtyi/RoyaleAnalyze/releases)仅有部分BUG未修复(如果你发现了这些BUG或者有一些关于开发的想法,可以来提[issue](https://github.com/Arshtyi/RoyaleAnalyze/issues)或者[pr](https://github.com/Arshtyi/RoyaleAnalyze/pulls)).
+> A~~:目前该脚本主体已经完成了所有功能开发,最新版本[V1.1.4](https://github.com/Arshtyi/RoyaleAnalyze/releases)仅有部分BUG未修复(如果你发现了这些BUG或者有一些关于开发的想法,可以来提[issue](https://github.com/Arshtyi/RoyaleAnalyze/issues)或者[pr](https://github.com/Arshtyi/RoyaleAnalyze/pulls)).~~截至V1.1.6,项目已经完结，尽管还有一些可以优化的地方，但已经没有太大必要了.
 
 > [!CAUTION]
 >
@@ -285,7 +289,7 @@
 >
 > Q:未来开放方向？
 >
-> A:本项目主体已于2025/2/18完成所有功能开发,后续本项目会再进行一段时间的BUG修复,之后停止维护,转而开发另一个替代项目(暂未开源).
+> A:本项目主体已于2025/3/19完成所有功能开发,~~后续本项目会再进行一段时间的BUG修复,之后停止维护~~,转而开发另一个替代项目(暂未开源).
 
 
 
@@ -297,11 +301,11 @@
 
 ## QQ
 
-640006128或3842004484
+640006128
 
 ## email
 
-上述QQ邮箱或者<8956230x@gmail.com>
+<arshtyi_trantor@outlook.com>
 
 ## 我们的交流群
 
@@ -310,4 +314,4 @@
 # <center> 开源事项 </center>
 
 - 开源许可[LICENSE](https://github.com/Arshtyi/RoyaleAnalyze/blob/main/LICENSE)
-- 各种开发事项欢迎提[issue](https://github.com/Arshtyi/RoyaleAnalyze/issues)或者[pr](https://github.com/Arshtyi/RoyaleAnalyze/pulls)
+- ~~各种开发事项欢迎提[issue](https://github.com/Arshtyi/RoyaleAnalyze/issues)或者[pr](https://github.com/Arshtyi/RoyaleAnalyze/pulls)~~

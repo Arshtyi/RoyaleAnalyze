@@ -44,14 +44,20 @@ def pathConcatenationForOutputTable(): ##输出路径拼接
     outputInformationPath = os.path.join(outputDir,"Information.xlsx")
     return outputInformationPath
 
+def log_dir_path():##日志目录路径拼接
+    currentDir = os.getcwd()
+    logDir = os.path.join(currentDir,"data")
+    logDir = os.path.join(logDir,"logs")
+    logDir = os.path.join(logDir,"Program")
+    return logDir
+
 def log_path():##日志路径拼接
     currentDir = os.getcwd()
     logDir = os.path.join(currentDir,"data")
     logDir = os.path.join(logDir,"logs")
-    logDir = os.path.join(logDir,"brower")
-    logPath = os.path.join(logDir,"brower.log")
+    logDir = os.path.join(logDir,"Program")
+    logPath = os.path.join(logDir,"program.log")
     return logPath
-##此日志路径暂时被弃用,改用下方的clanDebuglog_path
 
 def readme_path():##readme路径拼接
     currentDir = os.getcwd()

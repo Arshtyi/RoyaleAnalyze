@@ -41,61 +41,65 @@ from openpyxl.styles import PatternFill
 import src.formal as formal
 import src.externs as externs
 import os
+from lxml import etree
+import src.log as log
 def updateInformation():
     flag = True
-    print("[FETCH][INFO]: 准备更新部落信息和玩家信息...")
-    print("[FETCH][INFO]: 检查文件...")
+    log.log("INFO", "FETCH", "准备更新部落信息和玩家信息...", externs.log_path)
+    log.log("INFO", "FETCH", "准备更新部落信息和玩家信息...", )
+    log.log("INFO", "FETCH", "检查文件...", externs.log_path)
     if os.path.exists(externs.inputClansInformationLocation):
-        print("[FETCH][INFO]: 文件存在,准备读取...")
+        log.log("INFO", "FETCH", f"文件'{externs.inputClansInformationLocation}'存在,准备读取...", externs.log_path)
         wb = op.load_workbook(externs.inputClansInformationLocation)
         ws = wb[externs.clansInformationSheetName]
         max_row = ws.max_row
-        print("[FETCH][INFO]: 文件读取完成,准备更新部落信息...")
+        log.log("INFO", "FETCH", "文件读取完成,准备更新部落信息...", externs.log_path)
         for row in range(2,max_row + 1):
             clan = ws.cell(row = row,column = 2).value
             if clan is None:
-                break
+                break#防止读过头
             clan = clan[1:]
             url_clan = urls.url_clan + clan
-            requests = urllib.request.Request(url = url_clan,headers = urls.HEADERS)
+            requests = urllib.request.Request(url=url_clan, headers=urls.HEADERS)
             response = urllib.request.urlopen(requests)
             content = response.read().decode("utf-8")
-            soup = BeautifulSoup(content, 'html.parser')
-            hs = soup.find('h1',class_ = 'ui header margin0')
-            clan_name = hs.get_text().strip().replace(' ','')
+            tree = etree.HTML(content)
+            clan_name_element = tree.xpath(externs.XPaths["ClanName"])[0]
+            clan_name = clan_name_element.text.strip().replace(' ', '')
             ws.cell(row = row,column = 1).value = clan_name
-            print(f"[FETCH][INFO]: <{clan_name}>更新完成！")
+            log.log("INFO", "FETCH", f"< {clan_name} >更新完成！", externs.log_path)
         wb.save(filename = externs.inputClansInformationLocation)
-        print("[FETCH][INFO]: 全部部落信息更新完成！准备格式化...")
+        log.log("INFO", "FETCH", "全部部落信息更新完成！准备格式化...", externs.log_path)
         formal.processExcel(externs.inputClansInformationLocation)
-        print("[FETCH][INFO]: 格式化完成！")
+        log.log("INFO", "FETCH", "格式化完成！", externs.log_path)
+        log.log("INFO", "FETCH", "部落信息更新完成！", )
+        log.log("INFO", "FETCH", "部落信息更新完成！", externs.log_path)
     else:
-        print(f"[FETCH][INFO]: The file '{externs.inputClansInformationLocation}' does not exist")
+        log.log("INFO", "FETCH", f"文件'{externs.inputClansInformationLocation}'不存在", )
+        log.log("INFO", "FETCH", f"文件'{externs.inputClansInformationLocation}'不存在", externs.log_path)
     if os.path.exists(externs.inputGroupPlayerInformationLocation):
-        print("[FETCH][INFO]: 文件存在,准备读取...")
+        log.log("INFO", "FETCH", f"文件'{externs.inputGroupPlayerInformationLocation}'存在,准备读取...", externs.log_path)
         wb = op.load_workbook(externs.inputGroupPlayerInformationLocation)
         ws = wb[externs.groupPlayerInformationSheetName]
         max_row = ws.max_row
-        print("[FETCH][INFO]: 文件读取完成,准备玩家更新...")
+        log.log("INFO", "FETCH", "文件读取完成,准备玩家更新...", externs.log_path)
         for row in range(2,max_row + 1):
             player = ws.cell(row = row,column = 4).value
             if player is None:
-                break
+                break#防止读过头
             player = player[1:]
             url_player = urls.url_player + player
             requests = urllib.request.Request(url = url_player,headers = urls.HEADERS)
             response = urllib.request.urlopen(requests)
             content = response.read().decode("utf-8")
-            soup = BeautifulSoup(content, 'html.parser')
-            hs = soup.find('h1',class_ = 'ui header')
-            player_name = hs.get_text().strip().replace('\u200c','').replace('\u2006','')
-            div = soup.find('div',class_ = 'ui horizontal divided list')
-            div = div.find('div',class_ = 'ui header item')
-            a = div.find('a')
-            if a is None:
+            tree = etree.HTML(content)
+            player_name_element = tree.xpath(externs.XPaths["PlayerName"])[0]
+            player_name = player_name_element.text.strip().replace('\u200c','').replace('\u2006','')
+            a = tree.xpath(externs.XPaths["PlayerClan"])
+            if  a is None or len(a) == 0:
                 clan = "无"
             else:
-                clan = a.get_text().strip().replace(' ','')
+                clan = a[0].text.strip().replace(' ','')
             ws.cell(row = row,column = 1).value = clan
             if clan not in externs.clans:
                 fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
@@ -104,74 +108,76 @@ def updateInformation():
                 fill = PatternFill(fill_type=None)
                 ws.cell(row=row, column=1).fill = fill
             ws.cell(row = row,column = 2).value = player_name
-            print(f"[FETCH][INFO]: <{player_name}>更新完成！")
+            log.log("INFO", "FETCH", f"< {player_name} >更新完成！", externs.log_path)
         wb.save(filename = externs.inputGroupPlayerInformationLocation)
-        print("[FETCH][INFO]: 全部玩家信息更新完成！准备格式化...")
+        log.log("INFO", "FETCH", "全部玩家信息更新完成！准备格式化...", externs.log_path)
         formal.processExcel(externs.inputGroupPlayerInformationLocation)
-        print("[FETCH][INFO]: 格式化完成！")
+        log.log("INFO", "FETCH", "格式化完成！", externs.log_path)
+        log.log("INFO", "FETCH", "玩家信息更新完成！", )
+        log.log("INFO", "FETCH", "玩家信息更新完成！", externs.log_path)
     else:
-        print(f"[FETCH][INFO]: The file '{externs.inputGroupPlayerInformationLocation}' does not exist")
+        log.log("INFO", "FETCH", f"文件'{externs.inputGroupPlayerInformationLocation}'不存在", )
+        log.log("INFO", "FETCH", f"文件'{externs.inputGroupPlayerInformationLocation}'不存在", externs.log_path)
     return flag
 
 def deleteAll():
     flag = True
-    print("[FETCH][INFO]: 准备删除输出文件...")
-    print("[FETCH][INFO]: 检查文件...")
+    log.log("INFO", "FETCH", "准备删除输出文件...", externs.log_path)
     if os.path.exists(externs.outputFileLocation):
         os.remove(externs.outputFileLocation)
-        print(f"[FETCH][INFO]: The file '{externs.outputFileLocation}' has been deleted")
+        log.log("INFO", "FETCH", f"文件 '{externs.outputFileLocation}' 已被删除", externs.log_path)
     else:
-        print(f"[FETCH][INFO]: The file '{externs.outputFileLocation}' does not exist")
+        log.log("INFO", "FETCH", f"文件 '{externs.outputFileLocation}' 不存在", externs.log_path)
+    log.log("INFO", "FETCH", "输出文件删除完成！", )
+    log.log("INFO", "FETCH", "输出文件删除完成！", externs.log_path)
     return flag
+
 def queryContribution(filter):
     flag = True
     sheet_name = externs.contributionsSheetName
     url_0 = urls.url_clan
     formal.creatSheet(operations.creat_contribution_sheet())
-    print("[FETCH][INFO]: 输出创建完成,准备启动程序...")
+    log.log("INFO", "FETCH", "输出创建完成,准备启动程序...", externs.log_path)
     wb = op.load_workbook(externs.outputFileLocation)
     ws = wb[sheet_name]
     now_row = 1
     start_row = 2
-    print("[FETCH][INFO]: 程序启动,正在运行...")
+    log.log("INFO", "FETCH", "程序启动,正在运行...", externs.log_path)
     for clan in clans:
         url_war_race = url_0 + clans[clan] + "/war/race"
         requests = urllib.request.Request(url = url_war_race,headers = urls.HEADERS)
         response = urllib.request.urlopen(requests)
         content = response.read().decode("utf-8")
-        soup = BeautifulSoup(content, 'html.parser')
-        div_time = soup.find('div',{'class' : 'timeline'})
-        lis = div_time.find_all('li')
-        day = 1##第四天开始战斗日
+        tree = etree.HTML(content)
         in_war = 0##可能需要别的状态,不用bool
         data_num = 0
-        for li in lis:
-            div_unjudge = li.find('div',{'class' : "dot active"})
-            if div_unjudge != None and day > 3:##active war-in day
+        for day in range(1, 8):  # 第四天开始战斗日
+            dot_text = tree.xpath(externs.XPaths["WarTimeline"] + "/li[" + str(day) + "]/div[3]")[0].text.strip()
+            if dot_text is None or len(dot_text) == 0:
+                continue
+            else:
                 in_war = 1
                 break
-            day = day + 1 
         data = [clan]
         if 1 == in_war:
-            print(f"[FETCH][INFO]: <{clan}>正处于战斗日,开始查询...")
-            trs = soup.find_all('tr')
-            trs_players = [tr for tr in trs if 'player' in tr.get('class', []) and len(tr['class']) == 1]
-            trs_players = trs_players[1:]
-            for tr in trs_players:
+            log.log("INFO", "FETCH", f"< {clan} >正处于战斗日,开始查询...", externs.log_path)
+            log.log("INFO", "FETCH", f"< {clan} >正处于战斗日,开始查询...")
+            playersTable = tree.xpath(externs.XPaths["WarPlayersTable"])[0]
+            for player in playersTable:
+                player =etree.tostring(player,encoding='utf-8').decode('utf-8')
+                if "player not_current_member" in player:
+                    break
+                player = BeautifulSoup(player,'html.parser')
                 data = [clan]
-                player_name_location = tr.find('a',{'class':'player_name force_single_line_hidden'})
-                player_name = player_name_location.get_text().strip().replace('\u200c','').replace('\u2006','')
+                player_name =player.find('a',{'class':'player_name force_single_line_hidden'}).get_text().strip().replace('\u200c','').replace('\u2006','')
                 if filter and player_name not in players:
                     continue
                 data.append(player_name)
-                player_decks_used = tr.find('div',{'class':'value_bg decks_used'})
-                decks_uesd = (int)(player_decks_used.get_text())
+                decks_uesd = (int)(player.find('div',{'class':'value_bg decks_used'}).get_text())
                 data.append(decks_uesd) 
-                player_boat_attack = tr.find('div',{'class':'value_bg boat_attacks'})
-                boat_attack = (int)(player_boat_attack.get_text())
+                boat_attack = (int)(player.find('div',{'class':'value_bg boat_attacks'}).get_text())
                 data.append(boat_attack)
-                player_medal = tr.find('div',{'class':'value_bg fame'})
-                medal = (int)(player_medal.get_text())
+                medal = (int)( player.find('div',{'class':'value_bg fame'}).get_text())
                 data.append(medal)
                 data_num = data_num + 1
                 ws.append(data)
@@ -183,7 +189,7 @@ def queryContribution(filter):
             ws.merge_cells(start_row = start_row,end_row = now_row,start_column = 1,end_column = 1)
             start_row = now_row + 1
         elif 0 == in_war:
-            print(f"[FETCH][INFO]: <{clan}>未处于战斗日,格式输出正在进行...")
+            log.log("INFO", "FETCH", f"< {clan} >未处于战斗日,格式输出正在进行...", externs.log_path)
             data = [clan]
             data.append('该部落未处于战斗日！')
             data.append('')
@@ -193,12 +199,14 @@ def queryContribution(filter):
             now_row = now_row + 1
             start_row = now_row
             ws.merge_cells(start_column = 2,end_column = 5,start_row = now_row,end_row = now_row)
-        print(f"[FETCH][INFO]: <{clan}>查询已完成！")
+        log.log("INFO", "FETCH", f"< {clan} >查询已完成！", externs.log_path)
     for row in ws.iter_rows(min_row = 2,max_row = ws.max_row,min_col=5,max_col=5):
         if row[0].value == 0:
             fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
             ws.cell(row = row[0].row,column = 5).fill = fill
     wb.save(filename = externs.outputFileLocation)
+    log.log("INFO", "FETCH", "部落战贡献查询完成！", )
+    log.log("INFO", "FETCH", "部落战贡献查询完成！", externs.log_path)
     return flag
 
 def queryDonation(filter):
@@ -206,33 +214,30 @@ def queryDonation(filter):
     sheet_name = formal.donationSheetName
     url_0 = urls.url_clan
     formal.creatSheet(operations.creat_donation_sheet())
-    print("[FETCH][INFO]: 输出创建完成,准备启动程序...")
+    log.log("INFO", "FETCH", "输出创建完成,准备启动程序...", externs.log_path)
     wb = op.load_workbook(externs.outputFileLocation)
     ws = wb[sheet_name]
     data_num = 0
     now_row = 1
     start_row = 2
-    print("[FETCH][INFO]: 程序启动,正在运行...")
+    log.log("INFO", "FETCH", "程序启动,正在运行...", externs.log_path)
     for clan in clans:
-        print(f"[FETCH][INFO]: <{clan}>开始查询...")
+        log.log("INFO", "FETCH", f"< {clan} >开始查询...", externs.log_path)
         data_num = 0
         url_donation = url_0 + clans[clan]
         requests = urllib.request.Request(url = url_donation,headers = urls.HEADERS)
         response = urllib.request.urlopen(requests)
         content = response.read().decode("utf-8")
-        soup = BeautifulSoup(content, 'html.parser')
-        table_donation = soup.find('table', id='roster', class_='ui unstackable hover striped attached compact sortable table')
-        trs = table_donation.find_all('tr')
-        trs = trs[1:]
-        for tr in trs:
+        tree = etree.HTML(content)
+        table_donation = tree.xpath(externs.XPaths["InfoPlayersTable"])[0]
+        for tr in table_donation:
+            tr = BeautifulSoup(etree.tostring(tr,encoding='utf-8').decode('utf-8'),'html.parser')
             data = [clan]
-            a_ty = tr.find('a',class_='block member_link')
-            player_name = formal.keep_before_first_newline(a_ty.get_text().strip().replace('\u200c','').replace('\u2006','') )
+            player_name = formal.keep_before_first_newline(tr.find('a',class_='block member_link').get_text().strip().replace('\u200c','').replace('\u2006','') )
             if filter and player_name not in players:
                 continue
             data.append(player_name)
-            td_donation = tr.find('td',class_='donations right aligned mobile-hide')
-            donation = (int)(td_donation.get_text().strip().replace(',',''))
+            donation = (int)(tr.find('td',class_='donations right aligned mobile-hide').get_text().strip().replace(',',''))
             data.append(donation)
             data_num = data_num + 1
             ws.append(data)
@@ -243,12 +248,14 @@ def queryDonation(filter):
         ws = wb[sheet_name]
         ws.merge_cells(start_row = start_row,end_row = now_row,start_column = 1,end_column = 1)
         start_row = now_row + 1
-        print(f"[FETCH][INFO]: <{clan}>查询已完成！")
+        log.log("INFO", "FETCH", f"< {clan} >查询已完成！", externs.log_path)
     for row in ws.iter_rows(min_row = 2,max_row = ws.max_row,min_col=3,max_col=3):
         if row[0].value == 0:
             fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
             ws.cell(row = row[0].row,column = 3).fill = fill
     wb.save(filename = externs.outputFileLocation)    
+    log.log("INFO", "FETCH", "部落捐赠查询完成！", )
+    log.log("INFO", "FETCH", "部落捐赠查询完成！", externs.log_path)
     return flag
 
 def queryActivity(filter):
@@ -256,33 +263,30 @@ def queryActivity(filter):
     sheet_name = formal.activitySheetName
     url_0 = urls.url_clan
     formal.creatSheet(operations.creat_activity_sheet())
-    print("[FETCH][INFO]: 输出创建完成,准备启动程序...")
+    log.log("INFO", "FETCH", "输出创建完成,准备启动程序...", externs.log_path)
     wb = op.load_workbook(externs.outputFileLocation)
     ws = wb[sheet_name]
     data_num = 0
     now_row = 1
     start_row = 2
-    print("[FETCH][INFO]: 程序启动,正在运行...")
+    log.log("INFO", "FETCH", "程序启动,正在运行...", externs.log_path)
     for clan in clans:
-        print(f"[FETCH][INFO]: <{clan}>开始查询...")
+        log.log("INFO", "FETCH", f"< {clan} >开始查询...", externs.log_path)
         data_num = 0
         url_activity = url_0 + clans[clan]
         requests = urllib.request.Request(url = url_activity,headers = urls.HEADERS)
         response = urllib.request.urlopen(requests)
         content = response.read().decode("utf-8")
-        soup = BeautifulSoup(content, 'html.parser')
-        table_activity = soup.find('table', id='roster', class_='ui unstackable hover striped attached compact sortable table')
-        trs = table_activity.find_all('tr')
-        trs = trs[1:]
-        for tr in trs:
+        tree = etree.HTML(content)
+        table_activity = tree.xpath(externs.XPaths["InfoPlayersTable"])[0]
+        for tr in table_activity:
+            tr = BeautifulSoup(etree.tostring(tr,encoding='utf-8').decode('utf-8'),'html.parser')
             data = [clan]
-            a_ty = tr.find('a',class_='block member_link')
-            player_name = formal.keep_before_first_newline(a_ty.get_text().strip()).replace('\u200c','').replace('\u2006','')
+            player_name = formal.keep_before_first_newline(tr.find('a',class_='block member_link').get_text().strip()).replace('\u200c','').replace('\u2006','')
             if filter and player_name not in players:
                 continue
             data.append(player_name)
-            div = tr.find('div',class_='i18n_duration_short')
-            activity = formal.convert_time_number(div.get_text().strip())
+            activity = formal.convert_time_number(tr.find('div',class_='i18n_duration_short').get_text().strip())
             data.append(activity)
             data_num = data_num + 1
             ws.append(data)
@@ -292,13 +296,15 @@ def queryActivity(filter):
         ws = wb[sheet_name]
         ws.merge_cells(start_row = start_row,end_row = now_row,start_column = 1,end_column = 1)
         start_row = now_row + 1
-        print(f"[FETCH][INFO]: <{clan}>查询已完成！")
+        log.log("INFO", "FETCH", f"< {clan} >查询已完成！", externs.log_path)
     for row in ws.iter_rows(min_row = 2,max_row = ws.max_row,min_col=3,max_col=3):
         if row[0].value >= externs.inactivity:
             fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
             ws.cell(row = row[0].row,column = 3).fill = fill
         ws.cell(row = row[0].row,column = 3).value = formal.convert_time_from_number(row[0].value)
     wb.save(filename = externs.outputFileLocation)
+    log.log("INFO", "FETCH", "部落活跃查询完成！", )
+    log.log("INFO", "FETCH", "部落活跃查询完成！", externs.log_path)
     return flag
 
 def queryLastMonthWar(filter):
@@ -306,15 +312,15 @@ def queryLastMonthWar(filter):
     sheet_name = formal.lastMonthWarSheetName
     url_0 = urls.url_clan
     formal.creatSheet(operations.creat_last_month_war_sheet())
-    print("[FETCH][INFO]: 输出创建完成,准备启动程序...")
+    log.log("INFO", "FETCH", "输出创建完成,准备启动程序...", externs.log_path)
     wb = op.load_workbook(externs.outputFileLocation)
     ws = wb[sheet_name]
     data_num = 0
     now_row = 1
     start_row = 2
-    print("[FETCH][INFO]: 程序启动,正在运行...")
+    log.log("INFO", "FETCH", "程序启动,正在运行...", externs.log_path)
     for clan in clans:
-        print("[FETCH][INFO]: 开始配置驱动...")
+        log.log("INFO", "FETCH", "开始配置驱动...", externs.log_path)
         edge_options = Options()
         edge_options.add_argument("--headless") 
         edge_options.add_argument("--disable-gpu") 
@@ -324,76 +330,75 @@ def queryLastMonthWar(filter):
         edge_options.add_argument("--ignore-certificate-errors")
         edge_options.add_argument("--ignore-ssl-errors")
         edge_options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        print("[FETCH][INFO]: 驱动相关设置完成,准备配置日志输出...")
+        log.log("INFO", "FETCH", "开始配置日志输出...", externs.log_path)
         log_path = externs.Contributionslog_path + "\\" + clans[clan] + ".log"
-        service = EdgeService(EdgeChromiumDriverManager().install(), service_args=["--verbose", " --log-path="+log_path])
-        print(f"[FETCH][INFO]: 驱动启动项初始化完毕,日志输出为'{log_path}',准备启动...")
-        print("[FETCH][INFO]: 驱动配置完成,准备启动...")
+        try:
+            service = EdgeService(EdgeChromiumDriverManager().install(), service_args=["--verbose", " --log-path="+log_path])
+        except Exception as e:
+            log.log("CRITICAL", "FETCH", f"驱动初始化失败: {str(e)}", externs.log_path)
+            log.log("CRITICAL", "FETCH", f"驱动初始化失败: {str(e)}", )
+            flag = False
+            return flag
+        log.log("INFO", "FETCH",f"驱动启动项初始化完毕,日志输出为'{log_path}',准备启动...", externs.log_path)
+        log.log("INFO", "FETCH", "驱动配置完成,准备启动...", externs.log_path)
         driver = webdriver.Edge(service = service,options = edge_options)
-        print("[FETCH][INFO]: 驱动已启动,准备开始查询...")
-        print(f"[FETCH][INFO]: <{clan}>开始查询...")
+        log.log("INFO", "FETCH", "驱动已启动,准备开始查询...", externs.log_path)
+        log.log("INFO", "FETCH", f"< {clan} >开始查询...", externs.log_path)
         data_num = 0
         url_last_month_war = url_0 + clans[clan] +"/war/analytics"
         driver.get(url_last_month_war)
-        print("[FETCH][INFO]: 驱动正在运行......在驱动正确退出前请不要结束进程,否则将导致数据不完整和其他可能的错误！")
-        print("[FETCH][INFO]: 页面加载中...")
+        log.log("INFO", "FETCH", "驱动正在运行......在驱动正确退出前请不要结束进程,否则将导致数据不完整和其他可能的错误！", )
+        log.log("INFO", "FETCH", "页面加载中...", externs.log_path)
         try:
-            element = WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.XPATH,externs.XPaths["LastMonthWar"]
-            )))
-            print("[FETCH][INFO]: 页面加载完成,准备解析...")
+            WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.XPATH,externs.XPaths["LastMonthWarTable1"]))
+            )
+            WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.XPATH,externs.XPaths["LastMonthWarTable2"]))
+            )
+            log.log("INFO", "FETCH", "页面加载完成,准备解析...", externs.log_path)
+            log.log("INFO", "FETCH", "页面加载完成,准备解析...", )
             content = driver.page_source
         except:
-            print("[FETCH][ERROR]: 页面加载超时,驱动即将退出...")
+            log.log("ERROR", "FETCH", "页面加载超时,驱动即将退出...", externs.log_path)
+            log.log("ERROR", "FETCH", "页面加载超时,驱动即将退出...", )
             driver.quit()
-            print("[FETCH][INFO]: 驱动已正确退出")
+            log.log("INFO", "FETCH", f"驱动已正确退出,具体信息请查看日志：'{log_path}'", externs.log_path)
+            log.log("INFO", "FETCH", f"驱动已正确退出,具体信息请查看日志：'{log_path}'", )
             flag = False
             continue
-        soup = BeautifulSoup(content, 'html.parser')
-        table_contributions = soup.find('table', id='roster')
-        trs = table_contributions.find_all('tr')
-        trs = trs[1:]
-        table_decks = soup.find('table', id='roster2')
-        trs_2 = table_decks.find_all('tr')
-        trs_2 = trs_2[1:]
-        length = max(len(trs),len(trs_2))##其实是一样的
-        data = []
-        for i in range(length):
-            tr = trs[i]
-            data = [clan]
-            td = tr.find('td',class_="sep fix first_col sticky")##名字标签
-            player_name = formal.keep_before_first_newline(td.get_text().strip()).replace('\u200c','').replace('\u2006','') 
-            if filter and player_name not in players:
-                continue
-            data.append(player_name)
-            tds_contributions = tr.find_all('td',limit = 8)
-            tds_contributions = tds_contributions[4:]
-            all_contribution = 0
-            for td in tds_contributions:
-                contribution = td.get_text().strip()
+        tree = etree.HTML(content)
+        contributionsTable = tree.xpath(externs.XPaths["LastMonthWarTable1"])[0]
+        length = len(contributionsTable)+1
+        for i in range(1,length):
+            player_name =  tree.xpath(externs.XPaths["LastMonthWarTable1"] + "/tr[" + str(i) + "]/td[1]/a")[0].text.strip().replace('\u200c','').replace('\u2006','')
+            data = [clan, player_name]
+            contributionList = []
+            decksList = []
+            all_contributions=0
+            all_decks=0
+            for j in range(5,9):
+                contribution = tree.xpath(externs.XPaths["LastMonthWarTable1"] + "/tr[" + str(i) + "]/td[" + str(j) + "]")[0].text.strip().replace(" ","")
                 if contribution == "":
                     contribution = 0
                 contribution = (int)(contribution)
-                data.insert(2,contribution)
-                all_contribution = all_contribution + (contribution)
-            data.insert(7,all_contribution)
-            td_paticipate = tr.find('td',class_='sorting_1')
-            times = td_paticipate.get_text().strip().replace(" ","")
-            data.append(times)
-            tr_2 = trs_2[i]
-            tds_2 = tr_2.find_all('td',limit = 8)
-            tds_2 = tds_2[4:]
-            length = len(tds_2)
-            all_decks = 0
-            for j in range(length):
-                td_2 = tds_2[length - j - 1]
-                decks = td_2.get_text().strip()
-                if decks == "":
-                    decks = 0
-                decks = (int)(decks)
-                all_decks = all_decks + decks
-                data.insert(2 * j + 2,decks)
-            data.insert(2 * length + 2,all_decks)
+                all_contributions=all_contributions+contribution
+                contributionList.append(contribution)
+                deck = tree.xpath(externs.XPaths["LastMonthWarTable2"] + "/tr[" + str(i) + "]/td[" + str(j) + "]")[0].text.strip().replace(" ","")
+                if deck == "":
+                    deck = 0
+                deck = (int)(deck)
+                all_decks=all_decks+deck
+                decksList.append(deck)
+            contributionList.reverse()
+            contributionList.append(all_contributions)
+            decksList.reverse()
+            decksList.append(all_decks)
+            for deck,contribution in zip(decksList,contributionList):
+                data.append(deck)
+                data.append(contribution)
+            participation = tree.xpath(externs.XPaths["LastMonthWarTable1"] + "/tr[" + str(i) + "]/td[3]")[0].text.strip().replace(" ","")
+            data.append(participation)
             data_num = data_num + 1
             ws.append(data)
         now_row = now_row + data_num
@@ -403,9 +408,9 @@ def queryLastMonthWar(filter):
         ws = wb[sheet_name]
         ws.merge_cells(start_row = start_row,end_row = now_row,start_column = 1,end_column = 1)
         start_row = now_row + 1
-        print(f"[FETCH][INFO]: <{clan}>查询已完成！驱动准备退出...")
+        log.log("INFO", "FETCH", f"< {clan} >查询已完成！驱动准备退出...", externs.log_path)
         driver.quit()
-        print("[FETCH][INFO]: 驱动已正确退出")
+        log.log("INFO", "FETCH", f"驱动已正确退出,具体信息请查看日志：'{log_path}'", externs.log_path)
     for row in ws.iter_rows(min_row = 2,max_row = ws.max_row,min_col=4,max_col=12):
         if row[0].value == 0:
             fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
@@ -422,9 +427,9 @@ def queryLastMonthWar(filter):
         if row[8].value == 0:
             fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
             ws.cell(row = row[0].row,column = 12).fill = fill
-    print("[FETCH][INFO]: 所有查询已完成,准备保存数据...")
     wb.save(filename = externs.outputFileLocation)
-    print("[FETCH][INFO]: 数据已保存,查询结束")
+    log.log("INFO", "FETCH", "上月部落战贡献查询完成！", )
+    log.log("INFO", "FETCH", "上月部落战贡献查询完成！", externs.log_path)
     return flag
 
 def queryLastMonthDonation(filter):
@@ -432,15 +437,15 @@ def queryLastMonthDonation(filter):
     sheet_name = formal.lastMonthDonationSheetName
     url_0 = urls.url_clan
     formal.creatSheet(operations.creat_last_month_donation_sheet())
-    print("[FETCH][INFO]: 输出创建完成,准备启动程序...")
+    log.log("INFO", "FETCH", "输出创建完成,准备启动程序...", externs.log_path)
     wb = op.load_workbook(externs.outputFileLocation)
     ws = wb[sheet_name]
     data_num = 0
     now_row = 1
     start_row = 2
-    print("[FETCH][INFO]: 程序启动,正在运行...")
+    log.log("INFO", "FETCH", "程序启动,正在运行...", externs.log_path)
     for clan in clans:
-        print("[FETCH][INFO]: 开始配置驱动...")
+        log.log("INFO", "FETCH", "开始配置驱动...", externs.log_path)
         edge_options = Options()
         edge_options.add_argument("--headless") 
         edge_options.add_argument("--disable-gpu") 
@@ -450,54 +455,59 @@ def queryLastMonthDonation(filter):
         edge_options.add_argument("--ignore-certificate-errors")
         edge_options.add_argument("--ignore-ssl-errors")
         edge_options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        print("[FETCH][INFO]: 驱动相关设置完成,准备配置日志输出...")
+        log.log("INFO", "FETCH", "开始配置日志输出...", externs.log_path)
         log_path = externs.Donationslog_path + "\\" + clans[clan] + ".log"
-        service = EdgeService(EdgeChromiumDriverManager().install(), service_args=["--verbose", " --log-path="+log_path])
-        print(f"[FETCH][INFO]: 驱动启动项初始化完毕,日志输出为'{log_path}',准备启动...")
-        print("[FETCH][INFO]: 驱动配置完成,准备启动...")
+        try:
+            service = EdgeService(EdgeChromiumDriverManager().install(), service_args=["--verbose", " --log-path="+log_path])
+        except Exception as e:
+            log.log("CRITICAL", "FETCH", f"驱动初始化失败: {str(e)}", externs.log_path)
+            log.log("CRITICAL", "FETCH", f"驱动初始化失败: {str(e)}", )
+            flag = False
+            return flag
+        log.log("INFO", "FETCH", f"驱动启动项初始化完毕,日志输出为'{log_path}',准备启动...", externs.log_path)
+        log.log("INFO", "FETCH", "驱动配置完成,准备启动...", externs.log_path)
         driver = webdriver.Edge(service = service,options = edge_options)
-        print("[FETCH][INFO]: 驱动已启动,准备开始查询...")
-        print(f"[FETCH][INFO]: <{clan}>开始查询...")
+        log.log("INFO", "FETCH", "驱动已启动,准备开始查询...", externs.log_path)
+        log.log("INFO", "FETCH", f"< {clan} >开始查询...", externs.log_path)
         data_num = 0
         url_last_month_donation = url_0 + clans[clan]+"/history"
         driver.get(url_last_month_donation)
-        print("[FETCH][INFO]: 驱动正在运行......在驱动正确退出前请不要结束进程,否则将导致数据不完整和其他可能的错误！")
-        print("[FETCH][INFO]: 页面加载中...")
+        log.log("INFO", "FETCH", "驱动正在运行......在驱动正确退出前请不要结束进程,否则将导致数据不完整和其他可能的错误！", )
+        log.log("INFO", "FETCH", "页面加载中...", externs.log_path)
         try:
-            element = WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.XPATH,externs.XPaths["LastMonthDonation"]
-            )))
-            print("[FETCH][INFO]: 页面加载完成,准备解析...")
+            WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.XPATH,externs.XPaths["LastMonthDonation"]))
+            )
+            log.log("INFO", "FETCH", "页面加载完成,准备解析...", externs.log_path)
+            log.log("INFO", "FETCH", "页面加载完成,准备解析...", )
             content = driver.page_source
         except:
-            print("[FETCH][ERROR]: 页面加载超时,驱动即将退出...")
+            log.log("ERROR", "FETCH", "页面加载超时,驱动即将退出...", externs.log_path)
+            log.log("ERROR", "FETCH", "页面加载超时,驱动即将退出...", )
             driver.quit()
-            print("[FETCH][INFO]: 驱动已正确退出")
+            log.log("INFO", "FETCH", f"驱动已正确退出,具体信息请查看日志：'{log_path}'", externs.log_path)
+            log.log("INFO", "FETCH", f"驱动已正确退出,具体信息请查看日志：'{log_path}'", )
             flag = False
             continue
-        soup = BeautifulSoup(content, 'html.parser')
-        table_donnations = soup.find('table', id='roster')
-        trs = table_donnations.find_all('tr')
-        trs = trs[1:]
-        data = []
-        for tr in trs:
-            data = [clan]
-            td_name = tr.find('td',class_='sticky_col')
-            player_name = formal.keep_before_first_newline(td_name.get_text().strip()).replace('\u200c','').replace('\u2006','')
-            if filter and player_name not in players:
-                continue
-            data.append(player_name)
-            tds = tr.find_all('td',limit = 6)
-            tds = tds[2:]
-            all_donation = 0
-            for td in tds:
-                donation = td.get_text().strip()
-                if donation == "":
+        tree = etree.HTML(content)
+        table_donation = tree.xpath(externs.XPaths["LastMonthDonation"])[0]
+        length = len(table_donation)+1
+        for i in range(1,length):
+            player_name = tree.xpath(externs.XPaths["LastMonthDonation"] + "/tr[" + str(i) + "]/td[1]/a")[0].text.strip().replace('\u200c','').replace('\u2006','')
+            data = [clan, player_name]
+            donationList = []
+            all_donations = 0
+            for j in range(3,7):
+                donation = tree.xpath(externs.XPaths["LastMonthDonation"] + "/tr[" + str(i) + "]/td[" + str(j) + "]/div")[0].text
+                if donation is None:
                     donation = 0
                 donation = (int)(donation)
-                all_donation = all_donation + donation
-                data.insert(2,donation)
-            data.insert(6,all_donation)
+                all_donations = all_donations + donation
+                donationList.append(donation)
+            donationList.reverse()
+            donationList.append(all_donations)
+            for donation in donationList:
+                data.append(donation)
             data_num = data_num + 1
             ws.append(data)
         now_row = now_row + data_num
@@ -507,9 +517,9 @@ def queryLastMonthDonation(filter):
         ws = wb[sheet_name]
         ws.merge_cells(start_row = start_row,end_row = now_row,start_column = 1,end_column = 1)
         start_row = now_row + 1
-        print(f"[FETCH][INFO]: <{clan}>查询已完成！驱动准备退出...")
+        log.log("INFO", "FETCH", f"< {clan} >查询已完成！驱动准备退出...", externs.log_path)
         driver.quit()
-        print("[FETCH][INFO]: 驱动已正确退出")
+        log.log("INFO", "FETCH", f"驱动已正确退出,具体信息请查看日志：'{log_path}'", externs.log_path)
     for row in ws.iter_rows(min_row = 2,max_row = ws.max_row,min_col=3,max_col=7):
         if row[0].value == 0:
             fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
@@ -526,24 +536,26 @@ def queryLastMonthDonation(filter):
         if row[4].value == 0:
             fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
             ws.cell(row = row[0].row,column = 7).fill = fill
-    print("[FETCH][INFO]: 所有查询已完成,准备保存数据...")
     wb.save(filename = externs.outputFileLocation)
-    print("[FETCH][INFO]: 数据已保存,查询结束")
+    log.log("INFO", "FETCH", "上月部落捐赠查询完成！", )
+    log.log("INFO", "FETCH", "上月部落捐赠查询完成！", externs.log_path)
     return flag
 
 def queryAndSort(filter):
     flag = True
-    print("[FETCH][INFO]: 准备查询前置信息...")
+    log.log("INFO", "FETCH", "准备查询前置信息...", externs.log_path)
+    log.log("INFO", "FETCH", "准备查询前置信息...", )
     flag = queryLastMonthWar(filter) and queryLastMonthDonation(filter)
     if flag == False:
-        print("[FETCH][ERROR]: 前置查询失败,程序准备退出...")
+        log.log("ERROR", "FETCH", "前置查询失败,程序准备退出...", externs.log_path)
+        log.log("ERROR", "FETCH", "前置查询失败,程序准备退出...", )
         return flag
-    print("[FETCH][INFO]: 前置查询完成,准备设定权重并启动程序...")
+    log.log("INFO", "FETCH", "前置查询完成,准备设定权重并启动程序...", externs.log_path)
     contribution_weight = externs.weightContribution
     donation_weight = externs.weightDonation
-    print("[FETCH][INFO]: 权重设定完毕,准备创建输出...")
+    log.log("INFO", "FETCH", "权重设定完毕,准备创建输出...", externs.log_path)
     formal.creatSheet(operations.creat_sort_sheet())
-    print("[FETCH][INFO]: 输出创建完成,准备启动程序...")
+    log.log("INFO", "FETCH", "输出创建完成,准备启动程序...", externs.log_path)
     wb = op.load_workbook(externs.outputFileLocation)
     ws_1 = wb[formal.lastMonthWarSheetName]
     ws_2 = wb[formal.lastMonthDonationSheetName]
@@ -571,7 +583,7 @@ def queryAndSort(filter):
                 break
     end = ws_3.max_row
     wb.save(filename = externs.outputFileLocation)
-    print("[FETCH][INFO]: 数据已保存,准备排序...")
+    log.log("INFO", "FETCH", "数据已保存,准备排序...", externs.log_path)
     formal.sort_xlsx_data(externs.outputFileLocation,formal.sortedSheetName,start_row = 2,end_row = end,sort_column = 5)
     wb = op.load_workbook(externs.outputFileLocation)
     ws = wb[formal.sortedSheetName]
@@ -585,11 +597,13 @@ def queryAndSort(filter):
         if row[2].value == 0:
             fill = PatternFill(fill_type = 'solid',fgColor = 'FF0000')
             ws.cell(row = row[0].row,column = 5).fill = fill
-    print("[FETCH][INFO]: 排序完成,准备保存权重信息...")
+    log.log("INFO", "FETCH", "排序完成,准备保存权重信息...", externs.log_path)
     ws.append(['贡献权重','捐赠权重'])
     ws.append([contribution_weight,donation_weight])
     wb.save(filename = externs.outputFileLocation)
-    print("[FETCH][INFO]: 权重信息已保存,程序已退出")
+    log.log("INFO", "FETCH", "权重信息已保存,程序已退出", externs.log_path)
+    log.log("INFO", "FETCH", "贡献计算与排序完成！", )
+    log.log("INFO", "FETCH", "贡献计算与排序完成！", externs.log_path)
     return flag
 
 def queryRecentChange():
@@ -597,32 +611,32 @@ def queryRecentChange():
     sheet_name = formal.recentChangeSheetName
     url_0 = urls.url_clan
     formal.creatSheet(operations.creat_recent_change_sheet())
-    print("[FETCH][INFO]: 输出创建完成,准备启动程序...")
+    log.log("INFO", "FETCH", "输出创建完成,准备启动程序...", externs.log_path)
     wb = op.load_workbook(externs.outputFileLocation)
     ws = wb[sheet_name]
     data_num = 0
     now_row = 1
     start_row = 2
-    print("[FETCH][INFO]: 程序启动,正在运行...")
+    log.log("INFO", "FETCH", "程序启动,正在运行...", externs.log_path)
     for clan in clans:
-        print(f"[FETCH][INFO]: <{clan}>开始查询...")
+        log.log("INFO", "FETCH", f"< {clan} >开始查询...", externs.log_path)
         data_num = 0
         url_change = url_0 + clans[clan] + "/history/join-leave"
         requests = urllib.request.Request(url = url_change,headers = urls.HEADERS)
         response = urllib.request.urlopen(requests)
         content = response.read().decode("utf-8")
-        soup = BeautifulSoup(content, 'html.parser')
-        table_change = soup.find('div',class_ ='ui attached container sidemargin0 clan_history_join_leave')
-        a_s = table_change.find_all('a')
+        tree = etree.HTML(content)
+        players = tree.xpath(externs.XPaths["JoinLeaveTable"])[0]
+        length = len(players)+1
         dict_change = {}
-        for a in a_s:
-            change_div = a.find('div',class_ = 'header')
-            player_name = change_div.get_text().strip()
+        for i in range(1,length):
+            player = etree.tostring(players[i-1],encoding='utf-8').decode('utf-8')
+            player_name = tree.xpath(externs.XPaths["JoinLeaveTable"] + "/a[" + str(i)+ "]/div/div/div[1]")[0].text.strip().replace('\u200c','').replace('\u2006','')
             if player_name not in dict_change:
                 dict_change[player_name] = 0
-            if "green plus icon" in str(a):
+            if "green plus icon" in player:
                 dict_change[player_name] = dict_change[player_name] + 1
-            elif "red minus icon" in str(a):
+            elif "red minus icon" in player:
                 dict_change[player_name] = dict_change[player_name] - 1
         in_num = 0
         out_num = 0
@@ -649,12 +663,8 @@ def queryRecentChange():
         requests = urllib.request.Request(url = url_all_members,headers = urls.HEADERS)
         response = urllib.request.urlopen(requests)
         content = response.read().decode("utf-8")
-        soup = BeautifulSoup(content, 'html.parser')
-        col = soup.find('div',class_ = 'doubling three column row')
-        cols = col.find_all('div',class_ = 'column',limit = 4)
-        cols = cols[3]
-        members =cols.find('div',class_ = 'value').get_text().split('/')[0].strip()
-        members = (int)(members)
+        tree = etree.HTML(content)
+        members = (int)(tree.xpath(externs.XPaths["InfoNumber"])[0].text.split('/')[0].strip())
         ws.append([clan,"目前成员数",members,members])
         data_num = data_num + 2
         now_row = now_row + data_num
@@ -664,7 +674,7 @@ def queryRecentChange():
         ws.merge_cells(start_row = start_row,end_row = now_row,start_column = 1,end_column = 1)
         ws.merge_cells(start_row = now_row,start_column = 3,end_row = now_row,end_column = 4)
         start_row = now_row + 1
-        print(f"[FETCH][INFO]: <{clan}>查询已完成！")
+        log.log("INFO", "FETCH", f"< {clan} >查询已完成！", externs.log_path)
     for row in ws.iter_rows(min_row = 2,max_row = ws.max_row,min_col = 3,max_col = 4):
         if row[0].value == "是":
             ws.cell(row = row[0].row,column = 3).value = ""
@@ -675,4 +685,6 @@ def queryRecentChange():
             fill = PatternFill(fill_type = 'solid',fgColor = 'DA9694')
             ws.cell(row = row[0].row,column = 4).fill = fill
     wb.save(filename = externs.outputFileLocation)
+    log.log("INFO", "FETCH", "部落成员变动查询完成！", )
+    log.log("INFO", "FETCH", "部落成员变动查询完成！", externs.log_path)
     return flag

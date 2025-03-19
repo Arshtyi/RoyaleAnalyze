@@ -16,16 +16,16 @@ formal.py
 12. convert_time_format(input_str): 将时间字符串转换为带有中文单位的格式。
 13. modify_line_in_file(file_path, line_number, new_content): 修改文件中特定行的内容。
 该模块依赖于 openpyxl 库进行 Excel 文件操作,并使用 os 库进行文件系统操作。
-
 """
 import src.externs as externs
 import openpyxl as op
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Alignment
-from openpyxl.styles import PatternFill
 import src.operations as operations
 import os
 import src.gettime as gettime
+import src.externs as externs
+import src.log as log
 outputName = externs.outputFileLocation
 contributionSheetName = externs.contributionsSheetName
 donationSheetName = externs.donationsSheetName
@@ -38,25 +38,19 @@ clansInformationSheetName = externs.clansInformationSheetName
 def clearSheet(fileName, sheetName):
     """
     清除指定工作表的所有内容、格式和合并单元格,完全重置工作表.
-    
     :param file_name: Excel 文件的名称
     :param sheet_name: 目标工作表的名称
     """
-    # 加载工作簿
     wb = op.load_workbook(fileName)
-    
-    # 获取目标工作表
     ws = wb[sheetName]
     # 取消所有合并单元格
     for merged_range in list(ws.merged_cells):
-        ws.unmerge_cells(str(merged_range))  # 取消合并
-    
+        ws.unmerge_cells(str(merged_range))  # 取消合并单元格
     # 清除所有单元格的内容和格式
     for row in ws.iter_rows():
         for cell in row:
             cell.value = None  # 清空内容
             cell.style = 'Normal'  # 清除格式
-
     # 保存修改后的工作簿
     wb.save(fileName)
 
@@ -167,7 +161,7 @@ def creatSheet(operation):
         ws.append(['部落','玩家','加入','退出',gettime.get_current_time()])
         wb.save(filename = outputName)
     else :
-        print("[FORMAL][ERROR]: Undefined Query Type, Please Check Input Validity.")
+        log.log("ERROR", "FORMAL", "Undefined Query Type, Please Check Input Validity.", externs.log_path)
 
 def calculateAdjustedWidth(value):
     """
@@ -192,6 +186,7 @@ def adjustColumnWidth(sheet):
     动态调整工作表的列宽,确保中文繁体和宽字符正确显示.
     :param sheet: 当前工作表
     """
+    log.log("TRACE", "FORMAL", "开始调整列宽...", externs.log_path)
     for col in sheet.columns:
         max_width = 0
         col_letter = get_column_letter(col[0].column)  # 获取列号字母
@@ -200,6 +195,7 @@ def adjustColumnWidth(sheet):
                 adjusted_width = calculateAdjustedWidth(cell.value)
                 max_width = max(max_width, adjusted_width)
         sheet.column_dimensions[col_letter].width = max_width * 1.2
+    log.log("TRACE", "FORMAL", "列宽调整完成...", externs.log_path)
 
 def processExcel(fileName):
     """
@@ -214,16 +210,12 @@ def processExcel(fileName):
     """
     # 检查当前目录是否存在指定文件
     if not os.path.exists(fileName):
-        print(f"[FORMAL][ERROR]: 文件 '{fileName}' 不存在！请检查文件名和路径.")
+        log.log("ERROR", "FORMAL", f"File '{fileName}' does not exist! Please check the file name and path.", externs.log_path)
         return
-
-    # 加载工作簿
     wb = op.load_workbook(fileName)
-
     # 删除 "Sheet" 工作表
     if len(wb.sheetnames) > 1 and "Sheet" in wb.sheetnames:
         del wb["Sheet"]
-
     # 遍历每个工作表
     for sheet in wb.worksheets:
         if sheet.title[-1] == "1":
@@ -232,15 +224,14 @@ def processExcel(fileName):
             os.remove(fileName)
         # 调整列宽
         adjustColumnWidth(sheet)
-
         # 设置单元格居中
         for row in sheet.iter_rows():
             for cell in row:
                 cell.alignment = Alignment(horizontal="center", vertical="center")
-
     # 保存更改
     wb.save(fileName)
-    print(f"[FORMAL][INFO]: 文件输出为 '{fileName}'")
+    log.log("INFO", "FORMAL", f"格式化完成，文件输出为: '{fileName}'", externs.log_path)
+    log.log("INFO", "FORMAL", f"格式化完成，文件输出为: '{fileName}'")
 
 def sort_xlsx_data(file_path, sheet_name, start_row, end_row, sort_column):
     """
@@ -254,6 +245,7 @@ def sort_xlsx_data(file_path, sheet_name, start_row, end_row, sort_column):
     :param sort_column: 排序依据列(从1开始,1表示第一列)
     :return: 排序后的数据(二维列表)
     """
+    log.log("TRACE", "FORMAL", f"开始对工作表 '{sheet_name}' 的数据进行排序...", externs.log_path)
     wb = op.load_workbook(file_path)
     sheet = wb[sheet_name]
     rows_to_sort = []
@@ -269,6 +261,8 @@ def sort_xlsx_data(file_path, sheet_name, start_row, end_row, sort_column):
         for j, value in enumerate(row_data):
             sheet.cell(row=i, column=j + 1, value=value)
     wb.save(file_path)
+    log.log("TRACE", "FORMAL", f"工作表 '{sheet_name}' 的数据已排序完成.", externs.log_path)
+    log.log("TRACE", "FORMAL", f"工作表 '{sheet_name}' 的数据已排序完成.")
 
 def convert_time_number(input_str):
     time_values = {"w": 0, "d": 0, "h": 0, "m": 0}
@@ -283,6 +277,7 @@ def convert_time_number(input_str):
         elif part.endswith("m"):
             time_values["m"] = int(part[:-1])
     total_minutes = time_values["w"] * 7 * 24 * 60 + time_values["d"] * 24 * 60 + time_values["h"] * 60 + time_values["m"]
+    log.log("INFO", "FORMAL", f"Converted time string '{input_str}' to total minutes: {total_minutes}", externs.log_path)
     return total_minutes
 
 def convert_time_from_number(total_minutes):
@@ -328,22 +323,16 @@ def convert_time_format(input_str):
 
     return "".join(output)
 
-def modify_line_in_file(file_path, line_number, new_content):
-    # 打开文件读取内容
-    with open(file_path, 'r') as file:
-        lines = file.readlines()
-
-    # 检查行号是否有效
-    if line_number <= 0 or line_number > len(lines):
-        print("[FORMAL][ERROR]: Invalid line number!")
-        return
-
-    # 修改特定的行
-    lines[line_number - 1] = new_content + '\n'  # 需要换行符来保证行格式
-
-    # 打开文件进行写入
-    with open(file_path, 'w') as file:
-        file.writelines(lines)
-
-    print(f"[FORMAL][INFO]: '{file_path}' Line {line_number} has been updated.")
-
+# # 下面的函数已经弃用
+# def modify_line_in_file(file_path, line_number, new_content):
+#     # 打开文件读取内容
+#     with open(file_path, 'r') as file:
+#         lines = file.readlines()
+#     # 检查行号是否有效
+#     if line_number <= 0 or line_number > len(lines):
+#         return
+#     # 修改特定的行
+#     lines[line_number - 1] = new_content + '\n'  # 需要换行符来保证行格式
+#     # 打开文件进行写入
+#     with open(file_path, 'w') as file:
+#         file.writelines(lines)

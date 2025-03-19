@@ -28,6 +28,7 @@ recentChangeSheetName = "RecentChange"
 inputClansInformationLocation = path.pathConcatenationForClansInformationTable()
 inputGroupPlayerInformationLocation = path.pathConcatenationForGroupPlayerInformationTable()
 outputFileLocation = path.pathConcatenationForOutputTable()
+log_dir_path = path.log_dir_path()
 log_path= path.log_path()
 readme_path = path.readme_path()
 Contributionslog_path = path.Contributionslog_path()
@@ -37,25 +38,12 @@ weightContribution = 0.25
 weightDonation = 0.75
 inactivity = 5 * 24 * 60
 def getClansInformation():
-    """
-    从指定路径的 Excel 文件中读取 'clansInformation' sheet 的内容,
-    从第二行开始,将第一列作为字典的 key,第二列作为对应的 value.
-    
-    :param file_path: str, Excel 文件路径
-    :return: dict, 从 sheet 中读取的字典
-    """
-    # 加载op簿
     workbook = op.load_workbook(filename = inputClansInformationLocation)
-    
     # 确保 sheet 名为 'clansInformation'
     if clansInformationSheetName not in workbook.sheetnames:
-        raise ValueError(f"Excel 文件中没有名为 <{clansInformationSheetName}> 的 sheet")
-    
+        raise ValueError(f"Excel 文件中没有名为 < {clansInformationSheetName} > 的 sheet")
     sheet = workbook[clansInformationSheetName]
-    
-    # 初始化结果字典
     result = {}
-    
     # 遍历从第二行开始的内容
     for row in sheet.iter_rows(min_row=2, max_col=2, values_only=True):
         key, value = row
@@ -68,7 +56,7 @@ def getGroupPlayersInformation():
         return {}
     wb = op.load_workbook(filename = inputGroupPlayerInformationLocation)
     if groupPlayerInformationSheetName not in wb.sheetnames:
-        raise ValueError(f"Excel 文件中没有名为 <{groupPlayerInformationSheetName}> 的 sheet")
+        raise ValueError(f"Excel 文件中没有名为 < {groupPlayerInformationSheetName} > 的 sheet")
     ws = wb[groupPlayerInformationSheetName]
     result = {}
     for row in ws.iter_rows(min_row=2, min_col=1, max_col=5, values_only=True):
@@ -91,6 +79,15 @@ operations = {
     99: "格式化并退出"
 }
 XPaths = {
-    "LastMonthWar": '/html/body/div[3]/div[4]/div[2]/div[4]/div[2]/div/div/div/div[2]/div/table',
-    "LastMonthDonation": '/html/body/div[3]/div[4]/div[2]/div[4]/div[3]/div/div[2]/div/table',
+    "ClanName":"/html/body/div[3]/div[4]/div[2]/div[3]/div[1]/div[2]/div[1]/h1",
+    "PlayerName":"/html/body/div[3]/div[4]/div[2]/div[3]/div[1]/div[2]/div[1]/h1", 
+    "PlayerClan":"/html/body/div[3]/div[4]/div[2]/div[3]/div[1]/div[3]/div[4]/div[1]/div[2]/a",
+    "WarTimeline":"/html/body/div[3]/div[4]/div[2]/div[4]/div[1]/div[1]/div[1]/ul",
+    "WarPlayersTable":"/html/body/div[3]/div[4]/div[2]/div[4]/div[3]/table/tbody",
+    "InfoPlayersTable":"/html/body/div[3]/div[4]/div[2]/div[4]/div[6]/table/tbody",
+    "LastMonthWarTable1": "/html/body/div[3]/div[4]/div[2]/div[4]/div[2]/div/div/div/div[2]/div/table/tbody",
+    "LastMonthWarTable2": "/html/body/div[3]/div[4]/div[2]/div[4]/div[4]/div/div/div/div[2]/div/table/tbody",
+    "LastMonthDonation": "/html/body/div[3]/div[4]/div[2]/div[4]/div[3]/div/div[2]/div/table/tbody",
+    "JoinLeaveTable":"/html/body/div[3]/div[4]/div[2]/div[4]",
+    "InfoNumber":"/html/body/div[3]/div[4]/div[2]/div[4]/div[1]/div/div[2]/div[4]/div/div"
 }
