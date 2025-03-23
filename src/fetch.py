@@ -152,10 +152,9 @@ def queryContribution(filter):
         in_war = 0##可能需要别的状态,不用bool
         data_num = 0
         for day in range(1, 8):  # 第四天开始战斗日
-            dot_text = tree.xpath(externs.XPaths["WarTimeline"] + "/li[" + str(day) + "]/div[3]")[0].text.strip()
-            if dot_text is None or len(dot_text) == 0:
-                continue
-            else:
+            dot_text = tree.xpath(externs.XPaths["WarTimeline"] + "/li[" + str(day) + "]/div[3]")[0]
+            dot_text = etree.tostring(dot_text,encoding='utf-8').decode('utf-8')
+            if "day"in dot_text:
                 in_war = 1
                 break
         data = [clan]
